@@ -1,0 +1,52 @@
+<%#include "menu.h" %>
+<%
+QString lang = httpRequest().cookie("lang");
+QVariantMap qMap=httpRequest().queryItems();
+
+QVariant tid = tId();
+QString action = qMap.contains("action") ? httpRequest().queryItemValue("action"): variant("action").toString();
+QString menuId = qMap.contains("menuId") ? httpRequest().queryItemValue("menuId"): variant("menuId").toString();
+
+QVariantMap qMapOut;
+qMapOut.insert("tid",tid);
+qMapOut.insert("menuId",menuId);
+
+Menu menu=Menu::get(hmacVal(menuId).toInt());
+%>
+<div id="form<%== tid %>" class="form" action="/SystemUIsetting/<%== action %>Menu">
+  <%== inputAuthenticityTag() %>
+  <% if (action != "create") { %>
+     <input name="tabId" class="mini-textbox" visible="false" value="<%== menuId %>"  /> 
+  <% } %>
+  <table >
+    <tr>
+      <td><%== UI("MENUCD") %>:</td>
+      <td>
+        <input name="menuCd" class="mini-textbox" value="<%== menu.menuCd() %>" />
+      </td>
+      <td><%== UI("MENUNAMEZH") %>:</td>
+      <td>
+        <input name="menuNameZh" class="mini-textbox" value="<%== menu.menuNameZh() %>" />
+      </td>
+      <td><%== UI("MENUNAMEEN") %>:</td>
+      <td>
+        <input name="menuNameEn" class="mini-textbox" value="<%== menu.menuNameEn() %>" />
+      </td>
+    </tr>
+    <tr>
+      <td><%== UI("MENUTOOLTIP") %>:</td>
+      <td>
+        <input name="menuTooltip" class="mini-textbox" value="<%== menu.menuTooltip() %>" />
+      </td>
+      <td><%== UI("MENUDESC") %>:</td>
+      <td colspan="3" >
+        <input name="menuDesc" class="mini-textarea" value="<%== menu.menuDesc() %>" style="width:100%"/>
+      </td>
+    </tr>
+  </table>
+ </div>
+ <div class="mini-fit">
+    <% if (action != "Create") { %>
+      <%== renderPartial("SystemUIsetting/relatedMenu",qMapOut) %>
+    <% } %>
+  </div>

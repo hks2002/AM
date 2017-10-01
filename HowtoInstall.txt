@@ -1,0 +1,83 @@
+基本系统安装过程:
+
+1.下载Centos Minimal版本. (华中科技大学镜像点速度快,http://mirrors.ustc.edu.cn)
+2.下载PowerIso制作U盘启动.
+3.安装时确保连上网络.
+
+桌面安装过程(可选):
+
+#yum grouplist可显示可用的包名称. -y 参数可以使安装过程中不询问,一步安装完毕,适合脚本的自动运行
+yum groupinstall "X Window System"
+yum groupinstall "Desktop"
+yum groupinstall "Chinese Support"
+yum groupinstall "Font"
+命令"startx"启动桌面
+
+--------------------------------------------------------------------------------------------------
+安装开发工具:
+
+#安装编译工具(需要用到which命令)
+yum -y install which gcc gcc-c++ make \
+
+#Centos6需要安装新GCC,使其支持C++11
+yum install wget
+wget http://mirrors.ustc.edu.cn/gnu/gcc/gcc-4.9.4/gcc-4.9.4.tar.bz2
+tar xjf gcc-4.9.4.tar.bz2
+cd gcc-4.9.4
+#使用预设的脚本依赖库,避免库不兼容
+./contrib/download_prerequisites
+mkdir build
+cd build
+#--prefix=参数很重要,决定了安装的路径默认安装在/usr/local;需要指定Lib的位置
+#
+../configure --disable-multilib --prefix=/usr/local
+make 
+make install
+
+--------------------------------------------------------------------------------------------------
+下载Qt-5.7.1 Linux 64版(需要先安装桌面环境才能运行Run?待确定)
+桌面版安装:
+wget http://mirrors.ustc.edu.cn/qtproject/official_releases/qt/5.7/5.7.1/qt-opensource-linux-x64-5.7.1.run
+chmod 777 qt-opensource-linux-x64-5.7.1.run
+./qt-opensource-linux-x64-5.7.1.run
+
+命令行:
+Ubuntu:
+apt-get update 
+apt-get install -y gcc g++ make qt5-default qt5-qmake libqt5sql5-mysql libqt5sql5-psql libqt5sql5-odbc libqt5sql5-sqlite libqt5core5a libqt5qml5 libqt5xml5 qtbase5-dev qtdeclarative5-dev qtbase5-dev-tools
+apt-get install -y libmysqlclient-dev libpq5 libodbc1 
+
+Centos:
+yum -y install qt5-qtbase-devel qt5-qtdeclarative-devel qt5-qttools-devel qt5-qtbase-odbc qt5-qtbase-mysql qt5-qtbase-postgresql
+yum -y install libdbi-dbd-mysql libdbi-dbd-postgresql libdbi-dbd-sqlite
+--------------------------------------------------------------------------------------------------
+下载Treefrog Linux版
+wget https://github.com/hks2002/treefrog-framework/archive/Composite-Primary-Keys.tar.gz
+tar -xzf Composite-Primary-Keys.zip
+cd Composite-Primary-Keys
+按照网页介绍进行安装
+
+--------------------------------------------------------------------------------------------------
+系统环境变量设置(必须设定):
+
+使用env可以查看系统变量的内容,以及路径顺序(起始路径优先)
+修改 /etc/profile 
+# QTDIR=/opt/Qt-5.7.1 
+# PATH=$PATH:${QTDIR}/xxx/bin
+
+
+--------------------------------------------------------------------------------------------------
+连接库Lib设定(必须设定):
+1. /etc/ld.so.conf配置文件
+2. /etc/ld.so.conf.d目录
+3. ldconfig命令
+4. LD_LIBRARY_PATH Shell全局变量
+
+在 Linux 下面，共享库的寻找和加载是由 /lib/ld.so 实现的。 
+1. ld.so 在标准路经(/lib,/lib64,/usr/lib,/usr/lib64)中寻找应用程序用到的共享库。 往标准路经里添加，不用修改/etc/ld.so.conf，但要运行ldconfig.
+2. ld.so 在/etc/ld.so.conf查找非标准路径，修改此配置文件后,需要运行ldconfig. 
+3. ldconfig生成/etc/ld.so.cache, ld.so 加载共享库的时候从 ld.so.cache查找.
+
+LD_LIBRARY_PATH变量只在Shell环境下作用.
+可配置在/etc/profile或者~/.bash_profile
+配置立即生效命令source xxxx_profile 

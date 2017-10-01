@@ -1,0 +1,51 @@
+<%#include <TModelUtil> %>
+<%#include "dataservicecontroller.h" %>
+<%#include "menusGroupmenu.h" %>
+<%#include "sqlobjects/menusgroupmenuobject.h" %>
+<%#include "sqlobjects/menuobject.h" %>
+<%
+QString lang = httpRequest().cookie("lang");
+
+TCriteria cri;
+cri.add(MenusGroupMenuObject::MenusGroupId, variant("menusGroupId"));
+auto menusGroupMenuList = tfGetModelListByCriteria<MenusGroupMenu, MenusGroupMenuObject>(cri);
+
+QVariantList notIn;
+
+for (auto &x : menusGroupMenuList) {
+    notIn<<x.menuId();
+}
+
+cri.clear();
+QList<QPair<int, Tf::SortOrder>> sorts;
+QStringList fields;
+
+cri.add(MenuObject::MenuId, TSql::NotIn, notIn);
+sorts<<qMakePair(MenuObject::MenuCd,Tf::AscendingOrder);
+fields<<"menuId"<<"menuCd"<<"menuNameZh"<<"menuNameZh";
+QString data = "";
+QVariantMap qMapOut; 
+
+qMapOut.insert("masterPairList",QList<QVariant>()<<(QStringList() << "menusGroupId" << variant("menusGroupId").toString()));
+qMapOut.insert("slaver","Menu");
+qMapOut.insert("slaverList",QStringList()<<"menuId");
+qMapOut.insert("assignUrl","SystemUIsetting/assignMenuToMenusGroup");
+
+%>
+<div id="listBox_unassignedMenu<%== variant("uId") %>" class="mini-listbox" style="width:250px;height:150px;" textfield="<%== lang == "zh" ? "menuNameZh" : "menuNameEn";%>"
+valuefield="menuId" showcheckbox="true" multiselect="true" data='<%== data %>'>
+  <div property="columns">
+    <div type="indexcolumn"></div>
+    <div type="checkcolumn"></div>
+    <div visible="false" field="menuId"></div>
+    <div header="<%== UI("MENUCD") %>" field="menuCd"></div>
+    <div header="<%== lang == "zh" ? "menuNameZh" : "menuNameEn"; %>" field="<%== lang == "zh" ? UI("MENUNAMEZH") : UI("MENUNAMEEN") %>"></div>
+  </div>
+</div>
+<% if (variant("assign").toString() == "assign") { %>
+  <a class="mini-button" onclick="assignMenu('listBox_unassignedMenu<%== variant("uId") %>')"><%== UI("Assign") %></a>
+  <%== renderPartial("JSassign",qMapOut); %>
+<% } %>
+<% if (variant("window").toString() == "window") { %>
+  <a name="closeWindow" class="mini-button" onclick="closeWindow('window<%== variant("uId") %>')"><%== UI("Close") %></a></div>
+<% } %>

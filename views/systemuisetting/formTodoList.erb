@@ -1,0 +1,52 @@
+<%#include "todolist.h" %>
+<%
+QString lang = httpRequest().cookie("lang");
+QVariantMap qMap=httpRequest().queryItems();
+
+QVariant tid = tId();
+QString action = qMap.contains("action") ? httpRequest().queryItemValue("action"): variant("action").toString();
+QString todolistid = qMap.contains("todolistid") ? httpRequest().queryItemValue("todolistid"): variant("todolistid").toString();
+
+QVariantMap qMapOut;
+qMapOut.insert("tid",tid);
+qMapOut.insert("todolistid",todolistid);
+
+TodoList todoList=TodoList::get(hmacVal(todolistid).toInt());
+%>
+<div id="form<%== tid %>" class="form" action="/SystemUIsetting/<%== action %>TodoList">
+  <%== inputAuthenticityTag() %>
+  <% if (action != "create") { %>
+     <input name="tabId" class="mini-textbox" visible="false" value="<%== todolistid %>"  /> 
+  <% } %>
+  <table >
+    <tr>
+      <td><%== UI("TODOLISTCD") %>:</td>
+      <td>
+        <input name="todoListCd" class="mini-textbox" value="<%== todoList.todoListCd() %>" />
+      </td>
+      <td><%== UI("TODOLISTNAMEZH") %>:</td>
+      <td>
+        <input name="todoListNameZh" class="mini-textbox" value="<%== todoList.todoListNameZh() %>" />
+      </td>
+      <td><%== UI("TODOLISTNAMEEN") %>:</td>
+      <td>
+        <input name="todoListNameEn" class="mini-textbox" value="<%== todoList.todoListNameEn() %>" />
+      </td>
+    </tr>
+    <tr>
+      <td><%== UI("TODOLISTTOOLTIP") %>:</td>
+      <td>
+        <input name="todoListTooltip" class="mini-textbox" value="<%== todoList.todoListTooltip() %>" />
+      </td>
+      <td><%== UI("TODOLISTDESC") %>:</td>
+      <td colspan="3" >
+        <input name="todoListDesc" class="mini-textarea" value="<%== todoList.todoListDesc() %>" style="width:100%" />
+      </td>
+    </tr>
+  </table>
+</div>
+  <div class="mini-fit">
+    <% if (action != "Create") { %>
+      <%== renderPartial("SystemUIsetting/relatedTodoList",qMapOut) %>
+    <% } %>
+  </div>

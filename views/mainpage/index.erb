@@ -1,0 +1,96 @@
+<%#include "vtodolistbuttonrole.h" %>
+<%#include "vtodolistbuttonuser.h" %>
+<%#include "vtodolisttabrole.h" %>
+<%#include "vtodolisttabuser.h" %>
+<%#include "sqlobjects/vtodolistbuttonroleobject.h" %>
+<%#include "sqlobjects/vtodolistbuttonuserobject.h" %>
+<%#include "sqlobjects/vtodolisttabroleobject.h" %>
+<%#include "sqlobjects/vtodolisttabuserobject.h" %>
+<%#include "tmodelutil.h" %>
+
+<% 
+QString lang = httpRequest().cookie("lang");
+QString toDoRole = httpRequest().cookie("toDoRole");
+int currentRoleId = controller()->session().value(toDoRole).toInt();
+int currentUserId = controller()->session().value("currentUserId").toInt();
+
+int tabsActiveIndex = httpRequest().cookie("mainTabsActiveIndex").toInt();
+QVariantMap addedTabs = httpRequest().formItems();
+
+TCriteria cri;
+QList<VTodoListButtonRole> buttonRoleList ;
+QList<VTodoListTabRole> tabRoleList;
+QList<VTodoListButtonUser> buttonUserList;
+QList<VTodoListTabUser> tabUserList;
+
+if (currentRoleId > 0) { //byRole
+    cri.clear();
+    cri.add(VTodoListButtonRoleObject::RoleId, currentRoleId);
+    buttonRoleList = tfGetModelListByCriteria<VTodoListButtonRole, VTodoListButtonRoleObject>(cri);
+
+    cri.clear();
+    cri.add(VTodoListTabRoleObject::RoleId, currentRoleId);
+    tabRoleList = tfGetModelListByCriteria<VTodoListTabRole, VTodoListTabRoleObject>(cri);
+} else {//byUser
+    cri.clear();
+    cri.add(VTodoListButtonUserObject::UserId, currentUserId);
+    buttonUserList = tfGetModelListByCriteria<VTodoListButtonUser, VTodoListButtonUserObject>(cri);
+
+    cri.clear();
+    cri.add(VTodoListTabUserObject::UserId, currentUserId);
+    tabUserList = tfGetModelListByCriteria<VTodoListTabUser, VTodoListTabUserObject>(cri);
+}
+
+%>
+ 
+<!-- PageHeader -->
+<div class="app-header" >        
+  <%== renderPartial("pageHeader"); %>
+</div>
+<!-- Menus -->
+<div>
+  <%== renderPartial("menus"); %>
+</div>
+<!-- ToDo List buttons and tabs related to user and all his roles-->
+<!--ToolBars-->
+<div style="margin-left:3px;margin-right:3px;margin-bottom:2px;">
+    <!--roleButtons-->
+	<% for (const auto &i : buttonRoleList) { %>
+	   <a class="mini-button" name="/<%== i.controller()+"/"+ i.action() %>" tooltip="<%== i.buttonTooltip() %>" onclick="onButtonClick" ><%== lang=="zh"?i.buttonNameZh():i.buttonNameEn() %></a>
+	<% } %>
+    <!--userButtons-->
+	<% for (const auto &i : buttonUserList) { %>
+	   <a class="mini-button" name="/<%== i.controller()+"/"+ i.action() %>" tooltip="<%== i.buttonTooltip() %>" onclick="onButtonClick" ><%== lang=="zh"?i.buttonNameZh():i.buttonNameEn() %></a>
+	<% } %>	
+</div>
+
+<!--Tabs-->
+<div class="mini-fit">		
+    <div id="mainTabs" class="mini-tabs"  activeIndex="<%== tabsActiveIndex %>" style="width:100%;height:100%"  bodyStyle="border:0;" maskOnLoad="false" onbeforeactivechanged="onBeforeTabChange" onactivechanged="onTabChange" oncloseclick="onTabClose">			 
+         <!--roleTabs-->
+         <% for (const auto &i : tabRoleList) { %>
+           <div name="/<%== i.controller()+"/"+ i.action() %>" tooltip="<%== i.tabTooltip() %>" title="<%== lang=="zh"?i.tabNameZh():i.tabNameEn()%>" 
+           data-options="{tabNameZh:'<%== i.tabNameZh() %>',tabNameEn:'<%== i.tabNameEn() %>'}"></div>
+         <% } %>
+         <!--userTabs-->
+         <% for (const auto &i : tabUserList) { %>
+           <div name="/<%== i.controller()+"/"+ i.action() %>" tooltip="<%== i.tabTooltip() %>" title="<%== lang=="zh"?i.tabNameZh():i.tabNameEn()%>" 
+           data-options="{tabNameZh:'<%== i.tabNameZh() %>',tabNameEn:'<%== i.tabNameEn() %>'}"></div>
+         <% } %>
+         <!--addedTabs-->
+         <% 
+         for (QMapIterator<QString, QVariant> it(addedTabs); it.hasNext(); ) { 
+            it.next(); 
+            QStringList list=it.value().toString().split("$$"); 
+         %>
+           <div name="<%== it.key() %>" tooltip="<%== list.at(1) %>" title="<%== list.at(0) %>" 
+           data-options="{tabNameAlt:'<%== list.at(0) %>'}" showCloseButton="true"></div>
+         <% } %>
+    </div>
+</div>
+		
+<div style="line-height:25px;text-align:center;cursor:default"><%== renderPartial("pageFooter");%></div>
+
+<script type="text/javascript">
+    mini.parse();
+</script>

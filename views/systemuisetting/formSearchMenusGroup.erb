@@ -1,0 +1,37 @@
+<% QVariant tid = variant("tid") %>
+ <form id="searchForm<%== tid %>">   
+   <!-- style="display:inline-block;" in one line-->
+   <%== inputAuthenticityTag();%>
+   <input type="checkbox" onclick="toggleAdvanceSearch(this, 'searchForm<%== tid %>')"/><%== UI("Advance Search") %>
+   <table>
+   <tr>
+      <td><%== UI("MENUSGROUPCD") %>:</td>
+	  <td><input name="sqlOp_menusGroupCd" data="sqlOpData" value="1" class="mini-combobox" onvaluechanged="sqlOpChange" style="width:200px;display:none"/></td>
+      <td><input name="menusGroupCd" class="mini-textbox"/></td>
+   </tr>
+   <tr>
+      <td><%== UI("MENUSGROUPNAMEZH") %>:</td>
+	  <td><input name="sqlOp_menusGroupNameZh" data="sqlOpData" value="1" class="mini-combobox" onvaluechanged="sqlOpChange" style="width:200px;display:none" /></td>
+	  <td><input name="menusGroupNameZh" class="mini-textbox" /></td>
+   </tr>
+   <tr>
+      <td><%== UI("MENUSGROUPNAMEEN") %>:</td>
+	  <td><input name="sqlOp_menusGroupNameEn" data="sqlOpData" value="1" class="mini-combobox" onvaluechanged="sqlOpChange" style="width:200px;display:none"/></td>
+	  <td><input name="menusGroupNameEn" class="mini-textbox" /></td>
+   </tr>
+   <tr>
+      <td><%== UI("MENUSGROUPTOOLTIP") %>:</td>
+	  <td><input name="sqlOp_menusGroupTooltip" data="sqlOpData" value="1" class="mini-combobox" onvaluechanged="sqlOpChange" style="width:200px;display:none"/></td>
+	  <td><input name="menusGroupTooltip" class="mini-textbox" /></td>
+   </tr>
+   <tr>
+      <td><%== UI("MENUSGROUPDESC") %>:</td>
+	  <td><input name="sqlOp_menusGroupNameDesc" data="sqlOpData" value="1" class="mini-combobox" onvaluechanged="sqlOpChange" style="width:200px;display:none"/></td>
+	  <td><input name="menusGroupNameDesc" class="mini-textbox" /></td>
+   </tr>
+   </table>
+  </form>
+<div class="mini-toolbar" style="margin-left:3px;border:0"> 
+ <a class="mini-button" onclick="clearForm('searchForm<%== tid %>')"><%== UI("Clear") %></a>
+ <a class="mini-button" onclick="resetForm('searchForm<%== tid %>')"><%== UI("Reset") %></a> 
+</div>

@@ -1,0 +1,52 @@
+<%#include "button.h" %>
+<%
+QString lang = httpRequest().cookie("lang");
+QVariantMap qMap=httpRequest().queryItems();
+
+QVariant tid = tId();
+QString action = qMap.contains("action") ? httpRequest().queryItemValue("action"): variant("action").toString();
+QString buttonId = qMap.contains("buttonId") ? httpRequest().queryItemValue("buttonId"): variant("buttonId").toString();
+
+QVariantMap qMapOut;
+qMapOut.insert("tid",tid);
+qMapOut.insert("buttonId",buttonId);
+
+Button button=Button::get(hmacVal(buttonId).toInt());
+%>
+<div id="form<%== tid %>" class="form" action="/SystemUIsetting/<%== action %>Button">
+  <%== inputAuthenticityTag() %>
+  <% if (action != "create") { %>
+     <input name="tabId" class="mini-textbox" visible="false" value="<%== buttonId %>"  /> 
+  <% } %>
+  <table >
+    <tr>
+      <td><%== UI("BUTTONCD") %>:</td>
+      <td>
+        <input name="buttonCd" class="mini-textbox" value="<%== button.buttonCd() %>" />
+      </td>
+      <td><%== UI("BUTTONNAMEZH") %>:</td>
+      <td>
+        <input name="buttonNameZh" class="mini-textbox" value="<%== button.buttonNameZh() %>" />
+      </td>
+      <td><%== UI("BUTTONNAMEEN") %>:</td>
+      <td>
+        <input name="buttonNameEn" class="mini-textbox" value="<%== button.buttonNameEn() %>" />
+      </td>
+    </tr>
+    <tr>
+      <td><%== UI("BUTTONTOOLTIP") %>:</td>
+      <td>
+        <input name="buttonTooltip" class="mini-textbox" value="<%== button.buttonTooltip() %>" />
+      </td>
+      <td><%== UI("BUTTONDESC") %>:</td>
+      <td colspan="3">
+        <input name="buttonDesc" class="mini-textarea" value="<%== button.buttonDesc() %>" style="width:100%" />
+      </td>
+    </tr>
+  </table>
+</div>
+  <div class="mini-fit">
+    <% if (action != "Create") { %>
+      <%== renderPartial("SystemUIsetting/relatedButton",qMapOut) %>
+    <% } %>
+  </div>

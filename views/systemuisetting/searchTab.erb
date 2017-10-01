@@ -1,0 +1,51 @@
+<%
+QVariant tid = tId();
+QVariantMap qMapOut;
+qMapOut.insert("tid",tid);
+%>
+<!-- searchFrom -->
+<fieldset id="searchFieldsetTab<%== tid %>" class="hideFieldset"> <!--    default hide-->
+<legend><label>
+<input type="checkbox" onclick="toggleSearch(this, 'searchFieldsetTab<%== tid %>')" hidefocus=""/><%== UI("Search Criteria") %>
+</label></legend>
+<div class="fieldset-body">
+    <%== renderPartial("SystemUIsetting/formSearchTab",qMapOut) %>
+ </div>
+</fieldset>
+<!-- toolBar -->
+ <div class="mini-toolbar">
+        <a class="mini-button" onclick="doSearch('searchFormTab<%== tid %>','gridTab<%== tid %>')"><%== UI("Search") %></a>
+        <a class="mini-button" onclick="showRecord('gridTab<%== tid %>','<%== UI("Tab") %>',650,500,'/PartialService/formTab?action=show',['tabId'])" tooltip="" ><%== UI("Show Details") %></a>
+    <% if (accessAllow("systemuisetting/createTab")){ %>
+        <a class="mini-button" onclick="createRecord('<%== UI("Tab") %>',650,500,'/PartialService/formTab?action=create')" tooltip="<%== UI("TP_SYSTEMUISETTING_CREATE_TAB") %>" ><%== UI("Create") %></a>
+    <% } %>
+    <% if (accessAllow("systemuisetting/editTab")){ %>
+        <a class="mini-button" onclick="editRecord('gridTab<%== tid %>','<%== UI("Tab") %>',650,500,'/PartialService/formTab?action=edit',['tabId'])" tooltip="<%== UI("TP_SYSTEMUISETTING_EDIT_TAB") %>" ><%== UI("Edit") %></a>
+    <% } %>
+    <% if (accessAllow("systemuisetting/deleteTab")){ %>
+        <a class="mini-button" onclick="deleteRecord('gridTab<%== tid %>','/SystemUIsetting/deleteTab',['tabId'],'<%== csrfVal() %>')" tooltip="<%== UI("TP_SYSTEMUISETTING_DELETE_TAB") %>" ><%== UI("Delete") %></a>
+    <% } %>
+ </div>
+<!-- grid -->
+<div class="mini-fit">
+<div id="gridTab<%== tid %>" name="gridTab" class="mini-datagrid" url="/DataService/Search/Tab?searchMode=page" ajaxOptions="{data:{sortField:'tabCd'}}"
+   style="height:100%" showEmptyText="true" multiSelect="true" >
+  <div property="columns">
+   <div type="indexcolumn" width="25"></div>
+   <div type="checkcolumn" width="25"></div>
+   <div field="tabId" visible="false"><%== UI("TABID") %></div>
+   <div field="tabCd" allowsort="true"><%== UI("TABCD") %></div>
+   <div field="tabNameZh" allowsort="true"><%== UI("TABNAMEZH") %></div>
+   <div field="tabNameEn" allowsort="true"><%== UI("TABNAMEEN") %></div>
+   <div field="tabTooltip" allowsort="true"><%== UI("TABTOOLTIP") %></div>
+   <div field="tabDesc" allowsort="true"><%== UI("TABDESC") %></div>
+   <% if (controller()->identityKeyOfLoginUser()== "admin") { %>
+   <div field="controller" allowsort="true"><%== UI("CONTROLLER") %></div>
+   <div field="action" allowsort="true" width="100%"><%== UI("ACTION") %></div>
+   <% } %>
+  </div>
+</div>
+</div>
+<script type="text/javascript">
+    mini.parse();
+</script>

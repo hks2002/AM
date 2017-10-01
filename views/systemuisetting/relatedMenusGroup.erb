@@ -1,0 +1,48 @@
+<%
+QString tid = tId();
+QVariantMap qMapOut;
+
+qMapOut.insert("tid",tid);
+qMapOut.insert("width","200");
+qMapOut.insert("height","400");
+       
+qMapOut.insert("master","MenusGroup");
+qMapOut.insert("masterPairList",QVariantList()<<(QStringList()<<"menusGroupId"<<variant("menusGroupId").toString()));
+qMapOut.insert("slaver","Menu");
+qMapOut.insert("slaverList",QStringList()<<"menuId");
+
+qMapOut.insert("orderField","menuOrder");
+qMapOut.insert("menusGroupId",variant("menusGroupId"));
+
+qMapOut.insert("assignWindowUrl","SystemUIsetting/unassignedMenu");
+qMapOut.insert("unassignUrl","SystemUIsetting/unassignMenuFromMenusGroup");
+qMapOut.insert("orderUrl","SystemUIsetting/orderMenusGroupMenu");
+%>
+<div class="mini-tabs" activeindex="0" style="width:100%;height:100%;" bodystyle="border:0;">
+  <div title='<%== UI("Assigned Menus") %>'>    
+    <% if (accessAllow("SystemUIsetting/assignMenuToMenusGroup")){ %>
+        <a class="mini-button" plain="true" tooltip="<%== UI("Assign") %>" iconCls="icon-add" 
+        onclick="assignWinMenu()"></a>
+        <%== renderPartial("JSassignWindow",qMapOut) %>
+    <% } %>
+    <% if (accessAllow("SystemUIsetting/unassignMenuFromMenusGroup")){ %>
+        <a class="mini-button" plain="true" tooltip="<%== UI("UnAssign") %>" iconcls="icon-sub" 
+        onclick="unassignMenu('assignedMenu<%== tid %>')" ></a>
+        <%== renderPartial("JSunassign",qMapOut) %>
+    <% } %>   
+    <% if (accessAllow("SystemUIsetting/orderMenusGroupMenu")){ %>
+        <a class="mini-button" plain="true" tooltip="<%== UI("Move Up") %>" iconcls="icon-up"
+           onclick="moveUpMenu('assignedMenu<%== tid %>')" ></a> 
+        <a class="mini-button" plain="true" tooltip="<%== UI("Move Down") %>" iconcls="icon-down"
+           onclick="moveDownMenu('assignedMenu<%== tid %>')" ></a>
+        <%== renderPartial("JSorder",qMapOut) %>
+    <% } %>    
+    <% if (accessAllow("SystemUIsetting/editMenuBreak")){ %>
+        <a class="mini-button" plain="true" tooltip="<%== UI("Toggle Break") %>" iconcls="icon-split" 
+        onclick="menuToggleBreak('assignedMenu<%== tid %>')" ></a>
+        <%== renderPartial("SystemUIsetting/editMenuBreak",qMapOut) %>
+    <% } %>
+    
+    <%== renderPartial("SystemUIsetting/assignedMenu",qMapOut) %>
+  </div>
+</div>

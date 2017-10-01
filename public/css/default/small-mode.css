@@ -1,0 +1,502 @@
+﻿body
+{
+    font-size:10px;
+    line-height:16px;    
+}
+
+/* button
+==========================================*/
+.mini-button
+{
+    font-size:10px;
+    line-height:16px;
+}
+.mini-button-text
+{   
+    padding:1px 6px 3px 6px;	
+    padding:1px 6px 3px 6px\9;	
+    line-height:16px;
+}
+.mini-button-icon
+{
+    left:3px;    
+}
+.mini-button .mini-button-icon-text
+{
+    padding-left:23px;
+}
+.mini-button .mini-button-icon-only
+{
+    padding-left:12px;
+}
+.mini-button .mini-button-icon-only .mini-button-icon
+{    
+    left:2px;    
+}
+.mini-button-iconRight .mini-button-icon-text
+{
+    padding-left:6px;
+    padding-right:23px;
+}
+.mini-button-iconRight .mini-button-icon
+{
+    left:auto;
+    right:3px;
+}
+.mini-button-iconTop .mini-button-icon-text
+{
+    padding-left:6px;
+    padding-top:18px;
+}
+.mini-button-iconTop .mini-button-icon
+{
+    left:50%;
+    margin-left:-9px;
+    top:2px;
+    margin-top:auto;
+}
+.mini-button-allow
+{
+    margin-top:1px;
+    position:relative;
+  
+}
+
+/* textbox
+==========================================*/
+.mini-textbox-input
+{
+    height:16px;
+    line-height:16px;
+    font-size:10px;
+}
+.mini-textbox-border
+{
+    padding-left:2px;
+    padding-right:2px;
+    height:16px;
+}
+.mini-textbox
+{
+    overflow:visible;
+    height:20px;
+    width:150px;
+}
+.mini-textarea .mini-textbox-border
+{
+    padding-left:2px;
+    padding-right:2px;
+}
+.mini-textarea .mini-textbox-input
+{
+    line-height:16px;
+}
+.mini-placeholder-label
+{
+    line-height:16px;
+    padding-left:1px;
+}
+
+/* buttonedit
+==========================================*/
+.mini-buttonedit-input
+{
+    height:16px;
+    line-height:16px;
+    font-size:10px;
+}
+.mini-buttonedit-border
+{
+    padding-left:2px;
+    padding-right:18px;
+    height:18px;
+}
+.mini-buttonedit
+{
+    overflow:visible;
+    height:18px;
+    width:150px;
+}
+.mini-buttonedit-button
+{
+    height:16px;
+    width:16px;
+}
+.mini-buttonedit-close
+{
+    height:18px;
+}
+/*.mini-buttonedit-up span, .mini-buttonedit-down span
+{
+    background-position:50% 3px;
+}*/
+
+/* htmlfile
+==========================================*/
+.mini-htmlfile .mini-buttonedit-button
+{
+    line-height:16px;
+}
+
+/* textboxlist
+==========================================*/
+.mini-textboxlist
+{
+    height:18px;
+}
+.mini-textboxlist ul
+{
+    padding-top:1px;
+    padding-left:2px;
+}
+.mini-textboxlist .mini-textboxlist-item
+{
+    font-size:10px;
+    line-height:16px;
+}
+.mini-textboxlist .mini-errorIcon
+{
+    margin-top:1px;
+}
+.mini-textboxlist .mini-textboxlist-input
+{
+    height:16px;
+    line-height:16px;
+}
+
+/* checkbox
+==========================================*/
+.mini-checkbox
+{
+    font-size:10px;
+    line-height:16px;
+}
+.mini-checkbox-check,
+.mini-checkbox-icon
+{
+    margin-right:4px;
+}
+
+/* checkboxlist & radiobuttonlist
+==========================================*/
+.mini-checkboxlist table label,
+.mini-radiobuttonlist table label
+{
+    padding-left:2px;
+    line-height:16px;
+    font-size:10px;
+}
+
+/* listbox
+==========================================*/
+.mini-listbox td
+{
+    line-height:16px;
+    font-size:10px;
+    padding: 1px 2px 1px 2px;
+}
+
+/* grid
+==========================================*/
+.mini-grid-cell-inner
+{
+    padding-top:2px;
+    padding-bottom:2px;
+    font-size:10px;
+}
+.mini-grid-headerCell-inner
+{
+    padding-top:2px;
+    padding-bottom:2px;
+    font-size:10px;
+}
+.mini-grid-headerCell-outer
+{
+    padding-left:2px;
+    padding-right:1px;
+}
+.mini-grid-columnproxy
+{
+    padding-top:1px;
+    padding-bottom:2px;
+}
+.mini-grid-allowsort,
+.mini-grid-sortIcon
+{
+    margin-left:2px;
+}
+
+/* treegrid & tree
+==========================================*/
+.mini-tree-nodetitle,
+.mini-tree-node-ecicon,
+.mini-tree-indent
+{         
+    height:16px;
+}
+.mini-tree-nodeshow
+{
+    padding:0px 0px 0px 0px;
+}
+.mini-tree-node-hover .mini-tree-nodeshow,
+.mini-tree-selectedNode .mini-tree-nodeshow
+{
+    padding:0px 0px 0px 0px;
+}
+.mini-tree-nodetext
+{
+    padding-left:0px;
+}
+.mini-tree-checkbox
+{
+    margin-left:0px;
+    margin-right:0px;
+}
+
+/* pager
+==========================================*/
+.mini-pager
+{
+    height:16px;
+    line-height:18px;
+    padding:1px 1px 1px 1px;   
+}
+body .mini-pager-num
+{
+    height:16px;
+    line-height:18px;
+}
+
+/* toolbar
+==========================================*/
+.mini-toolbar
+{
+    padding:0px;  
+}
+
+/* tools
+==========================================*/
+.mini-tools span
+{
+    margin-left:1px;
+}
+
+/* panel
+==========================================*/
+.mini-panel-header-inner
+{	
+    padding:4px 4px 4px 5px;
+    font-size:11px;
+}
+.mini-panel .mini-panel-icon
+{
+    margin-right:2px;
+}
+.mini-panel .mini-tools
+{
+    top:1px;
+    right:1px;
+}
+.mini-panel-body
+{
+    padding:1px;
+}
+.mini-panel-toolbar,
+.mini-panel-footer
+{
+    /*padding:4px;*/
+}
+
+/* layout
+==========================================*/
+.mini-layout
+{
+    font-size:10px;
+}
+.mini-layout-region-header,
+.mini-layout-proxy
+{
+    height:20px;
+    line-height:20px;
+}
+.mini-layout-proxy
+{
+    width:20px;
+}
+.mini-layout-region-header .mini-tools,
+.mini-layout-proxy .mini-tools
+{
+    top:4px;
+    right:6px;
+}
+.mini-layout-proxy-text
+{
+    left:1px;
+    font-size:10px;
+}
+
+/* outlookbar
+==========================================*/
+.mini-outlookbar
+{        
+    font-size:11px;
+}
+.mini-outlookbar-groupHeader
+{
+    line-height:16px;
+    padding:2px 20px 2px 2px;
+}
+.mini-outlookbar-groupTitle
+{
+    padding-left:1px;
+}
+.mini-outlookbar-groupHeader .mini-tools
+{   
+    top:1px;
+    right:2px;    
+}
+
+/* menu
+==========================================*/
+.mini-menu
+{  
+    font-size:10px; 
+}
+.mini-menuitem-inner
+{
+    padding:0px 16px 0px 16px;   
+}
+.mini-menuitem-icon
+{
+    left:2px;
+    top:1px;
+} 
+.mini-menuitem-allow
+{
+    top:1px;
+    right:1px;    
+}
+.mini-menu-horizontal .mini-menuitem-allow
+{
+    top:2px;
+}
+.mini-menu-horizontal .mini-menu-inner
+{
+    padding:2px;
+}
+.mini-menu-horizontal .mini-menuitem-inner
+{
+    padding:0px 1px 0px 1px;
+}
+.mini-menu-horizontal .mini-menuitem-icon
+{
+    margin-right:0px;
+}
+
+/* tabs
+==========================================*/
+.mini-tab
+{
+    padding-left:8px;
+    padding-right:8px;
+}
+.mini-tab-text
+{
+    font-size:10px;
+    line-height:16px;
+    padding:1px 2px 1px 2px;    
+}
+.mini-tabs-plain .mini-tab-text
+{
+    line-height:16px;
+}
+.mini-tab-close
+{
+    margin-top:2px;
+}
+.mini-tabs-tabmenu
+{
+    top:2px;
+    right:1px;
+    width:20px;
+    height:20px;    
+    margin-right:1px;
+}
+.mini-tabs-nav,
+.mini-tabs-leftnav
+{
+    top:2px;
+    padding-left: 2px;
+    padding-right: 1px;
+}
+.mini-tabs-leftButton, .mini-tabs-rightButton
+{    
+    width:20px;
+    height:20px;
+    margin-right:1px;
+}
+.mini-tabs-buttons
+{
+    padding-top:1px;
+}
+
+/* calendar
+==========================================*/
+.mini-calendar,
+.mini-calendar-title,
+.mini-calendar-menu-month,
+.mini-calendar-menu-year
+{       
+    font-size:10px;
+}
+.mini-calendar-header
+{
+    height:18px;
+}
+.mini-calendar-title
+{
+    top:1px;
+}
+.mini-calendar-prev,
+.mini-calendar-next
+{
+    top:2px;
+}
+body .mini-calendar td.mini-calendar-date
+{
+    line-height:16px;
+    padding:0px 1px;
+}
+body .mini-calendar .mini-calendar-daysheader td
+{
+    line-height:16px;
+    padding:0px;
+}
+.mini-calendar-tadayButton, .mini-calendar-clearButton,
+.mini-calendar-okButton, .mini-calendar-cancelButton
+{
+    line-height:14px;
+    padding:2px;
+    padding-left:0px;
+    padding-right:0px;    
+}
+.mini-calendar-menu-year
+{
+    padding:1px 0px;
+}
+
+/* progressbar
+==========================================*/
+.mini-progressbar
+{
+    height:16px;   
+}
+.mini-progressbar-border
+{    
+    height:16px;    
+}
+.mini-progressbar-text
+{
+    line-height:16px;
+    font-size:10px;
+}

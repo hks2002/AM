@@ -1,0 +1,37 @@
+<% QVariant tid = variant("tid") %>
+<input type="checkbox" onclick="toggleAdvanceSearch(this, 'searchForm<%== tid %>')"/><%== UI("Advance Search") %>
+  <form id="searchForm<%== tid %>">   
+   <!-- style="display:inline-block;" in one line-->
+   <%== inputAuthenticityTag();%>
+   <table>
+   <tr>
+      <td><%== UI("MENUCD") %>:</td>
+	  <td><input name="sqlOp_menuCd" data="sqlOpData" value="1" class="mini-combobox" onvaluechanged="sqlOpChange" style="width:200px;display:none"/></td>
+      <td><input name="menuCd" class="mini-textbox"/></td>
+   </tr>
+   <tr>
+      <td><%== UI("MENUNAMEZH") %>:</td>
+	  <td><input name="sqlOp_menuNameZh" data="sqlOpData" value="1" class="mini-combobox" onvaluechanged="sqlOpChange"  style="width:200px;display:none" /></td>
+	  <td><input name="menuNameZh" class="mini-textbox" /></td>
+   </tr>
+   <tr>
+      <td><%== UI("MENUNAMEEN") %>:</td>
+	  <td><input name="sqlOp_menuNameEn" data="sqlOpData" value="1" class="mini-combobox" onvaluechanged="sqlOpChange" style="width:200px;display:none"/></td>
+	  <td><input name="menuNameEn" class="mini-textbox" /></td>
+   </tr>
+   <tr>
+      <td><%== UI("MENUTOOLTIP") %>:</td>
+	  <td><input name="sqlOp_menuTooltip" data="sqlOpData" value="1" class="mini-combobox" onvaluechanged="sqlOpChange" style="width:200px;display:none"/></td>
+	  <td><input name="menuTooltip" class="mini-textbox" /></td>
+   </tr>
+   <tr>
+      <td><%== UI("MENUDESC") %>:</td>
+	  <td><input name="sqlOp_menuNameDesc" data="sqlOpData" value="1" class="mini-combobox" onvaluechanged="sqlOpChange" style="width:200px;display:none"/></td>
+	  <td><input name="menuNameDesc" class="mini-textbox" /></td>
+   </tr>
+   </table>
+  </form>
+<div class="mini-toolbar" style="margin-left:3px;border:0"> 
+ <a class="mini-button" onclick="clearForm('searchForm<%== tid %>')"><%== UI("Clear") %></a>
+ <a class="mini-button" onclick="resetForm('searchForm<%== tid %>')"><%== UI("Reset") %></a> 
+</div>

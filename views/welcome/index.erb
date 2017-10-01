@@ -1,0 +1,25 @@
+    <p style="text-align:center;">
+        <span style="color:#4C33E5;font-size:32px;font-family:&quot;"><img src="/AM.png" alt="" /><br />
+    </span>
+    </p>
+    <p style="text-align:center;">
+        <span style="color:#4C33E5;font-size:32px;font-family:&quot;"><%== UI("WelcomeToUse") %><%== httpRequest().cookie("lang")=="zh"?"":" "%></%%><%== UI("AircraftMaintenanceManagementSystem") %></span>
+    </p>
+    <div style="text-align:center;font-size:16px;">
+        <a href="javascript:void(0);" onclick="signUpWindow()"><%== UI("SignUp") %></a>  <a href="javascript:void(0);" onclick="signInWindow()"><%== UI("SignIn") %></a>
+    </div>
+    <div style="text-align:center;font-size:12px;">
+        <%== UI("Developed By") %><div style="display:none" id="dynamicJS"></div>
+    </div>
+   <script type="text/javascript">
+   function signInWindow(){
+       $.ajax({
+            url: "/Welcome/signIn",
+            type: "post",
+            dataType: "text",
+            success: function (data) {
+                $("#dynamicJS").html(data);
+            }
+        });   
+   }
+   </script>   

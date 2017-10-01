@@ -1,0 +1,88 @@
+<%#include "vmenusgroupmenurole.h" %>
+<%#include "sqlobjects/vmenusgroupmenuroleobject.h" %>
+<%#include "vmenusgroupmenuuser.h" %>
+<%#include "sqlobjects/vmenusgroupmenuuserobject.h" %>
+<%#include "tmodelutil.h" %>
+<%
+QString lang = httpRequest().cookie("lang");
+
+QString toDoRole = httpRequest().cookie("toDoRole");
+int currentRoleId = controller()->session().value(toDoRole).toInt();
+int currentUserId = controller()->session().value("currentUserId").toInt();
+
+TCriteria cri;
+QList<VMenusGroupMenuRole> menuRoleList;
+QList<VMenusGroupMenuUser> menuUserList;
+
+if (currentRoleId > 0) { //byRole
+     cri.add(VMenusGroupMenuRoleObject::RoleId, currentRoleId);
+     menuRoleList =  tfGetModelListByCriteria<VMenusGroupMenuRole, VMenusGroupMenuRoleObject>(cri);
+} else {//byUser
+     cri.add(VMenusGroupMenuUserObject::UserId, currentUserId);
+    menuUserList =  tfGetModelListByCriteria<VMenusGroupMenuUser, VMenusGroupMenuUserObject>(cri);
+}
+%>
+<ul id="menu" class="mini-menubar" style="width:100%;">
+    <!--roleMuens-->
+	<% 
+       bool newgroup; 
+	   int groupId=-1;  
+	   int total=menuRoleList.length(); 
+	   int current=0; 
+	   for (const auto &i : menuRoleList) { 
+	       ++current;                       
+	       newgroup= (groupId==i.menusGroupId())? false:true;
+	       groupId=i.menusGroupId(); 
+	       if (newgroup && current==1){                  
+    %>
+			  <li>
+			  <span><%== lang=="zh"? i.menusGroupNameZh():i.menusGroupNameEn() %></span>
+			  <ul>
+	<%     }else if (newgroup && current>1) { %>
+			  </ul>
+			  </li><li>
+			  <span><%== lang=="zh"? i.menusGroupNameZh():i.menusGroupNameEn() %></span>
+			  <ul>
+	<%     }else{ %>
+		      <li name="/<%== i.controller()+"/"+ i.action() %>" onclick="onMenuItemClick" 
+			   data-options="{menuNameAlt:'<%== lang=="zh"? i.menuNameEn():i.menuNameZh() %>',menuTooltip:'<%== i.menuTooltip() %>'}"
+			  ><%== lang=="zh"? i.menuNameZh():i.menuNameEn() %></li>
+	<%     } 
+	      if (current==total){ %>
+			  </ul>
+			  </li>
+	<%     } 	
+	   } %>
+       
+       
+	<!--userMuens-->
+	<% 
+         groupId=-1;  
+         total=menuUserList.length(); 
+         current=0; 
+         for (const auto &i : menuUserList) { 
+             ++current;                       
+             newgroup= (groupId==i.menusGroupId())? false:true; 
+             groupId=i.menusGroupId(); 
+             if (newgroup && current==1){                  
+    %>
+			  <li>
+			  <span><%== lang=="zh"? i.menusGroupNameZh():i.menusGroupNameEn() %></span>
+			  <ul>
+	<%     }else if (newgroup && current>1) { %>
+			  </ul>
+			  </li><li>
+			  <span ><%== lang=="zh"? i.menusGroupNameZh():i.menusGroupNameEn() %></span>
+			  <ul>
+	<%     }else{ %>
+		      <li name="/<%== i.controller()+"/"+ i.action() %>" onclick="onMenuItemClick"
+			   data-options="{menuNameAlt:'<%== lang=="zh"? i.menuNameEn():i.menuNameZh() %>',menuTooltip:'<%== i.menuTooltip() %>'}"
+			  ><%== lang=="zh"? i.menuNameZh():i.menuNameEn() %></li>
+	<%     } 
+	      if (current==total){ %>
+			  </ul>
+			  </li>
+	<%     } 	
+	   } %>
+  
+</ul>

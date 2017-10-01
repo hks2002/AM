@@ -1,0 +1,344 @@
+#ifndef DATASERVICECONTROLLER_H
+#define DATASERVICECONTROLLER_H
+#include <TActionController>
+#include <TAbstractModel>
+#include <TCriteriaConverter>
+#include <TCriteria>
+#include "applicationhelper.h"
+
+class T_CONTROLLER_EXPORT DataServiceController : public  TActionController
+{
+    Q_OBJECT
+public:
+    DataServiceController() :  TActionController() { }
+
+public slots:
+    void Search(const QString &entity);
+
+private:
+    QString fields;
+    QString sortFields;
+    QString sortField;
+    QString sortOrder;
+    QString key;
+    int pageIndex = 0;
+    int pageSize = 100;
+    QString searchMode;
+    QString hashMode;
+
+    QMap<QString, QString> fieldNameMap;
+
+    void getHttpRequestPara();
+
+    template<class O>
+    void getFieldNameMap()
+    {
+        O obj;
+        const QMetaObject *metaObj = obj.metaObject();
+
+        for (int i = metaObj->propertyOffset(); i < metaObj->propertyCount(); ++i) {
+            const char *propName = metaObj->property(i).name();
+            QString varName = TAbstractModel::fieldNameToVariableName(propName);
+            fieldNameMap.insert(varName, propName);
+        }
+    }
+
+    template<class O>
+    QString tableName()
+    {
+        O obj;
+        tTrace(obj.tableName().prepend("tableName:").toLatin1().data());
+        return obj.tableName();
+    }
+
+    template<class O>
+    QStringList pkFieldList()
+    {
+        O obj;
+        QStringList list;
+
+        //default metaObject propertyoffset is 1, meanwhill sqlobj first index is 0
+        for (int index : obj.primaryKeyIndexList()) {
+            tTrace() << "PK index:" << index;
+            tTrace() << "PK field name:" << obj.metaObject()->property(obj.metaObject()->propertyOffset() + index).name();
+            list << TAbstractModel::fieldNameToVariableName(obj.metaObject()->property(obj.metaObject()->propertyOffset() + index).name());
+        }
+
+        return list;
+    }
+
+    template<class O>
+    QStringList fkFieldList()
+    {
+        O obj;
+        QStringList list;
+
+        //default metaObject propertyoffset is 1, meanwhill sqlobj first index is 0
+        for (int index : obj.foreignKeyIndexList()) {
+            tTrace() << "FK index:" << index;
+            tTrace() << "FK field name:" << obj.metaObject()->property(obj.metaObject()->propertyOffset() + index).name();
+            list << TAbstractModel::fieldNameToVariableName(obj.metaObject()->property(obj.metaObject()->propertyOffset() + index).name());
+        }
+
+        return list;
+    }
+
+    QString vTof(const QString &variableName)
+    {
+        tTrace(QString(variableName).append("->").append(
+                   fieldNameMap.value(variableName)).toLatin1().data());
+        return fieldNameMap.value(variableName);//if not found, return QString()
+    }
+
+    QString selectAsFields(const QStringList &fieldList)
+    {
+        QString selectAsField;
+
+        for (auto &x : fieldList) {
+            selectAsField += x + " as \"" + fieldNameMap.key(x) + "\",";
+        }
+
+        selectAsField.chop(1);
+        tTrace(QString(selectAsField).prepend("selectField:").toLatin1().data());
+        return selectAsField;
+    }
+
+    QString tableAllAsFields()
+    {
+        QString allAsFields;
+        QMapIterator<QString, QString> i(fieldNameMap);
+
+        while (i.hasNext()) {
+            QString lowerFieldName = i.next().value().toLower();
+
+            if (lowerFieldName != "created_at" &&
+                    lowerFieldName != "created_by" &&
+                    lowerFieldName != "updated_at" &&
+                    lowerFieldName != "updated_by" &&
+                    lowerFieldName != "modified_at" &&
+                    lowerFieldName != "modified_by"
+               ) {
+                allAsFields += i.next().value() + " as \"" + i.next().key() + "\",";
+            }
+        }
+
+        allAsFields.chop(1);
+        tTrace(allAsFields.prepend("selectField:").toLatin1().data());
+        return allAsFields;
+    }
+
+    QString singleSort(const QString &sortField, const QString &sortOrder = "asc")
+    {
+        QString sortColumnsOrder;
+        QString field = vTof(sortField);
+
+        if (!field.isEmpty()) {
+            sortColumnsOrder = QString(" order by ") + field + ' ' + sortOrder;
+            tTrace(QString(sortColumnsOrder).prepend("setSingleSort:").toLatin1().data());
+        }
+
+        return sortColumnsOrder;
+    }
+
+    QString multiSort(const QString &sortFields)
+    {
+        QString sortColumnsOrders;
+
+        if (sortFields.isEmpty()) {
+            tDebug(QString("sortFields is empty!").toLatin1().data());
+            return sortColumnsOrders;
+        }
+
+        QJsonParseError jsonError;
+        QJsonDocument document = QJsonDocument::fromJson(sortFields.toLatin1(), &jsonError);
+
+        if (jsonError.error == QJsonParseError::NoError) {
+            if (document.isArray()) {
+                QJsonArray array = document.array();
+
+                for (QJsonValue jsonValue : array) {
+                    QJsonObject obj = jsonValue.toObject();
+                    QString field = obj.value("field").toString();
+                    QString dir = obj.value("dir").toString().toLower();
+
+                    if (dir.isEmpty()) { dir = "asc";}
+
+                    QString sortfield = vTof(field);
+
+                    if (!sortfield.isEmpty()) {
+                        sortColumnsOrders +=  sortfield + ' ' + dir + ',';
+                    }
+                }
+
+                if (array.size() > 0) { sortColumnsOrders.chop(1); }
+            } else {
+                tDebug(QString("sortFields should be an array!").toLatin1().data());
+            }
+        } else {
+            tDebug(QString("sortFields parse error:").append(jsonError.errorString()).toLatin1().data());
+        }
+
+        tTrace(QString(sortColumnsOrders).prepend("setMultiSort:").toLatin1().data());
+        return sortColumnsOrders;
+    }
+
+    template<class O>
+    QString where(const QString &key)
+    {
+        QString where;
+
+        if (key.isEmpty()) {
+            return where;
+        }
+
+        QJsonParseError jsonError;
+        QJsonDocument document = QJsonDocument::fromJson(key.toLatin1(), &jsonError);
+
+        if (jsonError.error == QJsonParseError::NoError) {
+            if (document.isArray()) {
+                QJsonArray array = document.array();
+                TCriteria cri;
+                QStringList pkfieldList = pkFieldList<O>();
+
+                for (QJsonValue jsonValue : array) {
+                    QJsonObject obj = jsonValue.toObject();
+                    QString field = obj.value("field").toString();
+                    QString vals = obj.value("vals").toString();
+                    int op = obj.value("op").toInt();
+
+                    QString wherefield = vTof(field);
+
+                    if (!wherefield.isEmpty()) {
+                        O sqlobj;
+                        int propIndex = sqlobj.metaObject()->indexOfProperty(wherefield.toLatin1().data()) -
+                                        sqlobj.metaObject()->propertyOffset();
+
+                        switch (op) {
+                            case TSql::In:
+                            case TSql::NotIn:
+                            case TSql::LikeEscape:
+                            case TSql::NotLikeEscape:
+                            case TSql::ILikeEscape:
+                            case TSql::NotILikeEscape:
+                            case TSql::Between:
+                            case TSql::NotBetween: {
+                                    QStringList vallist;
+                                    vallist = vals.split(QRegularExpression("\\w+"), QString::SkipEmptyParts);
+
+                                    if (hashMode.toLower() == "nohash") {
+                                        cri.add(propIndex, (TSql::ComparisonOperator)op, vallist);
+                                    } else {
+                                        QList<QVariant> vlist;
+
+                                        for (QString &s : vallist) {
+                                            if (pkfieldList.contains(field)) {
+                                                vlist << hmacVal(s);
+                                            } else {
+                                                vlist << s;
+                                            }
+                                        }
+
+                                        cri.add(propIndex, (TSql::ComparisonOperator)op, vlist);
+                                    }
+                                }
+
+                            default:
+                                if (hashMode.toLower() == "nohash") {
+                                    cri.add(propIndex, (TSql::ComparisonOperator)op, vals);
+                                } else {
+                                    if (pkfieldList.contains(field)) {
+                                        cri.add(propIndex, (TSql::ComparisonOperator)op, hmacVal(vals));
+                                    } else {
+                                        cri.add(propIndex, (TSql::ComparisonOperator)op, vals);
+                                    }
+                                }
+                        }
+                    }
+                }
+
+                TCriteriaConverter<O> conv(cri, Tf::currentSqlDatabase(O().databaseId()));
+                where = conv.toString();
+
+                if (!where.isEmpty()) { where.prepend("where ");}
+            } else {
+                tDebug(QString("where key should be an array!").toLatin1().data());
+            }
+        } else {
+            tDebug(QString("where key parse error:").append(jsonError.errorString()).toLatin1().data());
+        }
+
+        tTrace(QString(where).prepend("where:").toLatin1().data());
+        return where;
+    }
+
+    template<class O>
+    void Render()
+    {
+        getHttpRequestPara();
+        getFieldNameMap<O>();
+
+        QString selectFields;
+        QString fieldsSorts;
+        selectFields = fields.isEmpty() ? tableAllAsFields() : selectAsFields(fields.split(QRegularExpression("\\w+"), QString::SkipEmptyParts));
+        fieldsSorts  = sortFields.isEmpty() ? singleSort(sortField, sortOrder) : multiSort(sortFields);
+
+        if (hashMode.toLower() == "nohash") {
+            if (searchMode.toLower() == "all") {
+                renderText(GetAllNoHash(tableName<O>(), selectFields, fieldsSorts, where<O>(key)));
+            } else if (searchMode.toLower() == "page") {
+                renderText(GetPageNoHash(tableName<O>(), selectFields, fieldsSorts, where<O>(key), pageIndex, pageSize));
+            } else if (searchMode.toLower() == "one") {
+                renderText(GetOneNoHash(tableName<O>(), selectFields, where<O>(key)));
+            } else {
+                renderText("Need para: searchMode!");
+            }
+        } else {
+            if (searchMode.toLower() == "all") {
+                renderText(GetAll(tableName<O>(), selectFields, fieldsSorts, where<O>(key), pkFieldList<O>(), fkFieldList<O>()));
+            } else if (searchMode.toLower() == "page") {
+                renderText(GetPage(tableName<O>(), selectFields, fieldsSorts, where<O>(key), pageIndex, pageSize, pkFieldList<O>(), fkFieldList<O>()));
+            } else if (searchMode.toLower() == "one") {
+                renderText(GetOne(tableName<O>(), selectFields,  where<O>(key), pkFieldList<O>(), fkFieldList<O>()));
+            } else {
+                renderText("Need para: searchMode!");
+            }
+        }
+
+    }
+
+    QString GetPageNoHash(const QString &tableName,
+                          const QString &selectField = "*",
+                          const QString &sortColumnsOrders = "",
+                          const QString &where = "",
+                          const int pageIndex = 0,
+                          const int pageSize = -1);
+    QString GetAllNoHash(const QString &tableName,
+                         const QString &selectField = "*",
+                         const QString &sortColumnsOrders = "",
+                         const QString &where = "");
+    QString GetOneNoHash(const QString &tableName,
+                         const QString &selectField = "*",
+                         const QString &where = "");
+    QString GetPage(const QString &tableName,
+                    const QString &selectField = "*",
+                    const QString &sortColumnsOrders = "",
+                    const QString &where = "",
+                    const int pageIndex = 0,
+                    const int pageSize = -1,
+                    const QStringList &pkFieldList = QStringList(),
+                    const QStringList &fkFieldList = QStringList());
+    QString GetAll(const QString &tableName,
+                   const QString &selectField = "*",
+                   const QString &sortColumnsOrders = "",
+                   const QString &where = "",
+                   const QStringList &pkFieldList = QStringList(),
+                   const QStringList &fkFieldList = QStringList());
+    QString GetOne(const QString &tableName,
+                   const QString &selectField = "*",
+                   const QString &where = "",
+                   const QStringList &pkFieldList = QStringList(),
+                   const QStringList &fkFieldList = QStringList());
+
+};
+
+#endif // DATASERVICECONTROLLER_H

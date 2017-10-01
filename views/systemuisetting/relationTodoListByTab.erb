@@ -1,0 +1,25 @@
+<%
+QString lang = httpRequest().cookie("lang");
+QString tid = variant("tid").toString().isEmpty() ? tId(): variant("tid").toString();
+QString tabId = httpRequest().queryItemValue("tabId").isEmpty() ? variant("tabId").toString() : httpRequest().queryItemValue("tabId");
+QString assigned = httpRequest().queryItemValue("assigned").isEmpty() ? "assigned" : httpRequest().queryItemValue("assigned");
+
+QString fields ="todoListId todoListCd todoListNameZh todoListNameEn";
+QString sortField ="todoListCd";
+QString key ="{'tabId':'"+tabId+"'}";
+
+%>
+<div class="mini-fit">
+<div id="assignedTodoList<%== tid %>" name="relationTodoList" class="mini-datagrid" style="width:350px;height:100%;" 
+autoLoad="true" showPager="false" showEmptyText="true" multiSelect="true"
+showcheckbox="true" multiselect="true" url="/DataService/Search/TodoList/TodoListTab/<%== assigned %>?searchMode=all" ajaxType="Post" 
+ajaxOptions="{data:{key:mini.encode(<%== key %>),fields:'<%== fields %>',sortField:'<%== sortField %>'}}" >
+  <div property="columns">
+    <div type="indexcolumn" width="25"></div>
+    <div type="checkcolumn" width="25"></div>
+    <div visible="false" field="todoListId"></div>
+    <div header="<%== UI("TODOLISTCD") %>" field="todoListCd" ></div>
+    <div header="<%== lang == "zh" ? UI("TODOLISTNAMEZH") : UI("TODOLISTNAMEEN") %>" field="<%== lang == "zh" ? "todoListNameZh" : "todoListNameEn"; %>" width="100%"></div>
+  </div>
+</div>
+</div>

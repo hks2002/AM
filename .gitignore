@@ -1,0 +1,36 @@
+*.moc
+moc_*.cpp
+Makefile
+Makefile.*
+*~
+*.bak
+*.bat
+.qmake.stash
+
+# Linux
+*.o
+*.a
+*.so
+*.so.*
+*.pro.user
+
+# macOS
+*.dylib
+**/target_wrapper.sh
+
+# Windows
+**/Release/
+**/Debug/
+**/target_wrapper.bat
+*.obj
+*.pdb
+*.rc
+*.ilk
+*.Release
+*.Debug
+*.suo
+*.sdf
+*.wixpdb
+*.wixobj
+*.xlsm
+*.sql

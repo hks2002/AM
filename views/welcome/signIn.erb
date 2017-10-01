@@ -1,0 +1,75 @@
+<div id="signInWindow" class="mini-window" width="300px;" showCloseButton="true" title="<%== UI("Sign In") %>" 
+   showModal="true" showCloseButton="false">
+
+    <div id="signInForm" style="padding:15px;padding-top:10px;">
+        <table >
+            <tr>
+                <td nowrap="nowrap"><label for="username$text"><%== UI("Account") %>:</label></td>
+                <td>
+                    <input id="username" name="username" class="mini-textbox" required="true" autofocus="autofocus" style="width:150px;"/>
+                </td>    
+            </tr>
+            <tr>
+                <td nowrap="nowrap"><label for="password$text"><%== UI("Password") %>:</label></td>
+                <td>
+                    <input id="password" name="password" class="mini-password" required="true" style="width:150px;" onenter="signIn"/>
+                    
+                </td>
+            </tr>
+            <tr>
+                <td style="padding-top:5px;" colspan="2" align="center">
+                <div><%== UI("Default Accout And Password Note") %></div>
+                <!-- <a href="forgetPassword" ><%== UI("Forget Password") %>?</a> -->
+                </td>
+            </tr>            
+            <tr>
+                 <td style="padding-top:5px;" colspan="2" align="center">
+                    <a onclick="signIn" class="mini-button" ><%== UI("Sign In System") %></a>
+                    <a onclick="resetForm('signInForm')" class="mini-button" "><%== UI("Reset") %></a>
+                </td>
+            </tr>
+            
+        </table>
+    </div>
+
+</div>
+
+   <script src="/js/hmac-sha512.js" type="text/javascript"></script>
+    <script type="text/javascript">
+        mini.parse();
+
+        $("#username").focus();
+        var signInWindow = mini.get("signInWindow");
+        signInWindow.show();
+
+        function signIn(e) {
+            var form = new mini.Form("#signInForm");
+
+            form.validate();
+            if (form.isValid() == false) return;
+            
+            var data = form.getData();
+            var hash=CryptoJS.HmacSHA512(data.password,data.username).toString(CryptoJS.enc.Hex);
+            data.password=hash;
+        
+            $.ajax({
+                  type: 'POST',
+                  url: '/Welcome/logIn',
+                  dataType:'json',
+                  data: data,
+                  success: function(data){
+                        if (data.success){
+                             window.location.href="/Mainpage/index";
+                        }else{
+                            mini.showMessageBox({
+                                showHeader: false,
+                                buttons: ['ok'],
+                                message: data.msg,
+                                iconCls: 'mini-messagebox-error'
+                            });
+                        }
+                  }
+             });
+        }
+       
+    </script>

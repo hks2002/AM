@@ -1,0 +1,49 @@
+<%#include "tab.h" %>
+<%
+QVariantMap qMap=httpRequest().queryItems();
+
+QString action = qMap.contains("action") ? httpRequest().queryItemValue("action"): variant("action").toString();
+QString tabId = qMap.contains("tabId") ? httpRequest().queryItemValue("tabId"): variant("tabId").toString();
+Tab tab=Tab::get(hmacVal(tabId).toInt());
+
+QVariantMap qMapOut;
+qMapOut.insert("tabId",tabId);
+qMapOut.insert("action",action);
+%>
+<div id="formTab<%== tId() %>" name="fromTab" class="form" action="/SystemUIsetting/<%== action %>Tab">
+  <%== inputAuthenticityTag() %>
+  <% if (action != "create") { %>
+     <input name="tabId" class="mini-textbox" visible="false" value="<%== tabId %>"  /> 
+  <% } %>
+  <table >
+    <tr>
+      <td><%== UI("TABCD") %>:</td>
+      <td>
+        <input name="tabCd" class="mini-textbox" value="<%== tab.tabCd() %>" />
+      </td>
+      <td><%== UI("TABNAMEZH") %>:</td>
+      <td>
+        <input name="tabNameZh" class="mini-textbox" value="<%== tab.tabNameZh() %>"  />
+      </td>
+      <td><%== UI("TABNAMEEN") %>:</td>
+      <td>
+        <input name="tabNameEn" class="mini-textbox" value="<%== tab.tabNameEn() %>" />
+      </td>
+    </tr>
+    <tr>
+      <td><%== UI("TABTOOLTIP") %>:</td>
+      <td>
+        <input name="tabTooltip" class="mini-textbox" value="<%== tab.tabTooltip() %>" />
+      </td>
+      <td><%== UI("TABDESC") %>:</td>
+      <td colspan="3" >
+        <input name="tabDesc" class="mini-textarea" value="<%== tab.tabDesc() %>" style="width:100%" />
+      </td>
+    </tr>
+  </table>
+</div>
+<div class="mini-fit">
+    <% if (action != "create") { %>
+    <%== renderPartial("SystemUIsetting/relationOfTab",qMapOut) %> 
+    <% } %>
+</div>

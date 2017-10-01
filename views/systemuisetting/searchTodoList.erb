@@ -1,0 +1,47 @@
+<%
+QVariant tid = tId();
+QVariantMap qMapOut;
+qMapOut.insert("tid",tid);
+%>
+<!-- searchFrom -->
+<fieldset id="searchFieldsetTodoList<%== tid %>" class="hideFieldset"> <!--    default hide-->
+<legend><label>
+<input type="checkbox" onclick="toggleSearch(this, 'searchFieldsetTodoList<%== tid %>')" hidefocus=""/><%== UI("Search Criteria") %>
+</label></legend>
+<div class="fieldset-body">
+    <%== renderPartial("SystemUIsetting/formSearchTodoList",qMapOut) %>
+ </div>
+</fieldset>
+<!-- toolBar -->
+ <div class="mini-toolbar">
+        <a class="mini-button" onclick="doSearch('searchFormTodoList<%== tid %>','gridTodoList<%== tid %>')"><%== UI("Search") %></a>
+        <a class="mini-button" onclick="showRecord('gridTodoList<%== tid %>','<%== UI("TodoList") %>',650,500,'/PartialService/formTodoList?action=show',['todoListId'])" tooltip="" ><%== UI("Show Details") %></a>
+    <% if (accessAllow("systemuisetting/createTodoList")){ %>
+        <a class="mini-button" onclick="createRecord('<%== UI("TodoList") %>',650,500,'/PartialService/formTodoList?action=create')" tooltip="<%== UI("TP_SYSTEMUISETTING_CREATE_TODOLIST") %>" ><%== UI("Create") %></a>
+    <% } %>
+    <% if (accessAllow("systemuisetting/editTodoList")){ %>
+        <a class="mini-button" onclick="editRecord('gridTodoList<%== tid %>','<%== UI("TodoList") %>',650,500,'/PartialService/formTodoList?action=edit',['todoListId'])" tooltip="<%== UI("TP_SYSTEMUISETTING_EDIT_TODOLIST") %>" ><%== UI("Edit") %></a>
+    <% } %>
+    <% if (accessAllow("systemuisetting/deleteTodoList")){ %>
+        <a class="mini-button" onclick="deleteRecord('gridTodoList<%== tid %>','/SystemUIsetting/deleteTodoList',['todoListId'],'<%== csrfVal() %>')" tooltip="<%== UI("TP_SYSTEMUISETTING_DELETE_TODOLIST") %>" ><%== UI("Delete") %></a>
+    <% } %>
+ </div>
+<!-- grid -->
+<div class="mini-fit">
+<div id="gridTodoList<%== tid %>" class="mini-datagrid" url="/DataService/Search/TodoList?searchMode=page" ajaxOptions="{data:{sortField:'todoListCd'}}"
+   style="height:100%" showEmptyText="true" multiSelect="true" onloaderror="onGridLoadError" onload="onGridLoad" >
+  <div property="columns">
+   <div type="indexcolumn" width="25"></div>
+   <div type="checkcolumn" width="25"></div>
+   <div field="todoListId" visible="false"><%== UI("TODOLISTID") %></div>
+   <div field="todoListCd" allowsort="true"><%== UI("TODOLISTCD") %></div>
+   <div field="todoListNameZh" allowsort="true"><%== UI("TODOLISTNAMEZH") %></div>
+   <div field="todoListNameEn" allowsort="true"><%== UI("TODOLISTNAMEEN") %></div>
+   <div field="todoListTooltip" allowsort="true"><%== UI("TODOLISTTOOLTIP") %></div>
+   <div field="todoListDesc" allowsort="true" width="100%"><%== UI("TODOLISTDESC") %></div>
+  </div>
+</div>
+</div>
+<script type="text/javascript">
+    mini.parse();
+</script>

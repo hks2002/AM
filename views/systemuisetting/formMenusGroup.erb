@@ -1,0 +1,52 @@
+<%#include "menusgroup.h" %>
+<%
+QString lang = httpRequest().cookie("lang");
+QVariantMap qMap=httpRequest().queryItems();
+
+QVariant tid = tId();
+QString action = qMap.contains("action") ? httpRequest().queryItemValue("action"): variant("action").toString();
+QString menusGroupId = qMap.contains("menusGroupId") ? httpRequest().queryItemValue("menusGroupId"): variant("menusGroupId").toString();
+
+QVariantMap qMapOut;
+qMapOut.insert("tid",tid);
+qMapOut.insert("menusGroupId",menusGroupId);
+
+MenusGroup menusGroup=MenusGroup::get(hmacVal(menusGroupId).toInt());
+%>
+<div id="form<%== tid %>" class="form" action="/SystemUIsetting/<%== action %>MenusGroup">
+  <%== inputAuthenticityTag() %>
+  <% if (action != "create") { %>
+     <input name="tabId" class="mini-textbox" visible="false" value="<%== menusGroupId %>"  /> 
+  <% } %>
+  <table >
+    <tr>
+      <td><%== UI("MENUSGROUPCD") %>:</td>
+      <td>
+        <input name="menusGroupCd" class="mini-textbox" value="<%== menusGroup.menusGroupCd() %>" />
+      </td>
+      <td><%== UI("MENUSGROUPNAMEZH") %>:</td>
+      <td>
+        <input name="menusGroupNameZh" class="mini-textbox" value="<%== menusGroup.menusGroupNameZh() %>" />
+      </td>
+      <td><%== UI("MENUSGROUPNAMEEN") %>:</td>
+      <td>
+        <input name="menusGroupNameEn" class="mini-textbox" value="<%== menusGroup.menusGroupNameEn() %>" />
+      </td>
+    </tr>
+    <tr>
+      <td><%== UI("MENUSGROUPTOOLTIP") %>:</td>
+      <td>
+        <input name="menusGroupTooltip" class="mini-textbox" value="<%== menusGroup.menusGroupTooltip() %>" />
+      </td>
+      <td><%== UI("MENUSGROUPDESC") %>:</td>
+      <td colspan="3" >
+        <input name="menusGroupDesc" class="mini-textarea" value="<%== menusGroup.menusGroupDesc() %>" style="width:100%" />
+      </td>
+    </tr>
+  </table>
+</div>
+<div class="mini-fit">
+    <% if (action != "Create") { %>
+       <%== renderPartial("SystemUIsetting/relatedMenusGroup",qMapOut) %>
+    <% } %>
+</div>

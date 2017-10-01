@@ -1,0 +1,52 @@
+<script type="text/javascript">
+function menuToggleBreak(listBoxId) {
+    var listBox = mini.get(listBoxId);
+    var items = listBox.getSelecteds();
+    var oldData = listBox.getData();
+
+    for (var i = 0, l = items.length; i < l; i++) {
+        var item = items[i];
+        if (item.breakBool) {
+            listBox.updateItem(item, {
+                breakBool: false
+            });
+        } else {
+            listBox.updateItem(item, {
+                breakBool: true
+            });
+        }
+    }
+    menusGroupSaveBreak(listBoxId, oldData);
+}
+
+function menuSaveBreak(listBoxId, oldData) {
+    var listBox = mini.get(listBoxId);
+    var data = listBox.getData();
+    var keys = new Array();
+    for (var i = 0; i < data.length; ++i) {
+        var obj = {};
+        obj.menusGroupId = "<%== variant("menusGroupId") %>";
+        obj.menuId = data[i].menuId;
+        obj.breakBool = data[i].breakBool;
+        keys.push(obj);
+    }
+
+    $.ajax({
+        url: "/SystemUIsetting/editMenuBreak",
+        type: "post",
+        dataType: "json",
+        data: {
+            authenticity_token: "<%== csrfVal() %>",
+            kyes: keys
+        },
+        success: function (data) {
+            if (data.success) {
+                mini.showTips({content: data.msg,state: "success", x: "center", y: "center", timeout: 2000});
+            } else {
+                mini.alert(data.msg);
+                listBox.setData(oldData);
+            }
+        }
+    });
+}
+</script>
