@@ -1,0 +1,36 @@
+<%
+QString tid = tId();
+QVariant menusGroupId = variant("menusGroupId");
+QVariant action = variant("action").toString();
+
+QVariantMap qMapOut;
+qMapOut.insert("tid",tid);
+qMapOut.insert("menusGroupId",menusGroupId);
+%>
+<div id="relationOfMenusGroup<%== tid %>" class="mini-tabs" activeindex="0" style="width:100%;height:100%;" bodystyle="border:0;">
+  <div title='<%== UI("Assigned Menus") %>'>
+    <div>
+        <% if (accessAllow("SystemUIsetting/assignMenuToMenusGroup")){ %>
+            <% if (action=="edit") { %>
+            <a class="mini-button" plain="true" tooltip="<%== UI("Assign") %>" iconCls="icon-assign" 
+            onclick="relationWindow(this,'<%== UI("Menu") %>',400,400,'/PartialService/relationMenuByMenusGroup?assigned=unassigned','/SystemUIsetting/assignMenuToMenusGroup',['menuId'],{'menusGroupId':'<%== menusGroupId %>'},'<%== csrfVal() %>')"></a>
+            <% } %>
+        <% } %>
+        <% if (accessAllow("SystemUIsetting/unassignMenuFromMenusGroup")) { %>
+            <% if (action=="edit") { %>
+            <a class="mini-button" plain="true" tooltip="<%== UI("Unassign") %>" iconcls="icon-unassign" 
+            onclick="relationRecord('relationMenuByMenusGroup<%== tid %>','/SystemUIsetting/unassignMenuFromMenusGroup',['menuId'],{'menusGroupId':'<%== menusGroupId %>'},'<%== csrfVal() %>')" ></a>
+            <% } %>
+        <% } %>
+        <% if (accessAllow("SystemUIsetting/orderMenusGroupMenu")) { %>
+            <% if (action=="edit") { %>
+            <a class="mini-button" plain="true" tooltip="<%== UI("Move Down") %>" iconcls="icon-down" 
+            onclick="moveDown('relationMenuByMenusGroup<%== tid %>','/SystemUIsetting/orderMenusGroupMenu',['menuId'],{'menusGroupId':'<%== menusGroupId %>'},'<%== csrfVal() %>')" ></a>
+            <a class="mini-button" plain="true" tooltip="<%== UI("Move Up") %>" iconcls="icon-up" 
+            onclick="moveUp('relationMenuByMenusGroup<%== tid %>','/SystemUIsetting/orderMenusGroupMenu',['menuId'],{'menusGroupId':'<%== menusGroupId %>'},'<%== csrfVal() %>')" ></a>
+            <% } %>
+        <% } %>
+    </div>
+    <%== renderPartial("SystemUIsetting/relationMenuByMenusGroup",qMapOut) %>
+  </div>
+</div>

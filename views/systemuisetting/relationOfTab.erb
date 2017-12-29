@@ -1,4 +1,4 @@
-<% 
+<%
 QString tid = tId();
 QVariant tabId = variant("tabId");
 QVariant action = variant("action").toString();
@@ -13,13 +13,13 @@ qMapOut.insert("tabId",tabId);
         <% if (accessAllow("SystemUIsetting/assignTabToTodoList")){ %>
             <% if (action=="edit") { %>
             <a class="mini-button" plain="true" tooltip="<%== UI("Assign") %>" iconCls="icon-assign" 
-            onclick="relationWindow(this,'<%== UI("Tab") %>',400,400,'/PartialService/relationTodoListByTab?assigned=unassigned','/SystemUIsetting/assignTabToTodoList',['todoListId'],{'tabId':'<%== tabId.toString() %>'},'<%== csrfVal() %>')"></a>
+            onclick="relationWindow(this,'<%== UI("TodoList") %>',400,400,'/PartialService/relationTodoListByTab?assigned=unassigned','/SystemUIsetting/assignTabToTodoList',['todoListId'],{'tabId':'<%== tabId %>'},'<%== csrfVal() %>')"></a>
             <% } %>
         <% } %>
-        <% if (accessAllow("SystemUIsetting/unassignTabToTodoList")) { %>
+        <% if (accessAllow("SystemUIsetting/unassignTabFromTodoList")) { %>
             <% if (action=="edit") { %>
             <a class="mini-button" plain="true" tooltip="<%== UI("Unassign") %>" iconcls="icon-unassign" 
-            onclick="relationRecord('assignedTodoList<%== tid %>','/SystemUIsetting/unassignTabFromTodoList',['todoListId'],{'tabId':'<%== tabId.toString() %>'},'<%== csrfVal() %>')" ></a>
+            onclick="relationRecord('relationTodoListByTab<%== tid %>','/SystemUIsetting/unassignTabFromTodoList',['todoListId'],{'tabId':'<%== tabId %>'},'<%== csrfVal() %>')" ></a>
             <% } %>
         <% } %>
     </div>

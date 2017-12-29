@@ -18,13 +18,13 @@
             </tr>
             <tr>
                 <td style="padding-top:5px;" colspan="2" align="center">
-                <div><%== UI("Default Accout And Password Note") %></div>
+                <div><%== UI("accout:test    password:test") %></div>
                 <!-- <a href="forgetPassword" ><%== UI("Forget Password") %>?</a> -->
                 </td>
             </tr>            
             <tr>
                  <td style="padding-top:5px;" colspan="2" align="center">
-                    <a onclick="signIn" class="mini-button" ><%== UI("Sign In System") %></a>
+                    <a onclick="signIn" class="mini-button" ><%== UI("Sign In") %></a>
                     <a onclick="resetForm('signInForm')" class="mini-button" "><%== UI("Reset") %></a>
                 </td>
             </tr>
@@ -34,7 +34,7 @@
 
 </div>
 
-   <script src="/js/hmac-sha512.js" type="text/javascript"></script>
+    <script src="/js/hmac-sha512.js" type="text/javascript"></script>
     <script type="text/javascript">
         mini.parse();
 
@@ -59,7 +59,11 @@
                   data: data,
                   success: function(data){
                         if (data.success){
+                             <% if (controller()->name().toLower() == "welcome") { %>
                              window.location.href="/Mainpage/index";
+                             <% }else{ %>
+                             signInWindow.hide();
+                             <% } %>
                         }else{
                             mini.showMessageBox({
                                 showHeader: false,

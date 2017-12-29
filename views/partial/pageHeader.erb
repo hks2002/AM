@@ -11,7 +11,7 @@ QString currentUserEn = controller()->session().value("currentUserEn").toString(
 QString loginUserName = controller()->identityKeyOfLoginUser();
 
 QString toDoRole = httpRequest().cookie("toDoRole");
-int currentRoleId = controller()->session().value(toDoRole).toInt();
+int currentRoleId = hmacVal(toDoRole).toInt();
 int currentUserId = controller()->session().value("currentUserId").toInt();
 
 TCriteria cri;
@@ -19,7 +19,7 @@ cri.add(VRoleUserObject::UserId, currentUserId);
 auto roleList = tfGetModelListByCriteria< VRoleUser, VRoleUserObject >(cri);
 
 %>
-<h1 style="margin:5px;width:525px;font-family:Microsoft YaHei,SimHei,SimSun; display:inline"><%== UI("AircraftMaintenanceManagementSystem") %></h1>
+<h1 style="margin:5px;width:525px;font-family:Microsoft YaHei,SimHei,SimSun; display:inline"><%== UI("Aircraft Maintenance Management System") %></h1>
 	<div style="position: absolute;text-align:right;right:12px;font-size:12px;line-height:25px;font-weight:normal;display:inline-block;">
 		<div style="display: inline-block; margin-left:2px"><%== UI("Skin") %>:</div>
 		<select id="selectSkin" onchange="onSkinChange(this.value)">
@@ -37,20 +37,20 @@ auto roleList = tfGetModelListByCriteria< VRoleUser, VRoleUserObject >(cri);
 			<option value="jqueryui-cupertino" <%== skin=="jqueryui-cupertino"? "selected='selected'":"" %>>jqueryui-cupertino</option>
 			<option value="jqueryui-smoothness" <%== skin=="jqueryui-smoothness"? "selected='selected'":"" %>>jqueryui-smoothness</option>
 		</select>
-		<div style="display: inline-block; margin-left:2px"><%== UI("Size Mode") %>:</div>
+		<div style="display: inline-block; margin-left:2px"><%== UI("Size") %>:</div>
 		<select id="selectMode" onchange="onModeChange(this.value)">
 		    <option value="small"<%== mode=="small"? "selected='selected'":"" %>>Small</option> 		
 			<option value=""<%== mode==""? "selected='selected'":"" %>>Default</option>				
 			<option value="medium"<%== mode=="medium"? "selected='selected'":"" %>>Medium</option>
 			<option value="large"<%== mode=="large"? "selected='selected'":"" %>>Large</option>         	
 		</select>
-		<div style="display: inline-block; margin-left:2px"><%== UI("Lang") %>:</div>
+		<div style="display: inline-block; margin-left:2px"><%== UI("Language") %>:</div>
 		<select id="selectLang" onchange="onLangChange(this.value)">
 			<option value="zh" <%== lang=="zh"? "selected='selected'":"" %>>中文</option>
 			<option value="en" <%== lang=="en"? "selected='selected'":"" %>>English</option>               
 		</select>
 		<div style="display:inline-block; margin-left:2px"><%== UI("Current User") %>:<%== lang=="zh"? currentUserZh:currentUserEn %>(<%== loginUserName %>)</div>
-		<div style="display:inline-block; margin-left:2px"><%== UI("ToDoRole") %>:</div>
+		<div style="display:inline-block; margin-left:2px"><%== UI("Roles") %>:</div>
 		<select id="selectToDoRole" onchange="onToDoRoleChange(this.value)">
 			<option value=""></option>
 			 <% for(const auto &i : roleList) { %>
@@ -58,5 +58,5 @@ auto roleList = tfGetModelListByCriteria< VRoleUser, VRoleUserObject >(cri);
 			       <option value="<%== hash %>" <%== currentRoleId==i.roleId()? "selected='selected'":"" %>><%== lang=="zh"? i.roleNameZh():i.roleNameEn() %></option>
 			 <% } %>				
 		</select>
-		<a href="/Welcome/logOut"><%== UI("Log Out") %></a>
+		<a href="/Welcome/logOut"><%== UI("Quit") %></a>
 	</div>

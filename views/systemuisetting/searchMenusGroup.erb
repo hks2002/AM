@@ -1,4 +1,5 @@
 <%
+QString lang = httpRequest().cookie("lang");
 QVariant tid = tId();
 QVariantMap qMapOut;
 qMapOut.insert("tid",tid);
@@ -13,35 +14,40 @@ qMapOut.insert("tid",tid);
  </div>
 </fieldset>
 <!-- toolBar -->
- <div class="mini-toolbar">
+ <div class="mini-toolbar" style="border:0px">
         <a class="mini-button" onclick="doSearch('searchFormMenusGroup<%== tid %>','gridMenusGroup<%== tid %>')"><%== UI("Search") %></a>
         <a class="mini-button" onclick="showRecord('gridMenusGroup<%== tid %>','<%== UI("MenusGroup") %>',650,500,'/PartialService/formMenusGroup?action=show',['menusGroupId'])" tooltip="" ><%== UI("Show Details") %></a>
-    <% if (accessAllow("systemuisetting/createMenusGroup")){ %>
+    <% if (accessAllow("SystemUIsetting/createMenusGroup")){ %>
         <a class="mini-button" onclick="createRecord('<%== UI("MenusGroup") %>',650,500,'/PartialService/formMenusGroup?action=create')" tooltip="<%== UI("TP_SYSTEMUISETTING_CREATE_MENUSGROUP") %>" ><%== UI("Create") %></a>
     <% } %>
-    <% if (accessAllow("systemuisetting/editMenusGroup")){ %>
+    <% if (accessAllow("SystemUIsetting/editMenusGroup")){ %>
         <a class="mini-button" onclick="editRecord('gridMenusGroup<%== tid %>','<%== UI("MenusGroup") %>',650,500,'/PartialService/formMenusGroup?action=edit',['menusGroupId'])" tooltip="<%== UI("TP_SYSTEMUISETTING_EDIT_MENUSGROUP") %>" ><%== UI("Edit") %></a>
     <% } %>
-    <% if (accessAllow("systemuisetting/deleteMenusGroup")){ %>
+    <% if (accessAllow("SystemUIsetting/deleteMenusGroup")){ %>
         <a class="mini-button" onclick="deleteRecord('gridMenusGroup<%== tid %>','/SystemUIsetting/deleteMenusGroup',['menusGroupId'],'<%== csrfVal() %>')" tooltip="<%== UI("TP_SYSTEMUISETTING_DELETE_MENUSGROUP") %>" ><%== UI("Delete") %></a>
     <% } %>
  </div>
 <!-- grid -->
 <div class="mini-fit">
-<div id="gridMenusGroup<%== tid %>" class="mini-datagrid" url="/DataService/Search/MenusGroup?searchMode=page" ajaxOptions="{data:{sortField:'menusGroupCd'}}"
-   style="height:100%" showEmptyText="true" multiSelect="true" onloaderror="onGridLoadError" onload="onGridLoad" >
+<div id="gridMenusGroup<%== tid %>" name="gridMenusGroup" class="mini-datagrid" url="/DataService/Search/MenusGroup?searchMode=page" ajaxOptions="{data:{sortField:'menusGroupCd'}}"
+   style="height:100%" showEmptyText="true" multiSelect="true" onpreload="onpreload" >
   <div property="columns">
    <div type="indexcolumn" width="25"></div>
    <div type="checkcolumn" width="25"></div>
    <div field="menusGroupId" visible="false"><%== UI("MENUSGROUPID") %></div>
    <div field="menusGroupCd" allowsort="true"><%== UI("MENUSGROUPCD") %></div>
-   <div field="menusGroupNameZh" allowsort="true"><%== UI("MENUSGROUPNAMEZH") %></div>
-   <div field="menusGroupNameEn" allowsort="true"><%== UI("MENUSGROUPNAMEEN") %></div>
-   <div field="menusGroupTooltip" allowsort="true"><%== UI("MENUSGROUPTOOLTIP") %></div>
+   <div field="<%== lang=="zh"?"menusGroupNameZh":"menusGroupNameEn" %>" allowsort="true"><%== lang=="zh"?UI("MENUSGROUPNAMEZH"):UI("MENUSGROUPNAMEEN") %></div>
+   <div field="menusGroupTooltip" allowsort="true" width="500"><%== UI("MENUSGROUPTOOLTIP") %></div>
    <div field="menusGroupDesc" allowsort="true" width="100%"><%== UI("MENUSGROUPDESC") %></div>
   </div>
 </div>
 </div>
 <script type="text/javascript">
     mini.parse();
+    var grid = mini.get("gridMenusGroup<%== tid %>");
+    grid.on("drawcell", function (e) {
+        if (e.field) {
+            e.cellHtml = '<a href="javascript:showRecord(\'gridMenusGroup<%== tid %>\',\'<%== UI("MenusGroup") %>\',650,500,\'/PartialService/formMenusGroup?action=show\',[\'menusGroupId\'])">' + e.value + '</a>';
+        }
+    });
 </script>

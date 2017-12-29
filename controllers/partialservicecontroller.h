@@ -13,10 +13,10 @@ public:
     PartialServiceController(): ApplicationController() { }
 
 public slots:
-    void relationMenu();
-    void relationButton();
-    void relationTab();
-    void relationMenusGroup();
+    void relationMenuByMenusGroup();
+    void relationMenusGroupByMenu();
+    void relationTabByTodoList();
+    void relationButtonByTodoList();
     void relationTodoListByButton();
     void relationTodoListByTab();
     void formMenusGroup();

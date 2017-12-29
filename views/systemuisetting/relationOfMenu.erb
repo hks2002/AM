@@ -1,0 +1,28 @@
+<%
+QString tid = tId();
+QVariant menuId = variant("menuId");
+QVariant action = variant("action").toString();
+
+QVariantMap qMapOut;
+qMapOut.insert("tid",tid);
+qMapOut.insert("menuId",menuId);
+%>
+<div id="relationOfMenu<%== tid %>" class="mini-tabs" activeindex="0" style="width:100%;height:100%;" bodystyle="border:0;">
+  <div title='<%== UI("Assigned MenusGroups") %>'>
+    <div>
+        <% if (accessAllow("SystemUIsetting/assignMenuToMenusGroup")){ %>
+            <% if (action=="edit") { %>
+            <a class="mini-button" plain="true" tooltip="<%== UI("Assign") %>" iconCls="icon-assign" 
+            onclick="relationWindow(this,'<%== UI("MenusGroup") %>',400,400,'/PartialService/relationMenusGroupByMenu?assigned=unassigned','/SystemUIsetting/assignMenuToMenusGroup',['menusGroupId'],{'menuId':'<%== menuId %>'},'<%== csrfVal() %>')"></a>
+            <% } %>
+        <% } %>
+        <% if (accessAllow("SystemUIsetting/unassignMenuFromMenusGroup")) { %>
+            <% if (action=="edit") { %>
+            <a class="mini-button" plain="true" tooltip="<%== UI("Unassign") %>" iconcls="icon-unassign" 
+            onclick="relationRecord('relationMenusGroupByMenu<%== tid %>','/SystemUIsetting/unassignMenuFromMenusGroup',['menusGroupId'],{'menuId':'<%== menuId %>'},'<%== csrfVal() %>')" ></a>
+            <% } %>
+        <% } %>
+    </div>
+    <%== renderPartial("SystemUIsetting/relationMenusGroupByMenu",qMapOut) %>
+  </div>
+</div>

@@ -1,37 +1,38 @@
 <% QVariant tid = variant("tid") %>
- <form id="searchForm<%== tid %>">   
-   <!-- style="display:inline-block;" in one line-->
+<% QVariant sqlop = CFG("SQLOP") %>
+<form id="searchFormMenusGroup<%== tid %>" name="searchFormMenusGroup">
+   <input class="mini-checkbox" name="advanceSearchCheckBox" onclick="toggleAdvanceSearch(this, 'searchFormMenusGroup<%== tid %>')" /><%== UI("Advance Search") %>
    <%== inputAuthenticityTag();%>
-   <input type="checkbox" onclick="toggleAdvanceSearch(this, 'searchForm<%== tid %>')"/><%== UI("Advance Search") %>
    <table>
    <tr>
-      <td><%== UI("MENUSGROUPCD") %>:</td>
-	  <td><input name="sqlOp_menusGroupCd" data="sqlOpData" value="1" class="mini-combobox" onvaluechanged="sqlOpChange" style="width:200px;display:none"/></td>
-      <td><input name="menusGroupCd" class="mini-textbox"/></td>
+      <td style="text-align:right;"><%== UI("MENUSGROUPCD") %>:</td>
+      <td><input name="sqlOp_menusGroupCd" data="sqlOpData" value="<%== sqlop %>" class="mini-combobox" onvaluechanged="sqlOpChange" visible="false" style="width:200px;" /></td>
+      <td><input name="menusGroupCd" class="mini-textbox" /></td>
+      <td><input name="menusGroupCd2" class="mini-textbox" visible="false" /></td>
+      <td style="text-align:right;"><%== UI("MENUSGROUPNAMEZH") %>:</td>
+      <td><input name="sqlOp_menusGroupNameZh" data="sqlOpData" value="<%== sqlop %>" class="mini-combobox" onvaluechanged="sqlOpChange" visible="false" style="width:200px;" /></td>
+      <td><input name="menusGroupNameZh" class="mini-textbox" /></td>
+      <td><input name="menusGroupNameZh2" class="mini-textbox" visible="false" /></td>
    </tr>
    <tr>
-      <td><%== UI("MENUSGROUPNAMEZH") %>:</td>
-	  <td><input name="sqlOp_menusGroupNameZh" data="sqlOpData" value="1" class="mini-combobox" onvaluechanged="sqlOpChange" style="width:200px;display:none" /></td>
-	  <td><input name="menusGroupNameZh" class="mini-textbox" /></td>
+      <td style="text-align:right;"><%== UI("MENUSGROUPNAMEEN") %>:</td>
+      <td><input name="sqlOp_menusGroupNameEn" data="sqlOpData" value="<%== sqlop %>" class="mini-combobox" onvaluechanged="sqlOpChange" visible="false" style="width:200px;" /></td>
+      <td><input name="menusGroupNameEn" class="mini-textbox" /></td>
+      <td><input name="menusGroupNameEn2" class="mini-textbox" visible="false" /></td>
+      <td style="text-align:right;"><%== UI("MENUSGROUPTOOLTIP") %>:</td>
+      <td><input name="sqlOp_menusGroupTooltip" data="sqlOpData" value="<%== sqlop %>" class="mini-combobox" onvaluechanged="sqlOpChange" visible="false" style="width:200px;" /></td>
+      <td><input name="menusGroupTooltip" class="mini-textbox" /></td>
+      <td><input name="menusGroupTooltip2" class="mini-textbox" visible="false" /></td>
    </tr>
    <tr>
-      <td><%== UI("MENUSGROUPNAMEEN") %>:</td>
-	  <td><input name="sqlOp_menusGroupNameEn" data="sqlOpData" value="1" class="mini-combobox" onvaluechanged="sqlOpChange" style="width:200px;display:none"/></td>
-	  <td><input name="menusGroupNameEn" class="mini-textbox" /></td>
+      <td style="text-align:right;"><%== UI("MENUSGROUPDESC") %>:</td>
+      <td><input name="sqlOp_menusGroupDesc" data="sqlOpData" value="<%== sqlop %>" class="mini-combobox" onvaluechanged="sqlOpChange" visible="false" style="width:200px;" /></td>
+      <td><input name="menusGroupDesc" class="mini-textbox" /></td>
+      <td><input name="menusGroupDesc2" class="mini-textbox" visible="false" /></td>
    </tr>
-   <tr>
-      <td><%== UI("MENUSGROUPTOOLTIP") %>:</td>
-	  <td><input name="sqlOp_menusGroupTooltip" data="sqlOpData" value="1" class="mini-combobox" onvaluechanged="sqlOpChange" style="width:200px;display:none"/></td>
-	  <td><input name="menusGroupTooltip" class="mini-textbox" /></td>
-   </tr>
-   <tr>
-      <td><%== UI("MENUSGROUPDESC") %>:</td>
-	  <td><input name="sqlOp_menusGroupNameDesc" data="sqlOpData" value="1" class="mini-combobox" onvaluechanged="sqlOpChange" style="width:200px;display:none"/></td>
-	  <td><input name="menusGroupNameDesc" class="mini-textbox" /></td>
-   </tr>
-   </table>
-  </form>
-<div class="mini-toolbar" style="margin-left:3px;border:0"> 
- <a class="mini-button" onclick="clearForm('searchForm<%== tid %>')"><%== UI("Clear") %></a>
- <a class="mini-button" onclick="resetForm('searchForm<%== tid %>')"><%== UI("Reset") %></a> 
+  </table>
+</form>
+<div class="mini-toolbar" style="margin-left:3px;border:0">
+ <a class="mini-button" onclick="clearForm('searchFormMenusGroup<%== tid %>')"><%== UI("Clear") %></a>
+ <a class="mini-button" onclick="resetForm('searchFormMenusGroup<%== tid %>')"><%== UI("Reset") %></a>
 </div>

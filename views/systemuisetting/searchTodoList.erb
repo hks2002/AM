@@ -1,4 +1,5 @@
 <%
+QString lang = httpRequest().cookie("lang");
 QVariant tid = tId();
 QVariantMap qMapOut;
 qMapOut.insert("tid",tid);
@@ -13,35 +14,40 @@ qMapOut.insert("tid",tid);
  </div>
 </fieldset>
 <!-- toolBar -->
- <div class="mini-toolbar">
+ <div class="mini-toolbar" style="border:0px">
         <a class="mini-button" onclick="doSearch('searchFormTodoList<%== tid %>','gridTodoList<%== tid %>')"><%== UI("Search") %></a>
         <a class="mini-button" onclick="showRecord('gridTodoList<%== tid %>','<%== UI("TodoList") %>',650,500,'/PartialService/formTodoList?action=show',['todoListId'])" tooltip="" ><%== UI("Show Details") %></a>
-    <% if (accessAllow("systemuisetting/createTodoList")){ %>
+    <% if (accessAllow("SystemUIsetting/createTodoList")){ %>
         <a class="mini-button" onclick="createRecord('<%== UI("TodoList") %>',650,500,'/PartialService/formTodoList?action=create')" tooltip="<%== UI("TP_SYSTEMUISETTING_CREATE_TODOLIST") %>" ><%== UI("Create") %></a>
     <% } %>
-    <% if (accessAllow("systemuisetting/editTodoList")){ %>
+    <% if (accessAllow("SystemUIsetting/editTodoList")){ %>
         <a class="mini-button" onclick="editRecord('gridTodoList<%== tid %>','<%== UI("TodoList") %>',650,500,'/PartialService/formTodoList?action=edit',['todoListId'])" tooltip="<%== UI("TP_SYSTEMUISETTING_EDIT_TODOLIST") %>" ><%== UI("Edit") %></a>
     <% } %>
-    <% if (accessAllow("systemuisetting/deleteTodoList")){ %>
+    <% if (accessAllow("SystemUIsetting/deleteTodoList")){ %>
         <a class="mini-button" onclick="deleteRecord('gridTodoList<%== tid %>','/SystemUIsetting/deleteTodoList',['todoListId'],'<%== csrfVal() %>')" tooltip="<%== UI("TP_SYSTEMUISETTING_DELETE_TODOLIST") %>" ><%== UI("Delete") %></a>
     <% } %>
  </div>
 <!-- grid -->
 <div class="mini-fit">
-<div id="gridTodoList<%== tid %>" class="mini-datagrid" url="/DataService/Search/TodoList?searchMode=page" ajaxOptions="{data:{sortField:'todoListCd'}}"
-   style="height:100%" showEmptyText="true" multiSelect="true" onloaderror="onGridLoadError" onload="onGridLoad" >
+<div id="gridTodoList<%== tid %>" name="gridTodoList" class="mini-datagrid" url="/DataService/Search/TodoList?searchMode=page" ajaxOptions="{data:{sortField:'todoListCd'}}"
+   style="height:100%" showEmptyText="true" multiSelect="true" onpreload="onpreload" >
   <div property="columns">
    <div type="indexcolumn" width="25"></div>
    <div type="checkcolumn" width="25"></div>
    <div field="todoListId" visible="false"><%== UI("TODOLISTID") %></div>
    <div field="todoListCd" allowsort="true"><%== UI("TODOLISTCD") %></div>
-   <div field="todoListNameZh" allowsort="true"><%== UI("TODOLISTNAMEZH") %></div>
-   <div field="todoListNameEn" allowsort="true"><%== UI("TODOLISTNAMEEN") %></div>
-   <div field="todoListTooltip" allowsort="true"><%== UI("TODOLISTTOOLTIP") %></div>
+   <div field="<%== lang=="zh"?"todoListNameZh":"todoListNameEn" %>" allowsort="true"><%== lang=="zh"?UI("TODOLISTNAMEZH"):UI("TODOLISTNAMEEN") %></div>
+   <div field="todoListTooltip" allowsort="true" width="500"><%== UI("TODOLISTTOOLTIP") %></div>
    <div field="todoListDesc" allowsort="true" width="100%"><%== UI("TODOLISTDESC") %></div>
   </div>
 </div>
 </div>
 <script type="text/javascript">
     mini.parse();
+    var grid = mini.get("gridTodoList<%== tid %>");
+    grid.on("drawcell", function (e) {
+        if (e.field) {
+            e.cellHtml = '<a href="javascript:showRecord(\'gridTodoList<%== tid %>\',\'<%== UI("TodoList") %>\',650,500,\'/PartialService/formTodoList?action=show\',[\'todoListId\'])">' + e.value + '</a>';
+        }
+    });
 </script>

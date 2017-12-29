@@ -246,6 +246,19 @@ QString DataServiceController::GetPage(const QString &tableName,
 
     QString sql = QString("select %2 from %1 %3 %4 %5 %6");
     //{total:100,pageIndex:1,pageSize:100,data:[{},{}]}
+
+    QString sqlforcount;
+    int totalcount = 0;
+    sqlforcount = sql.arg(tableName, "Count (1)", where.isEmpty() ? "" : where, "", "", "");
+    TSqlQuery queryforcount;
+    queryforcount.prepare(sqlforcount);
+    queryforcount.exec();
+
+    while (queryforcount.next()) {
+        QSqlRecord record = queryforcount.record();
+        totalcount = record.value(0).toInt();
+    }
+
     int offset = pageIndex * pageSize;
     sql = sql.arg(tableName,
                   selectField.isEmpty() ? "*" : selectField,
@@ -292,7 +305,7 @@ QString DataServiceController::GetPage(const QString &tableName,
     }
 
     result = result.prepend("\"data\":[").append(']');
-    QString  sumary = "\"total\":" + QString::number(query.size()) + ",\"pageIndex\":" + QString::number(offset) + ",\"pageSize\":" + QString::number(pageSize);
+    QString  sumary = "\"total\":" + QString::number(totalcount) + ",\"pageIndex\":" + QString::number(offset) + ",\"pageSize\":" + QString::number(pageSize);
     result = result.prepend(",").prepend(sumary);
     result = result.prepend('{').append('}');
     tDebug() << "ajax page hash query result:" << result;

@@ -5,50 +5,32 @@
    <%== inputAuthenticityTag();%>
    <table>
    <tr>
-      <td><%== UI("TABCD") %>:</td>
+      <td style="text-align:right;"><%== UI("TABCD") %>:</td>
       <td><input name="sqlOp_tabCd" data="sqlOpData" value="<%== sqlop %>" class="mini-combobox" onvaluechanged="sqlOpChange" visible="false" style="width:200px;" /></td>
       <td><input name="tabCd" class="mini-textbox" /></td>
       <td><input name="tabCd2" class="mini-textbox" visible="false" /></td>
-   </tr>
-   <tr>
-      <td><%== UI("TABNAMEZH") %>:</td>
+      <td style="text-align:right;"><%== UI("TABNAMEZH") %>:</td>
       <td><input name="sqlOp_tabNameZh" data="sqlOpData" value="<%== sqlop %>" class="mini-combobox" onvaluechanged="sqlOpChange" visible="false" style="width:200px;" /></td>
       <td><input name="tabNameZh" class="mini-textbox" /></td>
       <td><input name="tabNameZh2" class="mini-textbox" visible="false" /></td>
    </tr>
    <tr>
-      <td><%== UI("TABNAMEEN") %>:</td>
+      <td style="text-align:right;"><%== UI("TABNAMEEN") %>:</td>
       <td><input name="sqlOp_tabNameEn" data="sqlOpData" value="<%== sqlop %>" class="mini-combobox" onvaluechanged="sqlOpChange" visible="false" style="width:200px;" /></td>
       <td><input name="tabNameEn" class="mini-textbox" /></td>
       <td><input name="tabNameEn2" class="mini-textbox" visible="false" /></td>
-   </tr>
-   <tr>
-      <td><%== UI("TABTOOLTIP") %>:</td>
+      <td style="text-align:right;"><%== UI("TABTOOLTIP") %>:</td>
       <td><input name="sqlOp_tabTooltip" data="sqlOpData" value="<%== sqlop %>" class="mini-combobox" onvaluechanged="sqlOpChange" visible="false" style="width:200px;" /></td>
       <td><input name="tabTooltip" class="mini-textbox" /></td>
       <td><input name="tabTooltip2" class="mini-textbox" visible="false" /></td>
    </tr>
    <tr>
-      <td><%== UI("TABDESC") %>:</td>
+      <td style="text-align:right;"><%== UI("TABDESC") %>:</td>
       <td><input name="sqlOp_tabDesc" data="sqlOpData" value="<%== sqlop %>" class="mini-combobox" onvaluechanged="sqlOpChange" visible="false" style="width:200px;" /></td>
       <td><input name="tabDesc" class="mini-textbox" /></td>
       <td><input name="tabDesc2" class="mini-textbox" visible="false" /></td>
    </tr>
-   <% if (controller()->identityKeyOfLoginUser()== "admin") { %>
-   <tr>
-      <td><%== UI("CONTROLLER") %>:</td>
-      <td><input name="sqlOp_controller" data="sqlOpData" value="<%== sqlop %>" class="mini-combobox" onvaluechanged="sqlOpChange" visible="false" style="width:200px;" /></td>
-      <td><input name="controller" class="mini-textbox" /></td>
-      <td><input name="controller2" class="mini-textbox" visible="false" /></td>
-   </tr>
-   <tr>
-      <td><%== UI("ACTION") %>:</td>
-      <td><input name="sqlOp_action" data="sqlOpData" value="<%== sqlop %>" class="mini-combobox" onvaluechanged="sqlOpChange" visible="false" style="width:200px;" /></td>
-      <td><input name="action" class="mini-textbox" /></td>
-      <td><input name="action2" class="mini-textbox" visible="false" /></td>
-   </tr>
-   <% } %>
-   </table>
+  </table>
 </form>
 <div class="mini-toolbar" style="margin-left:3px;border:0">
  <a class="mini-button" onclick="clearForm('searchFormTab<%== tid %>')"><%== UI("Clear") %></a>

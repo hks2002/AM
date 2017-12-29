@@ -1,0 +1,35 @@
+<%
+QString lang = httpRequest().cookie("lang");
+QString tid = variant("tid").toString().isEmpty() ? tId(): variant("tid").toString();
+QString menusGroupId = httpRequest().queryItemValue("menusGroupId").isEmpty()? variant("menusGroupId").toString() : httpRequest().queryItemValue("menusGroupId");
+QString assigned = httpRequest().queryItemValue("assigned").isEmpty() ? "assigned" : httpRequest().queryItemValue("assigned");
+
+QString fields = lang == "zh" ? "menuId menuCd menuNameZh menuOrder" : "menuId menuCd menuNameEn menuOrder";
+QString sortField ="menuCd";
+QString key ="{'menusGroupId':'" + menusGroupId + "'}";
+
+%>
+<div class="mini-fit">
+<div id="relationMenuByMenusGroup<%== tid %>" name="relationMenu" class="mini-datagrid" style="width:375px;height:100%;" 
+autoLoad="true" showPager="false" showEmptyText="true" multiSelect="true" onpreload="onpreload" 
+showcheckbox="true" multiselect="true" url="/DataService/Search/Menu/MenusGroupMenu/<%== assigned %>?searchMode=all" ajaxType="Post" 
+ajaxOptions="{data:{key:mini.encode(<%== key %>),fields:'<%== fields %>',sortFields:[{'field':'menuOrder','dir':'asc'},{'field':'menuCd','dir':'asc'}]}}" >
+  <div property="columns">
+    <div type="indexcolumn" width="25"></div>
+    <div type="checkcolumn" width="25"></div>
+    <div visible="false" field="menuId"></div>
+    <div header="<%== UI("MENUCD") %>" field="<%== "menuCd" %>" ></div>
+    <div header="<%== lang == "zh" ? UI("MENUNAMEZH") : UI("MENUNAMEEN") %>" field="<%== lang == "zh" ? "menuNameZh" : "menuNameEn" %>" width="100%" ></div>
+    <div header="<%== UI("MENUORDER") %>" field="<%== "menuOrder" %>" ></div>
+  </div>
+</div>
+</div>
+<script type="text/javascript">
+  mini.parse();
+  var grid = mini.get("relationMenuByMenusGroup<%== tid %>");
+  grid.on("drawcell", function (e) {
+    if (e.field) {
+          e.cellHtml = '<a href="javascript:showRecord(\'relationMenuByMenusGroup<%== tid %>\',\'<%== UI("Menu") %>\',650,500,\'/PartialService/formMenu?action=show\',[\'menuId\'])">' + e.value + '</a>';
+        }
+  });
+</script>

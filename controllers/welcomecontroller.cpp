@@ -13,7 +13,7 @@ void WelcomeController::index()
     if (!isUserLoggedIn()) {
         render("index", "layout");
     } else {
-        renderTemplate("MainPage/index", "layout");
+        redirect(url("MainPage", "index"));
     }
 }
 
@@ -23,13 +23,20 @@ void WelcomeController::signIn()
         userLogout();
     }
 
-    render("signIn", "layout");
+    QString XMLHttpRequest = Tf::currentContext()->currentController()->httpRequest().header().rawHeader("X-Requested-With");
+
+    if (XMLHttpRequest == "XMLHttpRequest") {//is ajax request
+        render("signIn");
+    } else { //Normal request
+        render("signIn", "layout");
+    }
+
 }
 
 void WelcomeController::logOut()
 {
     userLogout();
-    render("index", "layout");
+    redirect(url("Welcome", "index"));
 }
 
 void WelcomeController::logIn()

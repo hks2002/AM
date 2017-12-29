@@ -1,52 +1,75 @@
-<%#include "menusgroup.h" %>
+<%#include "menusGroup.h" %>
 <%
 QString lang = httpRequest().cookie("lang");
-QVariantMap qMap=httpRequest().queryItems();
+QVariantMap qMap = httpRequest().queryItems();
+QString tid = tId();
 
-QVariant tid = tId();
 QString action = qMap.contains("action") ? httpRequest().queryItemValue("action"): variant("action").toString();
 QString menusGroupId = qMap.contains("menusGroupId") ? httpRequest().queryItemValue("menusGroupId"): variant("menusGroupId").toString();
+MenusGroup menusGroup = MenusGroup::get(hmacVal(menusGroupId).toInt());
 
 QVariantMap qMapOut;
-qMapOut.insert("tid",tid);
 qMapOut.insert("menusGroupId",menusGroupId);
-
-MenusGroup menusGroup=MenusGroup::get(hmacVal(menusGroupId).toInt());
+qMapOut.insert("action",action);
 %>
-<div id="form<%== tid %>" class="form" action="/SystemUIsetting/<%== action %>MenusGroup">
+<% if (action == "show"){ %>
+<!-- show -->
+<div id="formMenusGroup<%== tid %>" name="formMenusGroup" class="form" >
+  <table style="width:100%;">
+   <tr>
+      <td style="text-align:right;white-space:nowrap"><%== UI("MENUSGROUPCD") %>:</td>
+      <td><span style="padding-right:15px;" ><%== menusGroup.menusGroupCd() %></span>
+      <td style="text-align:right;white-space:nowrap"><%== UI("MENUSGROUPNAMEZH") %>:</td>
+      <td><span style="padding-right:15px;" ><%== menusGroup.menusGroupNameZh() %></span>
+      <td style="text-align:right;white-space:nowrap"><%== UI("MENUSGROUPNAMEEN") %>:</td>
+      <td><span style="padding-right:15px;" ><%== menusGroup.menusGroupNameEn() %></span>
+   </tr>
+   <tr>
+      <td style="text-align:right;white-space:nowrap"><%== UI("MENUSGROUPTOOLTIP") %>:</td>
+      <td colspan="5"><span style="padding-right:15px;"><%== menusGroup.menusGroupTooltip() %></span></td>
+   </tr>
+   <tr>
+      <td style="text-align:right;white-space:nowrap"><%== UI("MENUSGROUPDESC") %>:</td>
+      <td colspan="5"><span style="padding-right:15px;"><%== menusGroup.menusGroupDesc() %></span></td>
+   </tr>
+  </table>
+</div>
+<% }else { %>
+<!-- edit -->
+<div id="formMenusGroup<%== tid %>" name="formMenusGroup" class="form" action="/SystemUIsetting/<%== action %>MenusGroup">
   <%== inputAuthenticityTag() %>
   <% if (action != "create") { %>
-     <input name="tabId" class="mini-textbox" visible="false" value="<%== menusGroupId %>"  /> 
+     <input name="menusGroupId" class="mini-textbox" visible="false" value="<%== menusGroupId %>"  /> 
   <% } %>
-  <table >
-    <tr>
-      <td><%== UI("MENUSGROUPCD") %>:</td>
-      <td>
-        <input name="menusGroupCd" class="mini-textbox" value="<%== menusGroup.menusGroupCd() %>" />
-      </td>
-      <td><%== UI("MENUSGROUPNAMEZH") %>:</td>
-      <td>
-        <input name="menusGroupNameZh" class="mini-textbox" value="<%== menusGroup.menusGroupNameZh() %>" />
-      </td>
-      <td><%== UI("MENUSGROUPNAMEEN") %>:</td>
-      <td>
-        <input name="menusGroupNameEn" class="mini-textbox" value="<%== menusGroup.menusGroupNameEn() %>" />
-      </td>
+  <table style="width:100%;">
+   <tr>
+      <td style="text-align:right;white-space:nowrap"><%== UI("MENUSGROUPCD") %>:</td>
+      <td><input name="menusGroupCd" class="mini-textbox" vtype="maxLength:16"  value="<%== menusGroup.menusGroupCd() %>" /></td>
+      <td style="text-align:right;white-space:nowrap"><%== UI("MENUSGROUPNAMEZH") %>:</td>
+      <td><input name="menusGroupNameZh" class="mini-textbox" vtype="maxLength:64"  value="<%== menusGroup.menusGroupNameZh() %>" /></td>
+      <td style="text-align:right;white-space:nowrap"><%== UI("MENUSGROUPNAMEEN") %>:</td>
+      <td><input name="menusGroupNameEn" class="mini-textbox" vtype="maxLength:64"  value="<%== menusGroup.menusGroupNameEn() %>" /></td>
+   </tr>
+   <tr>
+      <td style="text-align:right;white-space:nowrap"><%== UI("MENUSGROUPTOOLTIP") %>:</td>
+      <td colspan="5"><input name="menusGroupTooltip" class="mini-textarea" vtype="maxLength:256" style="width:100%" value="<%== menusGroup.menusGroupTooltip() %>" /></td>
     </tr>
     <tr>
-      <td><%== UI("MENUSGROUPTOOLTIP") %>:</td>
-      <td>
-        <input name="menusGroupTooltip" class="mini-textbox" value="<%== menusGroup.menusGroupTooltip() %>" />
-      </td>
-      <td><%== UI("MENUSGROUPDESC") %>:</td>
-      <td colspan="3" >
-        <input name="menusGroupDesc" class="mini-textarea" value="<%== menusGroup.menusGroupDesc() %>" style="width:100%" />
-      </td>
+      <td style="text-align:right;white-space:nowrap"><%== UI("MENUSGROUPDESC") %>:</td>
+      <td colspan="5"><input name="menusGroupDesc" class="mini-textarea" style="width:100%" value="<%== menusGroup.menusGroupDesc() %>" /></td>
     </tr>
   </table>
 </div>
+<% } %>
+<!-- toolBar -->
+<div class="mini-toolbar" style="border:0px">
+    <% if (action == "show" && accessAllow("SystemUIsetting/editMenusGroup")){ %>
+        <a class="mini-button" onclick="editForm('formMenusGroup<%== tid %>','/PartialService/formMenusGroup?action=edit&menusGroupId=<%== menusGroupId%>')" tooltip="<%== UI("TP_SYSTEMUISETTING_EDIT_MENUSGROUP") %>" ><%== UI("Edit") %></a>
+    <% } %>
+</div>
+<!-- tabs -->
 <div class="mini-fit">
-    <% if (action != "Create") { %>
-       <%== renderPartial("SystemUIsetting/relatedMenusGroup",qMapOut) %>
+    <% if (action != "create") { %>
+    <%== renderPartial("SystemUIsetting/relationOfMenusGroup",qMapOut) %> 
     <% } %>
 </div>

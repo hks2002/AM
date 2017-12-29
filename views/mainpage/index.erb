@@ -11,7 +11,7 @@
 <% 
 QString lang = httpRequest().cookie("lang");
 QString toDoRole = httpRequest().cookie("toDoRole");
-int currentRoleId = controller()->session().value(toDoRole).toInt();
+int currentRoleId = hmacVal(toDoRole).toInt();
 int currentUserId = controller()->session().value("currentUserId").toInt();
 
 int tabsActiveIndex = httpRequest().cookie("mainTabsActiveIndex").toInt();

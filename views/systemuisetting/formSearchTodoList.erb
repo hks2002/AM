@@ -1,42 +1,38 @@
 <% QVariant tid = variant("tid") %>
-<input type="checkbox" onclick="toggleAdvanceSearch(this, 'searchFormTodoList<%== tid %>')"/><%== UI("Advance Search") %>
- <form id="searchFormTodoList<%== tid %>">   
-   <!-- style="display:inline-block;" in one line-->
+<% QVariant sqlop = CFG("SQLOP") %>
+<form id="searchFormTodoList<%== tid %>" name="searchFormTodoList">
+   <input class="mini-checkbox" name="advanceSearchCheckBox" onclick="toggleAdvanceSearch(this, 'searchFormTodoList<%== tid %>')" /><%== UI("Advance Search") %>
    <%== inputAuthenticityTag();%>
    <table>
    <tr>
-      <td><%== UI("TODOLISTCD") %>:</td>
-	  <td><input name="sqlOp_todoListCd" data="sqlOpData" value="1" class="mini-combobox" onvaluechanged="sqlOpChange" style="width:200px;display:none"/></td>
-      <td><input name="todoListCd" class="mini-textbox"/></td>
-      <td><input name="todoListCd2" class="mini-textbox"/></td>
+      <td style="text-align:right;"><%== UI("TODOLISTCD") %>:</td>
+      <td><input name="sqlOp_todoListCd" data="sqlOpData" value="<%== sqlop %>" class="mini-combobox" onvaluechanged="sqlOpChange" visible="false" style="width:200px;" /></td>
+      <td><input name="todoListCd" class="mini-textbox" /></td>
+      <td><input name="todoListCd2" class="mini-textbox" visible="false" /></td>
+      <td style="text-align:right;"><%== UI("TODOLISTNAMEZH") %>:</td>
+      <td><input name="sqlOp_todoListNameZh" data="sqlOpData" value="<%== sqlop %>" class="mini-combobox" onvaluechanged="sqlOpChange" visible="false" style="width:200px;" /></td>
+      <td><input name="todoListNameZh" class="mini-textbox" /></td>
+      <td><input name="todoListNameZh2" class="mini-textbox" visible="false" /></td>
    </tr>
    <tr>
-      <td><%== UI("TODOLISTNAMEZH") %>:</td>
-	  <td><input name="sqlOp_todoListNameZh" data="sqlOpData" value="1" class="mini-combobox" onvaluechanged="sqlOpChange" style="width:200px;display:none" /></td>
-	  <td><input name="todoListNameZh" class="mini-textbox" /></td>
-      <td><input name="todoListNameZh2" class="mini-textbox" /></td>
+      <td style="text-align:right;"><%== UI("TODOLISTNAMEEN") %>:</td>
+      <td><input name="sqlOp_todoListNameEn" data="sqlOpData" value="<%== sqlop %>" class="mini-combobox" onvaluechanged="sqlOpChange" visible="false" style="width:200px;" /></td>
+      <td><input name="todoListNameEn" class="mini-textbox" /></td>
+      <td><input name="todoListNameEn2" class="mini-textbox" visible="false" /></td>
+      <td style="text-align:right;"><%== UI("TODOLISTTOOLTIP") %>:</td>
+      <td><input name="sqlOp_todoListTooltip" data="sqlOpData" value="<%== sqlop %>" class="mini-combobox" onvaluechanged="sqlOpChange" visible="false" style="width:200px;" /></td>
+      <td><input name="todoListTooltip" class="mini-textbox" /></td>
+      <td><input name="todoListTooltip2" class="mini-textbox" visible="false" /></td>
    </tr>
    <tr>
-      <td><%== UI("TODOLISTNAMEEN") %>:</td>
-	  <td><input name="sqlOp_todoListNameEn" data="sqlOpData" value="1" class="mini-combobox" onvaluechanged="sqlOpChange" style="width:200px;display:none"/></td>
-	  <td><input name="todoListNameEn" class="mini-textbox" /></td>
-      <td><input name="todoListNameEn2" class="mini-textbox" /></td>
+      <td style="text-align:right;"><%== UI("TODOLISTDESC") %>:</td>
+      <td><input name="sqlOp_todoListDesc" data="sqlOpData" value="<%== sqlop %>" class="mini-combobox" onvaluechanged="sqlOpChange" visible="false" style="width:200px;" /></td>
+      <td><input name="todoListDesc" class="mini-textbox" /></td>
+      <td><input name="todoListDesc2" class="mini-textbox" visible="false" /></td>
    </tr>
-   <tr>
-      <td><%== UI("TODOLISTTOOLTIP") %>:</td>
-	  <td><input name="sqlOp_todoListTooltip" data="sqlOpData" value="1" class="mini-combobox" onvaluechanged="sqlOpChange" style="width:200px;display:none"/></td>
-	  <td><input name="todoListTooltip" class="mini-textbox" /></td>
-      <td><input name="todoListTooltip2" class="mini-textbox" /></td>
-   </tr>
-   <tr>
-      <td><%== UI("TODOLISTDESC") %>:</td>
-	  <td><input name="sqlOp_todoListNameDesc" data="sqlOpData" value="1" class="mini-combobox" onvaluechanged="sqlOpChange" style="width:200px;display:none"/></td>
-	  <td><input name="todoListNameDesc" class="mini-textbox" /></td>
-      <td><input name="todoListNameDesc2" class="mini-textbox" /></td>
-   </tr>
-   </table>
+  </table>
 </form>
-<div class="mini-toolbar" style="margin-left:3px;border:0"> 
+<div class="mini-toolbar" style="margin-left:3px;border:0">
  <a class="mini-button" onclick="clearForm('searchFormTodoList<%== tid %>')"><%== UI("Clear") %></a>
- <a class="mini-button" onclick="resetForm('searchFormTodoList<%== tid %>')"><%== UI("Reset") %></a> 
+ <a class="mini-button" onclick="resetForm('searchFormTodoList<%== tid %>')"><%== UI("Reset") %></a>
 </div>

@@ -1,42 +1,38 @@
 <% QVariant tid = variant("tid") %>
-<input type="checkbox" onclick="toggleAdvanceSearch(this, 'searchFormButton<%== tid %>')"/><%== UI("Advance Search") %>
- <form id="searchFormButton<%== tid %>">   
-   <!-- style="display:inline-block;" in one line-->
+<% QVariant sqlop = CFG("SQLOP") %>
+<form id="searchFormButton<%== tid %>" name="searchFormButton">
+   <input class="mini-checkbox" name="advanceSearchCheckBox" onclick="toggleAdvanceSearch(this, 'searchFormButton<%== tid %>')" /><%== UI("Advance Search") %>
    <%== inputAuthenticityTag();%>
    <table>
    <tr>
-      <td><%== UI("BUTTONCD") %>:</td>
-	  <td><input name="sqlOp_buttonCd" data="sqlOpData" value="1" class="mini-combobox" onvaluechanged="sqlOpChange" style="width:200px;display:none"/></td>
-      <td><input name="buttonCd" class="mini-textbox"/></td>
-      <td><input name="buttonCd2" class="mini-textbox"/></td>
+      <td style="text-align:right;"><%== UI("BUTTONCD") %>:</td>
+      <td><input name="sqlOp_buttonCd" data="sqlOpData" value="<%== sqlop %>" class="mini-combobox" onvaluechanged="sqlOpChange" visible="false" style="width:200px;" /></td>
+      <td><input name="buttonCd" class="mini-textbox" /></td>
+      <td><input name="buttonCd2" class="mini-textbox" visible="false" /></td>
+      <td style="text-align:right;"><%== UI("BUTTONNAMEZH") %>:</td>
+      <td><input name="sqlOp_buttonNameZh" data="sqlOpData" value="<%== sqlop %>" class="mini-combobox" onvaluechanged="sqlOpChange" visible="false" style="width:200px;" /></td>
+      <td><input name="buttonNameZh" class="mini-textbox" /></td>
+      <td><input name="buttonNameZh2" class="mini-textbox" visible="false" /></td>
    </tr>
    <tr>
-      <td><%== UI("BUTTONNAMEZH") %>:</td>
-	  <td><input name="sqlOp_buttonNameZh" data="sqlOpData" value="1" class="mini-combobox" onvaluechanged="sqlOpChange" style="width:200px;display:none" /></td>
-	  <td><input name="buttonNameZh" class="mini-textbox" /></td>
-      <td><input name="buttonNameZh2" class="mini-textbox" /></td>
+      <td style="text-align:right;"><%== UI("BUTTONNAMEEN") %>:</td>
+      <td><input name="sqlOp_buttonNameEn" data="sqlOpData" value="<%== sqlop %>" class="mini-combobox" onvaluechanged="sqlOpChange" visible="false" style="width:200px;" /></td>
+      <td><input name="buttonNameEn" class="mini-textbox" /></td>
+      <td><input name="buttonNameEn2" class="mini-textbox" visible="false" /></td>
+      <td style="text-align:right;"><%== UI("BUTTONTOOLTIP") %>:</td>
+      <td><input name="sqlOp_buttonTooltip" data="sqlOpData" value="<%== sqlop %>" class="mini-combobox" onvaluechanged="sqlOpChange" visible="false" style="width:200px;" /></td>
+      <td><input name="buttonTooltip" class="mini-textbox" /></td>
+      <td><input name="buttonTooltip2" class="mini-textbox" visible="false" /></td>
    </tr>
    <tr>
-      <td><%== UI("BUTTONNAMEEN") %>:</td>
-	  <td><input name="sqlOp_buttonNameEn" data="sqlOpData" value="1" class="mini-combobox" onvaluechanged="sqlOpChange" style="width:200px;display:none"/></td>
-	  <td><input name="buttonNameEn" class="mini-textbox" /></td>
-      <td><input name="buttonNameEn2" class="mini-textbox" /></td>
+      <td style="text-align:right;"><%== UI("BUTTONDESC") %>:</td>
+      <td><input name="sqlOp_buttonDesc" data="sqlOpData" value="<%== sqlop %>" class="mini-combobox" onvaluechanged="sqlOpChange" visible="false" style="width:200px;" /></td>
+      <td><input name="buttonDesc" class="mini-textbox" /></td>
+      <td><input name="buttonDesc2" class="mini-textbox" visible="false" /></td>
    </tr>
-   <tr>
-      <td><%== UI("BUTTONTOOLTIP") %>:</td>
-	  <td><input name="sqlOp_buttonTooltip" data="sqlOpData" value="1" class="mini-combobox" onvaluechanged="sqlOpChange" style="width:200px;display:none"/></td>
-	  <td><input name="buttonTooltip" class="mini-textbox" /></td>
-      <td><input name="buttonTooltip2" class="mini-textbox" /></td>
-   </tr>
-   <tr>
-      <td><%== UI("BUTTONDESC") %>:</td>
-	  <td><input name="sqlOp_buttonNameDesc" data="sqlOpData" value="1" class="mini-combobox" onvaluechanged="sqlOpChange" style="width:200px;display:none"/></td>
-	  <td><input name="buttonNameDesc" class="mini-textbox" /></td>
-      <td><input name="buttonNameDesc2" class="mini-textbox" /></td>
-   </tr>
-   </table>
-  </form>
-<div class="mini-toolbar" style="margin-left:3px;border:0"> 
+  </table>
+</form>
+<div class="mini-toolbar" style="margin-left:3px;border:0">
  <a class="mini-button" onclick="clearForm('searchFormButton<%== tid %>')"><%== UI("Clear") %></a>
- <a class="mini-button" onclick="resetForm('searchFormButton<%== tid %>')"><%== UI("Reset") %></a> 
+ <a class="mini-button" onclick="resetForm('searchFormButton<%== tid %>')"><%== UI("Reset") %></a>
 </div>

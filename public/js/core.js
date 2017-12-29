@@ -2,7 +2,7 @@
 /*-----------------------------------------------------------------------------*/
 mini_debugger = false;
 mini.DataTable.prototype.pageSize = 50;
-mini.DataTable.prototype.autoLoad = false;
+mini.DataTable.prototype.autoLoad = true;
 mini.Pager.prototype.sizeList = [50, 100, 500, 1000, 5000, 10000];
 mini.ColumnModel.prototype._defaultColumnWidth = 150;
 mini.DataGrid.prototype.showLoading = false;
@@ -212,15 +212,10 @@ function onButtonClick(e) {
     });
 }
 
-function onBeforeTabChange(e) {
-    var tabs = mini.get(e.sender.id);
-
-    var el = tabs.getTabBodyEl(e.tab);
-    var ctls = mini.getChildControls(el);
-    $(el).html("");
-    for(var i=0,l=ctls.length;i<l;i++){
-        ctls[i].destroy();
-    }  
+function onBeforeTabChange(e) {//e.tab is the target tab
+    var tabs = mini.get(e.sender.id);    
+    var el = tabs.getTabBodyEl(tabs.getActiveTab());
+    el.innerHTML = "";
 }
 
 function onTabChange(e) {
@@ -230,24 +225,30 @@ function onTabChange(e) {
     } else if (tabs.id == "subTabs") {
         mini.Cookie.set("subTabsActiveIndex", tabs.activeIndex, 100);
     } else {}
-
-    if (e.tab) {
-        var el = tabs.getTabBodyEl(e.tab);
-        $.ajax({
-            url: e.tab.name, //name is url            
-            dataType: 'text',
-            success: function (data) {
-                if (data){
-                    $(el).html(data);
-                }
+    
+    var el = tabs.getTabBodyEl(e.tab);
+    $.ajax({
+        url: e.tab.name, //name is url            
+        dataType: 'text',
+        success: function (text) {
+            if (text){
+                $(el).html(text);
             }
-        });
-    }
+        }
+    });
 }
 
 function onTabClose(e) {
     var url = e.tab.name;
     delete addedTabs.url;
+}
+
+function onpreload(e){
+    try{
+        var json= JSON.parse(e.text);//ajax return is not a json
+    }catch(error){
+        $("#dynamicJS").html(e.text);
+    }
 }
 
 function doSearch(formId, gridId) {
@@ -278,7 +279,9 @@ function reloadGrids(grids){
 
 function reloadControls(ctls){
     for(var i=0,l=ctls.length;i<l;i++){
-        ctls[i].load(ctls[i].url);
+        if (ctls[i].url.length>0){
+            ctls[i].load(ctls[i].url);
+        }
     }
 }
 
@@ -317,12 +320,20 @@ function clearForm(formId) {
     form.clear();
 }
 
-function readOnlyForm(formId){
-    var form = new mini.Form("#" + formId);
-    var controls=form.getFields();
-      for(var i=0,l=controls.length;i<l;i++){
-          controls[i].setReadOnly(true);
-      }
+function editForm(showformId,url){
+     $.ajax({
+        url: url,
+        type: "post",
+        dataType:"text",
+        success:function (text) { 
+            $("#" + showformId).parent().replaceWith(text);
+            
+            var editformId = $(text).filter(".form").attr("id");
+            var footer ='<a class="mini-button" onclick="saveForm(\''+editformId+'\')">' + am.Save + '</a>';
+            footer +=' ';
+            $("#" + editformId).siblings(':last').prev().prepend(footer);
+       }
+   });  
 }
 
 function hideButton(divId){
@@ -341,8 +352,14 @@ function openWindow(winId){
 }
 
 function closeWindow(winId){
-    var win = mini.get(winId);
-    win.hide();
+    //var win = mini.get(winId);
+    //win.hide();
+    
+    var div=document.getElementById(winId);
+    var controls=mini.getChildControls(div);    //根据dom元素获取所有内部控件
+    $(controls).each(function(i,item){
+        item.destroy();
+    })
 }
 
 function stepWindow(winId){ 
@@ -576,7 +593,6 @@ function showRecord(id,title,width,height,url,pks){
         success: function (text) {
             if (text){
                $(win.getBodyEl()).html(text);
-                var formId = win.getBodyEl().getElementsByClassName("form")[0].id;
                 var footer ='<a class="mini-button" onclick="closeWindow(\''+win.id+'\')">' + am.Close + '</a>';
                 win.setFooter(footer); 
             }                
@@ -701,7 +717,7 @@ function relationWindow(obj,title,width,height,dataUrl,actionUrl,pks,vals,token)
     });
 }
 
-function moveUp(id,url,pks,token) {
+function moveUp(id,url,pks,vals,token) {
   var control = mini.get(id);
   var items = control.getSelecteds();
   
@@ -710,8 +726,11 @@ function moveUp(id,url,pks,token) {
             var obj = {};
             for(k = 0,len=pks.length; k < len; k++) {
                 obj[pks[k]]=items[i][pks[k]];
-            }     
-           key.push(obj);            
+            }
+            for (var k in vals){//is object
+                           obj[k]=vals[k];
+            }           
+            key.push(obj);            
         }
 
            $.ajax({
@@ -746,7 +765,7 @@ function moveUp(id,url,pks,token) {
     }
 }
 
-function moveDown(id,url,pks,token) {
+function moveDown(id,url,pks,vals,token) {
   var control = mini.get(id);
   var items = control.getSelecteds();
   
@@ -755,8 +774,11 @@ function moveDown(id,url,pks,token) {
             var obj = {};
             for(k = 0,len=pks.length; k < len; k++) {
                 obj[pks[k]]=items[i][pks[k]];
-            }     
-           key.push(obj);            
+            }
+            for (var k in vals){//is object
+                           obj[k]=vals[k];
+            }           
+            key.push(obj);           
         }
 
            $.ajax({
@@ -793,24 +815,13 @@ function moveDown(id,url,pks,token) {
 
 function refreshPage()
 {
-  var grids= mini.findControls(function(control){
-       if(control.type == "datagrid") {
-           return true;
-       }
-  });
-  var trees= mini.findControls(function(control){
-       if(control.type == "tree") {
-           return true;
-       }
-  });
-  var listboxs= mini.findControls(function(control){
-       if(control.type == "listbox") {
-           return true;
-       }
-  });
-   reloadGrids(grids);
-   reloadControls(trees);
-   reloadControls(listboxs);  
+   var ctls = mini.getChildControls(document); //根据dom元素获取所有内部控件
+   var grids=$(ctls).filter(function(i,ctl){
+      if (ctl.type == "datagrid" || ctl.type == "tree") {
+          ctl.reload();
+        }
+   });
+   
 }
 
-var refreshInterval=setInterval("refreshPage()",1800000);
+//var refreshInterval=setInterval("refreshPage()",5000);  //方法好像有问题,不能删除控件.

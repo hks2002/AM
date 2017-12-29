@@ -1,23 +1,23 @@
 #include "partialservicecontroller.h"
 
-void PartialServiceController::relationMenu()
+void PartialServiceController::relationMenuByMenusGroup()
 {
-    renderTemplate("SystemUIsetting/relationMenu");
+    renderTemplate("SystemUIsetting/relationMenuByMenusGroup");
 }
 
-void PartialServiceController::relationButton()
+void PartialServiceController::relationMenusGroupByMenu()
 {
-    renderTemplate("SystemUIsetting/relationButton");
+    renderTemplate("SystemUIsetting/relationMenusGroupByMenu");
 }
 
-void PartialServiceController::relationTab()
+void PartialServiceController::relationTabByTodoList()
 {
-    renderTemplate("SystemUIsetting/relationTab");
+    renderTemplate("SystemUIsetting/relationTabByTodoList");
 }
 
-void PartialServiceController::relationMenusGroup()
+void PartialServiceController::relationButtonByTodoList()
 {
-    renderTemplate("SystemUIsetting/relationMenusGroup");
+    renderTemplate("SystemUIsetting/relationButtonByTodoList");
 }
 
 void PartialServiceController::relationTodoListByButton()

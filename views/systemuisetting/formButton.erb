@@ -1,52 +1,75 @@
 <%#include "button.h" %>
 <%
 QString lang = httpRequest().cookie("lang");
-QVariantMap qMap=httpRequest().queryItems();
+QVariantMap qMap = httpRequest().queryItems();
+QString tid = tId();
 
-QVariant tid = tId();
 QString action = qMap.contains("action") ? httpRequest().queryItemValue("action"): variant("action").toString();
 QString buttonId = qMap.contains("buttonId") ? httpRequest().queryItemValue("buttonId"): variant("buttonId").toString();
+Button button = Button::get(hmacVal(buttonId).toInt());
 
 QVariantMap qMapOut;
-qMapOut.insert("tid",tid);
 qMapOut.insert("buttonId",buttonId);
-
-Button button=Button::get(hmacVal(buttonId).toInt());
+qMapOut.insert("action",action);
 %>
-<div id="form<%== tid %>" class="form" action="/SystemUIsetting/<%== action %>Button">
-  <%== inputAuthenticityTag() %>
-  <% if (action != "create") { %>
-     <input name="tabId" class="mini-textbox" visible="false" value="<%== buttonId %>"  /> 
-  <% } %>
-  <table >
-    <tr>
-      <td><%== UI("BUTTONCD") %>:</td>
-      <td>
-        <input name="buttonCd" class="mini-textbox" value="<%== button.buttonCd() %>" />
-      </td>
-      <td><%== UI("BUTTONNAMEZH") %>:</td>
-      <td>
-        <input name="buttonNameZh" class="mini-textbox" value="<%== button.buttonNameZh() %>" />
-      </td>
-      <td><%== UI("BUTTONNAMEEN") %>:</td>
-      <td>
-        <input name="buttonNameEn" class="mini-textbox" value="<%== button.buttonNameEn() %>" />
-      </td>
-    </tr>
-    <tr>
-      <td><%== UI("BUTTONTOOLTIP") %>:</td>
-      <td>
-        <input name="buttonTooltip" class="mini-textbox" value="<%== button.buttonTooltip() %>" />
-      </td>
-      <td><%== UI("BUTTONDESC") %>:</td>
-      <td colspan="3">
-        <input name="buttonDesc" class="mini-textarea" value="<%== button.buttonDesc() %>" style="width:100%" />
-      </td>
-    </tr>
+<% if (action == "show"){ %>
+<!-- show -->
+<div id="formButton<%== tid %>" name="formButton" class="form" >
+  <table style="width:100%;">
+   <tr>
+      <td style="text-align:right;white-space:nowrap"><%== UI("BUTTONCD") %>:</td>
+      <td><span style="padding-right:15px;" ><%== button.buttonCd() %></span>
+      <td style="text-align:right;white-space:nowrap"><%== UI("BUTTONNAMEZH") %>:</td>
+      <td><span style="padding-right:15px;" ><%== button.buttonNameZh() %></span>
+      <td style="text-align:right;white-space:nowrap"><%== UI("BUTTONNAMEEN") %>:</td>
+      <td><span style="padding-right:15px;" ><%== button.buttonNameEn() %></span>
+   </tr>
+   <tr>
+      <td style="text-align:right;white-space:nowrap"><%== UI("BUTTONTOOLTIP") %>:</td>
+      <td colspan="5"><span style="padding-right:15px;"><%== button.buttonTooltip() %></span></td>
+   </tr>
+   <tr>
+      <td style="text-align:right;white-space:nowrap"><%== UI("BUTTONDESC") %>:</td>
+      <td colspan="5"><span style="padding-right:15px;"><%== button.buttonDesc() %></span></td>
+   </tr>
   </table>
 </div>
-  <div class="mini-fit">
-    <% if (action != "Create") { %>
-      <%== renderPartial("SystemUIsetting/relatedButton",qMapOut) %>
+<% }else { %>
+<!-- edit -->
+<div id="formButton<%== tid %>" name="formButton" class="form" action="/SystemUIsetting/<%== action %>Button">
+  <%== inputAuthenticityTag() %>
+  <% if (action != "create") { %>
+     <input name="buttonId" class="mini-textbox" visible="false" value="<%== buttonId %>"  /> 
+  <% } %>
+  <table style="width:100%;">
+   <tr>
+      <td style="text-align:right;white-space:nowrap"><%== UI("BUTTONCD") %>:</td>
+      <td><input name="buttonCd" class="mini-textbox" vtype="maxLength:64"  value="<%== button.buttonCd() %>" /></td>
+      <td style="text-align:right;white-space:nowrap"><%== UI("BUTTONNAMEZH") %>:</td>
+      <td><input name="buttonNameZh" class="mini-textbox" vtype="maxLength:64"  value="<%== button.buttonNameZh() %>" /></td>
+      <td style="text-align:right;white-space:nowrap"><%== UI("BUTTONNAMEEN") %>:</td>
+      <td><input name="buttonNameEn" class="mini-textbox" vtype="maxLength:64"  value="<%== button.buttonNameEn() %>" /></td>
+   </tr>
+   <tr>
+      <td style="text-align:right;white-space:nowrap"><%== UI("BUTTONTOOLTIP") %>:</td>
+      <td colspan="5"><input name="buttonTooltip" class="mini-textarea" vtype="maxLength:256" style="width:100%" value="<%== button.buttonTooltip() %>" /></td>
+   </tr>
+   <tr>
+      <td style="text-align:right;white-space:nowrap"><%== UI("BUTTONDESC") %>:</td>
+      <td colspan="5"><input name="buttonDesc" class="mini-textarea" style="width:100%" value="<%== button.buttonDesc() %>" /></td>
+   </tr>
+  </table>
+</div>
+<% } %>
+<!-- toolBar -->
+<div class="mini-toolbar" style="border:0px">
+    <% if (action == "show" && accessAllow("SystemUIsetting/editButton")){ %>
+        <a class="mini-button" onclick="editForm('formButton<%== tid %>','/PartialService/formButton?action=edit&buttonId=<%== buttonId%>')" tooltip="<%== UI("TP_SYSTEMUISETTING_EDIT_BUTTON") %>" ><%== UI("Edit") %></a>
     <% } %>
-  </div>
+</div>
+<!-- tabs -->
+<div class="mini-fit">
+    <% if (action != "create") { %>
+    <%== renderPartial("SystemUIsetting/relationOfButton",qMapOut) %> 
+    <% } %>
+</div>

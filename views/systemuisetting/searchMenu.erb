@@ -1,4 +1,5 @@
 <%
+QString lang = httpRequest().cookie("lang");
 QVariant tid = tId();
 QVariantMap qMapOut;
 qMapOut.insert("tid",tid);
@@ -13,37 +14,40 @@ qMapOut.insert("tid",tid);
  </div>
 </fieldset>
 <!-- toolBar -->
- <div class="mini-toolbar">
+ <div class="mini-toolbar" style="border:0px">
         <a class="mini-button" onclick="doSearch('searchFormMenu<%== tid %>','gridMenu<%== tid %>')"><%== UI("Search") %></a>
         <a class="mini-button" onclick="showRecord('gridMenu<%== tid %>','<%== UI("Menu") %>',650,500,'/PartialService/formMenu?action=show',['menuId'])" tooltip="" ><%== UI("Show Details") %></a>
-    <% if (accessAllow("systemuisetting/createMenu")){ %>
+    <% if (accessAllow("SystemUIsetting/createMenu")){ %>
         <a class="mini-button" onclick="createRecord('<%== UI("Menu") %>',650,500,'/PartialService/formMenu?action=create')" tooltip="<%== UI("TP_SYSTEMUISETTING_CREATE_MENU") %>" ><%== UI("Create") %></a>
     <% } %>
-    <% if (accessAllow("systemuisetting/editMenu")){ %>
+    <% if (accessAllow("SystemUIsetting/editMenu")){ %>
         <a class="mini-button" onclick="editRecord('gridMenu<%== tid %>','<%== UI("Menu") %>',650,500,'/PartialService/formMenu?action=edit',['menuId'])" tooltip="<%== UI("TP_SYSTEMUISETTING_EDIT_MENU") %>" ><%== UI("Edit") %></a>
     <% } %>
-    <% if (accessAllow("systemuisetting/deleteMenu")){ %>
+    <% if (accessAllow("SystemUIsetting/deleteMenu")){ %>
         <a class="mini-button" onclick="deleteRecord('gridMenu<%== tid %>','/SystemUIsetting/deleteMenu',['menuId'],'<%== csrfVal() %>')" tooltip="<%== UI("TP_SYSTEMUISETTING_DELETE_MENU") %>" ><%== UI("Delete") %></a>
     <% } %>
  </div>
 <!-- grid -->
 <div class="mini-fit">
-<div id="gridMenu<%== tid %>" class="mini-datagrid" url="/DataService/Search/Menu?searchMode=page" ajaxOptions="{data:{sortField:'menuCd'}}"
-   style="height:100%" showEmptyText="true" multiSelect="true" onloaderror="onGridLoadError" onload="onGridLoad" >
+<div id="gridMenu<%== tid %>" name="gridMenu" class="mini-datagrid" url="/DataService/Search/Menu?searchMode=page" ajaxOptions="{data:{sortField:'menuCd'}}"
+   style="height:100%" showEmptyText="true" multiSelect="true" onpreload="onpreload" >
   <div property="columns">
    <div type="indexcolumn" width="25"></div>
    <div type="checkcolumn" width="25"></div>
    <div field="menuId" visible="false"><%== UI("MENUID") %></div>
    <div field="menuCd" allowsort="true"><%== UI("MENUCD") %></div>
-   <div field="menuNameZh" allowsort="true"><%== UI("MENUNAMEZH") %></div>
-   <div field="menuNameEn" allowsort="true"><%== UI("MENUNAMEEN") %></div>
-   <div field="menuTooltip" allowsort="true"><%== UI("MENUTOOLTIP") %></div>
-   <div field="menuDesc" allowsort="true"><%== UI("MENUDESC") %></div>
-   <div field="controller" allowsort="true"><%== UI("CONTROLLER") %></div>
-   <div field="action" allowsort="true" width="100%"><%== UI("ACTION") %></div>
+   <div field="<%== lang=="zh"?"menuNameZh":"menuNameEn" %>" allowsort="true"><%== lang=="zh"?UI("MENUNAMEZH"):UI("MENUNAMEEN") %></div>
+   <div field="menuTooltip" allowsort="true" width="500"><%== UI("MENUTOOLTIP") %></div>
+   <div field="menuDesc" allowsort="true" width="100%"><%== UI("MENUDESC") %></div>
   </div>
 </div>
 </div>
 <script type="text/javascript">
     mini.parse();
+    var grid = mini.get("gridMenu<%== tid %>");
+    grid.on("drawcell", function (e) {
+        if (e.field) {
+            e.cellHtml = '<a href="javascript:showRecord(\'gridMenu<%== tid %>\',\'<%== UI("Menu") %>\',650,500,\'/PartialService/formMenu?action=show\',[\'menuId\'])">' + e.value + '</a>';
+        }
+    });
 </script>

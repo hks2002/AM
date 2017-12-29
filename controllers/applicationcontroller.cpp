@@ -19,7 +19,10 @@ ApplicationController::~ApplicationController()
 
 void ApplicationController::staticInitialize()
 {
+    //load am.ini
     Tf::app()->getConfig("am");
+
+    //load zh_CN.ini,en_US.ini
     QVariantMap &zh = const_cast<QVariantMap &>(Tf::app()->getConfig("zh_CN"));
     QVariantMap &en = const_cast<QVariantMap &>(Tf::app()->getConfig("en_US"));
 
@@ -27,10 +30,10 @@ void ApplicationController::staticInitialize()
     auto list = act.getAll();
 
     for (ActionApp &a : list) {
-        zh.insert(QString("ACT_").append(a.actionCd()), a.actionNameZh());
-        en.insert(QString("ACT_").append(a.actionCd()), a.actionNameEn());
-        zh.insert(QString("TP_").append(a.actionCd()), a.actionTooltip());
-        en.insert(QString("TP_").append(a.actionCd()), a.actionTooltip());
+        zh.insert(QString("ACT_").append(a.actionCd()), QString::fromUtf8(a.actionNameZh().toLatin1().data()));
+        en.insert(QString("ACT_").append(a.actionCd()), QString::fromUtf8(a.actionNameEn().toLatin1().data()));
+        zh.insert(QString("TP_").append(a.actionCd()), QString::fromUtf8(a.actionTooltip().toLatin1().data()));
+        en.insert(QString("TP_").append(a.actionCd()), QString::fromUtf8(a.actionTooltip().toLatin1().data()));
     }
 }
 

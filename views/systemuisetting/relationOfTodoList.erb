@@ -1,0 +1,45 @@
+<%
+QString tid = tId();
+QVariant todoListId = variant("todoListId");
+QVariant action = variant("action").toString();
+
+QVariantMap qMapOut;
+qMapOut.insert("tid",tid);
+qMapOut.insert("todoListId",todoListId);
+%>
+<div id="relationOfTodoList<%== tid %>" class="mini-tabs" activeindex="0" style="width:100%;height:100%;" bodystyle="border:0;">
+  <div title='<%== UI("Assigned Tabs") %>'>
+    <div>
+        <% if (accessAllow("SystemUIsetting/assignTabToTodoList")){ %>
+            <% if (action=="edit") { %>
+            <a class="mini-button" plain="true" tooltip="<%== UI("Assign") %>" iconCls="icon-assign" 
+            onclick="relationWindow(this,'<%== UI("Tab") %>',400,400,'/PartialService/relationTabByTodoList?assigned=unassigned','/SystemUIsetting/assignTabToTodoList',['tabId'],{'todoListId':'<%== todoListId %>'},'<%== csrfVal() %>')"></a>
+            <% } %>
+        <% } %>
+        <% if (accessAllow("SystemUIsetting/unassignTabFromTodoList")) { %>
+            <% if (action=="edit") { %>
+            <a class="mini-button" plain="true" tooltip="<%== UI("Unassign") %>" iconcls="icon-unassign" 
+            onclick="relationRecord('relationTabByTodoList<%== tid %>','/SystemUIsetting/unassignTabFromTodoList',['tabId'],{'todoListId':'<%== todoListId %>'},'<%== csrfVal() %>')" ></a>
+            <% } %>
+        <% } %>
+    </div>
+    <%== renderPartial("SystemUIsetting/relationTabByTodoList",qMapOut) %>
+  </div>
+  <div title='<%== UI("Assigned Buttons") %>'>
+    <div>
+        <% if (accessAllow("SystemUIsetting/assignButtonToTodoList")){ %>
+            <% if (action=="edit") { %>
+            <a class="mini-button" plain="true" tooltip="<%== UI("Assign") %>" iconCls="icon-assign" 
+            onclick="relationWindow(this,'<%== UI("Button") %>',400,400,'/PartialService/relationButtonByTodoList?assigned=unassigned','/SystemUIsetting/assignButtonToTodoList',['buttonId'],{'todoListId':'<%== todoListId %>'},'<%== csrfVal() %>')"></a>
+            <% } %>
+        <% } %>
+        <% if (accessAllow("SystemUIsetting/unassignButtonFromTodoList")) { %>
+            <% if (action=="edit") { %>
+            <a class="mini-button" plain="true" tooltip="<%== UI("Unassign") %>" iconcls="icon-unassign" 
+            onclick="relationRecord('relationButtonByTodoList<%== tid %>','/SystemUIsetting/unassignButtonFromTodoList',['buttonId'],{'todoListId':'<%== todoListId %>'},'<%== csrfVal() %>')" ></a>
+            <% } %>
+        <% } %>
+    </div>
+    <%== renderPartial("SystemUIsetting/relationButtonByTodoList",qMapOut) %>
+  </div>
+</div>

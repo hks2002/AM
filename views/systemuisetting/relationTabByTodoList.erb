@@ -1,0 +1,34 @@
+<%
+QString lang = httpRequest().cookie("lang");
+QString tid = variant("tid").toString().isEmpty() ? tId(): variant("tid").toString();
+QString todoListId = httpRequest().queryItemValue("todoListId").isEmpty()? variant("todoListId").toString() : httpRequest().queryItemValue("todoListId");
+QString assigned = httpRequest().queryItemValue("assigned").isEmpty() ? "assigned" : httpRequest().queryItemValue("assigned");
+
+QString fields = lang == "zh" ? "tabId tabCd tabNameZh" : "tabId tabCd tabNameEn";
+QString sortField ="tabCd";
+QString key ="{'todoListId':'" + todoListId + "'}";
+
+%>
+<div class="mini-fit">
+<div id="relationTabByTodoList<%== tid %>" name="relationTab" class="mini-datagrid" style="width:375px;height:100%;" 
+autoLoad="true" showPager="false" showEmptyText="true" multiSelect="true" onpreload="onpreload" 
+showcheckbox="true" multiselect="true" url="/DataService/Search/Tab/TodoListTab/<%== assigned %>?searchMode=all" ajaxType="Post" 
+ajaxOptions="{data:{key:mini.encode(<%== key %>),fields:'<%== fields %>',sortField:'<%== sortField %>'}}" >
+  <div property="columns">
+    <div type="indexcolumn" width="25"></div>
+    <div type="checkcolumn" width="25"></div>
+    <div visible="false" field="tabId"></div>
+    <div header="<%== UI("TABCD") %>" field="<%== "tabCd" %>" ></div>
+    <div header="<%== lang == "zh" ? UI("TABNAMEZH") : UI("TABNAMEEN") %>" field="<%== lang == "zh" ? "tabNameZh" : "tabNameEn" %>" width="100%" ></div>
+  </div>
+</div>
+</div>
+<script type="text/javascript">
+  mini.parse();
+  var grid = mini.get("relationTabByTodoList<%== tid %>");
+  grid.on("drawcell", function (e) {
+    if (e.field) {
+          e.cellHtml = '<a href="javascript:showRecord(\'relationTabByTodoList<%== tid %>\',\'<%== UI("Tab") %>\',650,500,\'/PartialService/formTab?action=show\',[\'tabId\'])">' + e.value + '</a>';
+        }
+  });
+</script>

@@ -41,8 +41,7 @@
 	background:url(icons/print.gif) no-repeat;
 }
 .icon-help{
-	background:url(icons/help.gif) no-repeat;
-	
+	background:url(icons/help.png) no-repeat;	
 }
 .icon-undo{
 	background:url(icons/undo.gif) no-repeat;
@@ -127,10 +126,10 @@
 	background:url(icons/collapse.gif) no-repeat;
 }
 .icon-down{
-	background:url(icons/down.gif) no-repeat;
+	background:url(icons/down.png) no-repeat;
 }
 .icon-up{
-	background:url(icons/up.gif) no-repeat;
+	background:url(icons/up.png) no-repeat;
 }
 .icon-assign{
 	background:url(icons/assign.png) no-repeat;
