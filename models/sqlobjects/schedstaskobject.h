@@ -68,6 +68,7 @@ public:
         UpdatedBy,
     };
 
+public slots:
     QList<int> primaryKeyIndexList() const override { QList<int> pkidxList; return pkidxList<<SchedId; }
     int autoValueIndex() const override { return SchedId; }
     QList<int> foreignKeyIndexList() const { QList<int> fkIdxList;return fkIdxList<<AccountId<<ReschedFromCd<<CancelWhenCd<<FirstSchedFromCd<<InvNoId<<TaskOriginatorId<<TaskSubclassId<<TaskClassCd<<PartNoId<<TaskId<<HSchedId; }
@@ -132,5 +133,6 @@ private:    /*** Don't modify below this line ***/
     Q_PROPERTY(QString updated_by READ getupdated_by WRITE setupdated_by)
     T_DEFINE_PROPERTY(QString, updated_by)
 };
+
 
 #endif // SCHEDSTASKOBJECT_H

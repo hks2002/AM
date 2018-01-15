@@ -34,6 +34,7 @@ public:
         UpdatedBy,
     };
 
+public slots:
     QList<int> primaryKeyIndexList() const override { QList<int> pkidxList; return pkidxList<<QuarId; }
     int autoValueIndex() const override { return QuarId; }
     QList<int> foreignKeyIndexList() const { QList<int> fkIdxList;return fkIdxList<<LocId<<InvNoId<<UserId; }
@@ -64,5 +65,6 @@ private:    /*** Don't modify below this line ***/
     Q_PROPERTY(QString updated_by READ getupdated_by WRITE setupdated_by)
     T_DEFINE_PROPERTY(QString, updated_by)
 };
+
 
 #endif // QUARQUAROBJECT_H

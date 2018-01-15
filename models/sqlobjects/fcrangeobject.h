@@ -32,6 +32,7 @@ public:
         UpdatedBy,
     };
 
+public slots:
     QList<int> primaryKeyIndexList() const override { QList<int> pkidxList; return pkidxList<<FcRangeId; }
     int autoValueIndex() const override { return FcRangeId; }
     QList<int> foreignKeyIndexList() const { QList<int> fkIdxList;return fkIdxList<<FcModelId; }
@@ -60,5 +61,6 @@ private:    /*** Don't modify below this line ***/
     Q_PROPERTY(QString updated_by READ getupdated_by WRITE setupdated_by)
     T_DEFINE_PROPERTY(QString, updated_by)
 };
+
 
 #endif // FCRANGEOBJECT_H

@@ -15,14 +15,14 @@ qMapOut.insert("action",action);
 <% if (action == "show"){ %>
 <!-- show -->
 <div id="formTab<%== tid %>" name="formTab" class="form" >
-  <table style="width:100%;">
+  <table class="layout-fixed" width="100%">
    <tr>
       <td style="text-align:right;white-space:nowrap"><%== UI("TABCD") %>:</td>
-      <td><span style="padding-right:15px;" ><%== tab.tabCd() %></span></td>
+      <td><span style="padding-right:30px;" ><%== tab.tabCd() %></span></td>
       <td style="text-align:right;white-space:nowrap"><%== UI("TABNAMEZH") %>:</td>
-      <td><span style="padding-right:15px;" ><%== tab.tabNameZh() %></span></td>
+      <td><span style="padding-right:30px;" ><%== tab.tabNameZh() %></span></td>
       <td style="text-align:right;white-space:nowrap"><%== UI("TABNAMEEN") %>:</td>
-      <td><span style="padding-right:15px;" ><%== tab.tabNameEn() %></span></td>
+      <td><span style="padding-right:30px;" ><%== tab.tabNameEn() %></span></td>
    </tr>
    <tr>
       <td style="text-align:right;white-space:nowrap"><%== UI("TABTOOLTIP") %>:</td>
@@ -41,14 +41,14 @@ qMapOut.insert("action",action);
   <% if (action != "create") { %>
      <input name="tabId" class="mini-textbox" visible="false" value="<%== tabId %>"  /> 
   <% } %>
-  <table style="width:100%;">
+  <table style="width:100%">
    <tr>
       <td style="text-align:right;white-space:nowrap"><%== UI("TABCD") %>:</td>
-      <td><input name="tabCd" class="mini-textbox" vtype="maxLength:64"  value="<%== tab.tabCd() %>" /></td>
+      <td><input name="tabCd" class="mini-textbox" vtype="maxLength:64"  style="width:100%" value="<%== tab.tabCd() %>" /></td>
       <td style="text-align:right;white-space:nowrap"><%== UI("TABNAMEZH") %>:</td>
-      <td><input name="tabNameZh" class="mini-textbox" vtype="maxLength:64"  value="<%== tab.tabNameZh() %>" /></td>
+      <td><input name="tabNameZh" class="mini-textbox" vtype="maxLength:64" style="width:100%" value="<%== tab.tabNameZh() %>" /></td>
       <td style="text-align:right;white-space:nowrap"><%== UI("TABNAMEEN") %>:</td>
-      <td><input name="tabNameEn" class="mini-textbox" vtype="maxLength:64"  value="<%== tab.tabNameEn() %>" /></td>
+      <td><input name="tabNameEn" class="mini-textbox" vtype="maxLength:64" style="width:100%" value="<%== tab.tabNameEn() %>" /></td>
    </tr>
    <tr>
       <td style="text-align:right;white-space:nowrap"><%== UI("TABTOOLTIP") %>:</td>

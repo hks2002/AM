@@ -18,6 +18,7 @@ public:
         RoleId,
     };
 
+public slots:
     QList<int> primaryKeyIndexList() const override { QList<int> pkidxList; return pkidxList; }
     int autoValueIndex() const override { return -1; }
     QString tableName() const override { return QLatin1String("v_controller_action_role_action"); }
@@ -31,5 +32,6 @@ private:    /*** Don't modify below this line ***/
     Q_PROPERTY(int role_id READ getrole_id WRITE setrole_id)
     T_DEFINE_PROPERTY(int, role_id)
 };
+
 
 #endif // VCONTROLLERACTIONROLEACTIONOBJECT_H

@@ -48,6 +48,7 @@ public:
         Action,
     };
 
+public slots:
     QList<int> primaryKeyIndexList() const override { QList<int> pkidxList; return pkidxList; }
     int autoValueIndex() const override { return -1; }
     QString tableName() const override { return QLatin1String("v_menus_group_menu_role"); }
@@ -91,5 +92,6 @@ private:    /*** Don't modify below this line ***/
     Q_PROPERTY(QString action READ getaction WRITE setaction)
     T_DEFINE_PROPERTY(QString, action)
 };
+
 
 #endif // VMENUSGROUPMENUROLEOBJECT_H

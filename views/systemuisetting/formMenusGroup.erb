@@ -15,14 +15,14 @@ qMapOut.insert("action",action);
 <% if (action == "show"){ %>
 <!-- show -->
 <div id="formMenusGroup<%== tid %>" name="formMenusGroup" class="form" >
-  <table style="width:100%;">
+  <table class="layout-fixed" width="100%">
    <tr>
       <td style="text-align:right;white-space:nowrap"><%== UI("MENUSGROUPCD") %>:</td>
-      <td><span style="padding-right:15px;" ><%== menusGroup.menusGroupCd() %></span>
+      <td><span style="padding-right:30px;" ><%== menusGroup.menusGroupCd() %></span>
       <td style="text-align:right;white-space:nowrap"><%== UI("MENUSGROUPNAMEZH") %>:</td>
-      <td><span style="padding-right:15px;" ><%== menusGroup.menusGroupNameZh() %></span>
+      <td><span style="padding-right:30px;" ><%== menusGroup.menusGroupNameZh() %></span>
       <td style="text-align:right;white-space:nowrap"><%== UI("MENUSGROUPNAMEEN") %>:</td>
-      <td><span style="padding-right:15px;" ><%== menusGroup.menusGroupNameEn() %></span>
+      <td><span style="padding-right:30px;" ><%== menusGroup.menusGroupNameEn() %></span>
    </tr>
    <tr>
       <td style="text-align:right;white-space:nowrap"><%== UI("MENUSGROUPTOOLTIP") %>:</td>
@@ -41,14 +41,14 @@ qMapOut.insert("action",action);
   <% if (action != "create") { %>
      <input name="menusGroupId" class="mini-textbox" visible="false" value="<%== menusGroupId %>"  /> 
   <% } %>
-  <table style="width:100%;">
+  <table style="width:100%">
    <tr>
       <td style="text-align:right;white-space:nowrap"><%== UI("MENUSGROUPCD") %>:</td>
-      <td><input name="menusGroupCd" class="mini-textbox" vtype="maxLength:16"  value="<%== menusGroup.menusGroupCd() %>" /></td>
+      <td><input name="menusGroupCd" class="mini-textbox" vtype="maxLength:16" style="width:100%" value="<%== menusGroup.menusGroupCd() %>" /></td>
       <td style="text-align:right;white-space:nowrap"><%== UI("MENUSGROUPNAMEZH") %>:</td>
-      <td><input name="menusGroupNameZh" class="mini-textbox" vtype="maxLength:64"  value="<%== menusGroup.menusGroupNameZh() %>" /></td>
+      <td><input name="menusGroupNameZh" class="mini-textbox" vtype="maxLength:64" style="width:100%" value="<%== menusGroup.menusGroupNameZh() %>" /></td>
       <td style="text-align:right;white-space:nowrap"><%== UI("MENUSGROUPNAMEEN") %>:</td>
-      <td><input name="menusGroupNameEn" class="mini-textbox" vtype="maxLength:64"  value="<%== menusGroup.menusGroupNameEn() %>" /></td>
+      <td><input name="menusGroupNameEn" class="mini-textbox" vtype="maxLength:64" style="width:100%" value="<%== menusGroup.menusGroupNameEn() %>" /></td>
    </tr>
    <tr>
       <td style="text-align:right;white-space:nowrap"><%== UI("MENUSGROUPTOOLTIP") %>:</td>

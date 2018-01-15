@@ -1,7 +1,7 @@
 <%
 QString tid = tId();
 QVariant menuId = variant("menuId");
-QVariant action = variant("action").toString();
+QString action = variant("action").toString();
 
 QVariantMap qMapOut;
 qMapOut.insert("tid",tid);
@@ -13,7 +13,7 @@ qMapOut.insert("menuId",menuId);
         <% if (accessAllow("SystemUIsetting/assignMenuToMenusGroup")){ %>
             <% if (action=="edit") { %>
             <a class="mini-button" plain="true" tooltip="<%== UI("Assign") %>" iconCls="icon-assign" 
-            onclick="relationWindow(this,'<%== UI("MenusGroup") %>',400,400,'/PartialService/relationMenusGroupByMenu?assigned=unassigned','/SystemUIsetting/assignMenuToMenusGroup',['menusGroupId'],{'menuId':'<%== menuId %>'},'<%== csrfVal() %>')"></a>
+            onclick="relationWindow(this,'<%== UI("MenusGroup") %>',400,400,'/PartialService/relationMenusGroupByMenu?relation=unassigned','/SystemUIsetting/assignMenuToMenusGroup',['menusGroupId'],{'menuId':'<%== menuId %>'},'<%== csrfVal() %>')"></a>
             <% } %>
         <% } %>
         <% if (accessAllow("SystemUIsetting/unassignMenuFromMenusGroup")) { %>

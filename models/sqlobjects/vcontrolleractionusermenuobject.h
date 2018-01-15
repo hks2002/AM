@@ -18,6 +18,7 @@ public:
         UserId,
     };
 
+public slots:
     QList<int> primaryKeyIndexList() const override { QList<int> pkidxList; return pkidxList; }
     int autoValueIndex() const override { return -1; }
     QString tableName() const override { return QLatin1String("v_controller_action_user_menu"); }
@@ -31,5 +32,6 @@ private:    /*** Don't modify below this line ***/
     Q_PROPERTY(int user_id READ getuser_id WRITE setuser_id)
     T_DEFINE_PROPERTY(int, user_id)
 };
+
 
 #endif // VCONTROLLERACTIONUSERMENUOBJECT_H

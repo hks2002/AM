@@ -2,32 +2,33 @@
 QString lang = httpRequest().cookie("lang");
 QString tid = variant("tid").toString().isEmpty() ? tId(): variant("tid").toString();
 QString menuId = httpRequest().queryItemValue("menuId").isEmpty()? variant("menuId").toString() : httpRequest().queryItemValue("menuId");
-QString assigned = httpRequest().queryItemValue("assigned").isEmpty() ? "assigned" : httpRequest().queryItemValue("assigned");
+QString relation = httpRequest().queryItemValue("relation").isEmpty() ? "assigned" : httpRequest().queryItemValue("relation");
 
-QString fields = lang == "zh" ? "menusGroupId menusGroupCd menusGroupNameZh" : "menusGroupId menusGroupCd menusGroupNameEn";
-QString sortField ="menusGroupCd";
-QString key ="{'menuId':'" + menuId + "'}";
+QString relationKey ="{'menuId':'" + menuId + "'}";
 
 %>
 <div class="mini-fit">
 <div id="relationMenusGroupByMenu<%== tid %>" name="relationMenusGroup" class="mini-datagrid" style="width:375px;height:100%;" 
-autoLoad="true" showPager="false" showEmptyText="true" multiSelect="true" onpreload="onpreload" 
-showcheckbox="true" multiselect="true" url="/DataService/Search/MenusGroup/MenusGroupMenu/<%== assigned %>?searchMode=all" ajaxType="Post" 
-ajaxOptions="{data:{key:mini.encode(<%== key %>),fields:'<%== fields %>',sortField:'<%== sortField %>'}}" >
+showPager="false" showEmptyText="true" multiSelect="true" onpreload="onpreload" allowSortColumn="false"
+url="/DataService/Search/<%== relation %>MenusGroupByMenu?searchMode=all&relation=<%== relation %>" sortField="menusGroupCd"
+ajaxOptions="{data:{relationKey:mini.encode(<%== relationKey %>)}}" >
   <div property="columns">
     <div type="indexcolumn" width="25"></div>
     <div type="checkcolumn" width="25"></div>
     <div visible="false" field="menusGroupId"></div>
-    <div header="<%== UI("MENUSGROUPCD") %>" field="<%== "menusGroupCd" %>" ></div>
-    <div header="<%== lang == "zh" ? UI("MENUSGROUPNAMEZH") : UI("MENUSGROUPNAMEEN") %>" field="<%== lang == "zh" ? "menusGroupNameZh" : "menusGroupNameEn" %>" width="100%" ></div>
+    <div header="<%== UI("MENUSGROUPCD") %>" field="<%== "menusGroupCd" %>" allowsort="true"></div>
+    <div header="<%== lang == "zh" ? UI("MENUSGROUPNAMEZH") : UI("MENUSGROUPNAMEEN") %>" field="<%== lang == "zh" ? "menusGroupNameZh" : "menusGroupNameEn" %>" width="100%" allowsort="true"></div>
   </div>
 </div>
 </div>
 <script type="text/javascript">
   mini.parse();
   var grid = mini.get("relationMenusGroupByMenu<%== tid %>");
+  var sorter = new MultiSort(grid);
+  sorter.sort([{'field':'menusGroupCd'}]);
+  
   grid.on("drawcell", function (e) {
-    if (e.field) {
+    if (e.field=="menusGroupCd") {
           e.cellHtml = '<a href="javascript:showRecord(\'relationMenusGroupByMenu<%== tid %>\',\'<%== UI("MenusGroup") %>\',650,500,\'/PartialService/formMenusGroup?action=show\',[\'menusGroupId\'])">' + e.value + '</a>';
         }
   });

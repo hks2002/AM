@@ -29,7 +29,7 @@ qMapOut.insert("tid",tid);
  </div>
 <!-- grid -->
 <div class="mini-fit">
-<div id="gridButton<%== tid %>" name="gridButton" class="mini-datagrid" url="/DataService/Search/Button?searchMode=page" ajaxOptions="{data:{sortField:'buttonCd'}}"
+<div id="gridButton<%== tid %>" name="gridButton" class="mini-datagrid" url="/DataService/Search/Button?searchMode=page" allowSortColumn="false" 
    style="height:100%" showEmptyText="true" multiSelect="true" onpreload="onpreload" >
   <div property="columns">
    <div type="indexcolumn" width="25"></div>
@@ -45,8 +45,11 @@ qMapOut.insert("tid",tid);
 <script type="text/javascript">
     mini.parse();
     var grid = mini.get("gridButton<%== tid %>");
+    var sorter = new MultiSort(grid);
+    sorter.sort([{'field':'buttonCd'}]);
+    
     grid.on("drawcell", function (e) {
-        if (e.field) {
+        if (e.field=="buttonCd") {
             e.cellHtml = '<a href="javascript:showRecord(\'gridButton<%== tid %>\',\'<%== UI("Button") %>\',650,500,\'/PartialService/formButton?action=show\',[\'buttonId\'])">' + e.value + '</a>';
         }
     });

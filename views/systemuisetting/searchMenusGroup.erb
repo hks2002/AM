@@ -29,7 +29,7 @@ qMapOut.insert("tid",tid);
  </div>
 <!-- grid -->
 <div class="mini-fit">
-<div id="gridMenusGroup<%== tid %>" name="gridMenusGroup" class="mini-datagrid" url="/DataService/Search/MenusGroup?searchMode=page" ajaxOptions="{data:{sortField:'menusGroupCd'}}"
+<div id="gridMenusGroup<%== tid %>" name="gridMenusGroup" class="mini-datagrid" url="/DataService/Search/MenusGroup?searchMode=page" allowSortColumn="false" 
    style="height:100%" showEmptyText="true" multiSelect="true" onpreload="onpreload" >
   <div property="columns">
    <div type="indexcolumn" width="25"></div>
@@ -45,8 +45,11 @@ qMapOut.insert("tid",tid);
 <script type="text/javascript">
     mini.parse();
     var grid = mini.get("gridMenusGroup<%== tid %>");
+    var sorter = new MultiSort(grid);
+    sorter.sort([{'field':'menusGroupCd'}]);
+    
     grid.on("drawcell", function (e) {
-        if (e.field) {
+        if (e.field=="menusGroupCd") {
             e.cellHtml = '<a href="javascript:showRecord(\'gridMenusGroup<%== tid %>\',\'<%== UI("MenusGroup") %>\',650,500,\'/PartialService/formMenusGroup?action=show\',[\'menusGroupId\'])">' + e.value + '</a>';
         }
     });

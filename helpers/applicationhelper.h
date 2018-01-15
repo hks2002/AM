@@ -26,12 +26,18 @@ T_HELPER_EXPORT inline QString UI(const QString &code)
     QString utf8str;
 
     if (lang == "zh") {
-        utf8str = Tf::app()->getConfigValue("zh_CN", code, code).toString().trimmed();
+        utf8str = Tf::app()->getConfigValue("zh_CN", code, "").toString().trimmed();
     } else {
-        utf8str = Tf::app()->getConfigValue("en_US", code, code).toString().trimmed();
+        utf8str = Tf::app()->getConfigValue("en_US", code, "").toString().trimmed();
     }
 
-    tTrace(QString("UI:").append(code).append("->").append(utf8str).toLatin1().data());
+    tSystemTrace("UI:%s -> %s", code.toLatin1().data(), utf8str.toLatin1().data());
+
+    if (utf8str.isEmpty()) {
+        tError("UI %s not found.", code.toLatin1().data());
+        utf8str = code;
+    }
+
     return QString::fromUtf8(utf8str.toLatin1().data());
 }
 
@@ -40,7 +46,7 @@ T_HELPER_EXPORT inline QString CFG(const QString &code)
     QString utf8str;
 
     utf8str = Tf::app()->getConfigValue("am", code).toString().trimmed();
-    tTrace(QString("CFG:").append(code).append("->").append(utf8str).toLatin1().data());
+    tSystemTrace("CFG %s: %s", code.toLatin1().data(), utf8str.toLatin1().data());
     return utf8str;
 }
 
@@ -52,7 +58,7 @@ T_HELPER_EXPORT inline QString hmac(int id)
         TSession &s = const_cast<TSession &>(Tf::currentContext()->currentController()->session());
         QString hash = TCryptMac::hash(QString::number(id).toLatin1(), Tf::currentContext()->currentController()->session().id(), TCryptMac::Hmac_Md5).toHex();
         s.insert(hash, id);
-        tTrace() << "id->Hash:" << id << "->" << hash;
+        tSystemTrace("id->Hash: %d -> %s", id, hash.toLatin1().data());
         return hash;
     } else {
         return QString::number(id);
@@ -68,7 +74,7 @@ T_HELPER_EXPORT inline QString hmac(const QString &cd)
         TSession &s = const_cast<TSession &>(Tf::currentContext()->currentController()->session());
         QString hash = TCryptMac::hash(cd.toLatin1(), Tf::currentContext()->currentController()->session().id(), TCryptMac::Hmac_Md5).toHex();
         s.insert(hash, cd);
-        tTrace() << "cd->Hash:" << cd << "->" << hash;
+        tSystemTrace("id->Hash: %s -> %s", cd.toLatin1().data(), hash.toLatin1().data());
         return hash;
     } else {
         return cd;
@@ -79,7 +85,7 @@ T_HELPER_EXPORT inline QVariant hmacVal(const QString &hash)
 {
     if (CFG("ENABLE_HASH").toLower() == "true" || CFG("ENABLE_HASH") == "1") {
         TSession &s = const_cast<TSession &>(Tf::currentContext()->currentController()->session());
-        tTrace() << "hash->id/cd:" << hash << "->" << s.value(hash).toString();
+        tSystemTrace("Hash->id/cd: %s -> %s", hash.toLatin1().data(), s.value(hash).toString().toLatin1().data());
         return s.value(hash);
     } else {
         return hash;
@@ -92,7 +98,7 @@ T_HELPER_EXPORT inline bool accessAllow(const QString &ctl, const QString &act)
     int currentUserId = Tf::currentContext()->currentController()->session().value(url).toInt();
 
     if (currentUserId <= 0) {
-        tDebug() << "Access:" << url << " is Forbidden";
+        tTrace("Access :%s is Forbidden", url.toLatin1().data());
         //FIXME should be false, please change it
         //Use true for development
         return true;
@@ -106,7 +112,7 @@ T_HELPER_EXPORT inline bool accessAllow(const QString &url)
     int currentUserId = Tf::currentContext()->currentController()->session().value(url).toInt();
 
     if (currentUserId <= 0) {
-        tDebug() << "Access:" << url << " is Forbidden";
+        tTrace("Access %s is Forbidden", url.toLatin1().data());
         //FIXME should be false, please change it
         //Use true for development
         return true;

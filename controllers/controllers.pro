@@ -15,7 +15,9 @@ include(../appbase.pri)
 
 HEADERS += advisorycontroller.h \
     partialservicecontroller.h \
-    welcomecontroller.h
+    welcomecontroller.h \
+    dscriteria.h \
+    dscriteriaconverter.h
 HEADERS += applicationcontroller.h
 HEADERS += assemblyassembliescontroller.h
 HEADERS += assemblyconfigslotcontroller.h
@@ -98,7 +100,9 @@ HEADERS += warrantycontractinitializationcontroller.h
 HEADERS += warrantyevaluationcontroller.h
 SOURCES += advisorycontroller.cpp \
     partialservicecontroller.cpp \
-    welcomecontroller.cpp
+    welcomecontroller.cpp \
+    dscriteria.cpp \
+    dscriteriaconverter.cpp
 SOURCES += applicationcontroller.cpp
 SOURCES += assemblyassembliescontroller.cpp
 SOURCES += assemblyconfigslotcontroller.cpp

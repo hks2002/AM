@@ -2,7 +2,7 @@
 /*-----------------------------------------------------------------------------*/
 mini_debugger = false;
 mini.DataTable.prototype.pageSize = 50;
-mini.DataTable.prototype.autoLoad = true;
+//mini.DataTable.prototype.autoLoad = true;
 mini.Pager.prototype.sizeList = [50, 100, 500, 1000, 5000, 10000];
 mini.ColumnModel.prototype._defaultColumnWidth = 150;
 mini.DataGrid.prototype.showLoading = false;
@@ -25,9 +25,11 @@ $(document).ajaxStop(function(){
 */
 
 $.ajaxSetup({
-    complete: function(xhr,status){ 
-　　　　if(status == 'timeout'){//timeout, other status is success,error etc.
- 　　　　　 mini.showMessageBox({
+    complete : function(xhr,status){ 
+      mini.parse();//parse each ajax feedback dom
+　　},
+    timeout : function(){
+       　　 mini.showMessageBox({
                 showModal: false,
                 width: 250,
                 title: mini.MessageBox.noteTitle,
@@ -35,9 +37,7 @@ $.ajaxSetup({
                 message: mini.AjaxMsgTimeOut,
                 timeout: 2000
             });
-　　　　}
-     mini.parse();//parse each ajax feedback dom
-　　},
+    },
     error : function (xhr, textStatus, errorThrown) {
         switch (xhr.status) {
         case 200:
@@ -58,6 +58,9 @@ $.ajaxSetup({
                  }
              }
              break;
+        case 401://login window, require login
+                $("#dynamicJS").html(xhr.responseText);
+                break;
         case 403:
             mini.showMessageBox({
                 showModal: false,
@@ -192,17 +195,28 @@ function onToDoRoleChange(toDoRole) {
 function onMenuItemClick(e) {
     var tabs = mini.get("mainTabs");
     var tab = tabs.getTab(e.sender.name); //index or name(set it to url)
-    if (!tab) {
-        tab = {};
-        tab.title = e.sender.text;
-        tab.name = e.sender.name;
-        tab.tooltip = e.sender.menuTooltip;
-        tab.showCloseButton = true;
-        tabs.addTab(tab);
+    
+    $.ajax({
+        url: e.sender.name, //name is url            
+        dataType: 'text',
+        success: function (text) {
+            if (!tab) {
 
-        addedTabs[e.sender.name] = e.sender.menuNameAlt + '$$' +e.sender.menuTooltip;
-    }
-    tabs.activeTab(tab);
+                tab = {};
+                tab.title = e.sender.text;
+                tab.name = e.sender.name;
+                tab.tooltip = e.sender.menuTooltip;
+                tab.showCloseButton = true;
+                tabs.addTab(tab);
+
+                addedTabs[e.sender.name] = e.sender.menuNameAlt + '$$' +e.sender.menuTooltip;
+            }                    
+            tabs.activeTab(tab);
+            var el = tabs.getTabBodyEl(tab);
+            $(el).html(text);
+        }
+    });    
+    
 }
 
 function onButtonClick(e) {
@@ -213,9 +227,18 @@ function onButtonClick(e) {
 }
 
 function onBeforeTabChange(e) {//e.tab is the target tab
-    var tabs = mini.get(e.sender.id);    
-    var el = tabs.getTabBodyEl(tabs.getActiveTab());
-    el.innerHTML = "";
+    e.cancel = true;
+    var tabs = mini.get(e.sender.id);
+    
+    $.ajax({
+        url: e.tab.name, //name is url            
+        dataType: 'text',
+        success: function (text) {
+                var el = tabs.getTabBodyEl(e.tab);
+                $(el).html(text);
+                tabs.activeTab(e.tab);
+        }
+    });
 }
 
 function onTabChange(e) {
@@ -227,15 +250,15 @@ function onTabChange(e) {
     } else {}
     
     var el = tabs.getTabBodyEl(e.tab);
-    $.ajax({
-        url: e.tab.name, //name is url            
-        dataType: 'text',
-        success: function (text) {
-            if (text){
-                $(el).html(text);
+    if (!$(el).html()){  //new tab doesn't trigger event tabchange. and if new tab html is null, init it. 
+        $.ajax({
+            url: e.tab.name, //name is url            
+            dataType: 'text',
+            success: function (text) {
+                    $(el).html(text);
             }
-        }
-    });
+        });
+    }
 }
 
 function onTabClose(e) {
@@ -245,7 +268,7 @@ function onTabClose(e) {
 
 function onpreload(e){
     try{
-        var json= JSON.parse(e.text);//ajax return is not a json
+        var json= JSON.parse(e.text);// if ajax return is not a json,
     }catch(error){
         $("#dynamicJS").html(e.text);
     }
@@ -501,28 +524,28 @@ function selectAtleastOne(items){
 }
 
 function createRecord(title,width,height,url){
-    var win = mini.open({
-        title: am.Create + " - " + title,
-        showModal: false,showMaxButton:true,showCollapseButton:true,allowResize:true,allowDrag:true,showFooter:true,
-        footerStyle:"text-align:left; padding:2px;",
-        width: width,
-        height: height
-    });
-    stepWindow(win.id);
-
  $.ajax({
         url: url + "?action=create",
         type: "get",
         dataType:"text",
         success: function (text) {
-            if (text){
-                $(win.getBodyEl()).html(text);
-                var formId = win.getBodyEl().getElementsByClassName("form")[0].id;
-                var footer ='<a class="mini-button" onclick="saveForm(\''+formId+'\')">' + am.Save + '</a>';
-                    footer +=' ';
-                    footer +='<a class="mini-button" onclick="closeWindow(\''+win.id+'\')">' + am.Close + '</a>';
-                win.setFooter(footer);   
-            }
+
+             var win = mini.open({
+                title: am.Create + " - " + title,
+                showModal: false,showMaxButton:true,showCollapseButton:true,allowResize:true,allowDrag:true,showFooter:true,
+                footerStyle:"text-align:left; padding:2px;",
+                width: width,
+                height: height
+            });
+            stepWindow(win.id);
+            
+            $(win.getBodyEl()).html(text);
+            var formId = win.getBodyEl().getElementsByClassName("form")[0].id;
+            var footer ='<a class="mini-button" onclick="saveForm(\''+formId+'\')">' + am.Save + '</a>';
+                footer +=' ';
+                footer +='<a class="mini-button" onclick="closeWindow(\''+win.id+'\')">' + am.Close + '</a>';
+            win.setFooter(footer);   
+
         }
     });  
 }
@@ -534,14 +557,6 @@ function editRecord(id,title,width,height,url,pks){
     if (!selectOnlyOne(items)){
         return;
     }
-    var win = mini.open({
-    title: am.Edit + " - " + title,
-    showModal: false,showMaxButton:true,showCollapseButton:true,allowResize:true,allowDrag:true,showFooter:true,
-    footerStyle:"text-align:left; padding:2px;",
-    width: width,
-    height: height
-   });
-   stepWindow(win.id);
    
    var pkstr='';
    for(i = 0,len=pks.length; i < len; i++) {
@@ -553,14 +568,23 @@ function editRecord(id,title,width,height,url,pks){
         type: "get",
         dataType:"text",
         success: function (text) {
-            if (text){
-                $(win.getBodyEl()).html(text);
-                var formId = win.getBodyEl().getElementsByClassName("form")[0].id;
-                var footer ='<a class="mini-button" onclick="saveForm(\''+formId+'\')">' + am.Save + '</a>';
-                    footer +=' ';
-                    footer +='<a class="mini-button" onclick="closeWindow(\''+win.id+'\')">' + am.Close + '</a>';
-                win.setFooter(footer); 
-            }
+
+             var win = mini.open({
+                 title: am.Edit + " - " + title,
+                 showModal: false,showMaxButton:true,showCollapseButton:true,allowResize:true,allowDrag:true,showFooter:true,
+                 footerStyle:"text-align:left; padding:2px;",
+                 width: width,
+                 height: height
+            });
+            stepWindow(win.id);
+
+            $(win.getBodyEl()).html(text);
+            var formId = win.getBodyEl().getElementsByClassName("form")[0].id;
+            var footer ='<a class="mini-button" onclick="saveForm(\''+formId+'\')">' + am.Save + '</a>';
+                footer +=' ';
+                footer +='<a class="mini-button" onclick="closeWindow(\''+win.id+'\')">' + am.Close + '</a>';
+            win.setFooter(footer); 
+
         }
     });
 }
@@ -572,14 +596,6 @@ function showRecord(id,title,width,height,url,pks){
     if (!selectOnlyOne(items)){
        return ;    
     }
-    var win = mini.open({
-    title: am.Show + " - " + title,
-    showModal: false,showMaxButton:true,showCollapseButton:true,allowResize:true,allowDrag:true,showFooter:true,
-    footerStyle:"text-align:left; padding:2px;",
-    width: width,
-    height: height
-   });
-   stepWindow(win.id);
    
    var pkstr='';
    for(i = 0,len=pks.length; i < len; i++) {
@@ -591,11 +607,20 @@ function showRecord(id,title,width,height,url,pks){
         type: "get",
         dataType:"text",
         success: function (text) {
-            if (text){
-               $(win.getBodyEl()).html(text);
-                var footer ='<a class="mini-button" onclick="closeWindow(\''+win.id+'\')">' + am.Close + '</a>';
-                win.setFooter(footer); 
-            }                
+
+            var win = mini.open({
+                title: am.Show + " - " + title,
+                showModal: false,showMaxButton:true,showCollapseButton:true,allowResize:true,allowDrag:true,showFooter:true,
+                footerStyle:"text-align:left; padding:2px;",
+                width: width,
+                height: height
+            });
+            stepWindow(win.id);
+
+            $(win.getBodyEl()).html(text);
+            var footer ='<a class="mini-button" onclick="closeWindow(\''+win.id+'\')">' + am.Close + '</a>';
+            win.setFooter(footer); 
+            
         }
     });   
 }
@@ -624,7 +649,7 @@ function deleteRecord(id,url,pks,token){
                 key: mini.encode(key)
             },
             success: function (data) {
-                if (data){
+
                         if (data.success) {
                         mini.showTips({content: data.msg,state: "success", x: "center", y: "center", timeout: 2000});
                              if (control.type == "datagrid"){
@@ -638,7 +663,7 @@ function deleteRecord(id,url,pks,token){
                     } else {
                         mini.alert(data.msg);
                     }
-                }
+
             }
         });       
 }
@@ -655,10 +680,10 @@ function relationRecord(id,url,pks,vals,token){
   for (var i = 0; i < items.length; ++i) {
       var obj = {};
       for(k = 0,len=pks.length; k < len; k++) {//is array
-                obj[pks[k]]=items[i][pks[k]];
+          obj[pks[k]]=items[i][pks[k]];
       }
       for (var k in vals){//is object
-                obj[k]=vals[k];
+          obj[k]=vals[k];
       }
       key.push(obj);
   }
@@ -672,7 +697,7 @@ function relationRecord(id,url,pks,vals,token){
           key: mini.encode(key)
       },
       success: function (data) {
-            if (data){
+
               if (data.success) {
                   mini.showTips({content: data.msg,state: "success", x: "center", y: "center", timeout: 2000});
                   var ctls = mini.getsByName(control.name);
@@ -680,22 +705,12 @@ function relationRecord(id,url,pks,vals,token){
               } else {
                   mini.alert(data.msg);
               }
-           }
+
       }
   }); 
 }
 
 function relationWindow(obj,title,width,height,dataUrl,actionUrl,pks,vals,token){
-      var win = mini.open({
-            title: am.Assign + " - " + title,
-            showModal: true,allowResize:true,allowDrag:true,showFooter:true,
-            footerStyle:"text-align:left; padding:2px;",
-            width: width,
-            height: height
-        });
-     
-    // win.show(obj,{xAlign:"left",yAlign:"Above"});
-     
      var pkstr='';
      for (var i in vals){//vals is object
            pkstr += "&" + i + "=" + vals[i];
@@ -705,112 +720,68 @@ function relationWindow(obj,title,width,height,dataUrl,actionUrl,pks,vals,token)
         type: "get",
         dataType:"text",
         success:function(text){
-            if (text){            
-                $(win.getBodyEl()).html(text);
-                var controlId = win.getBodyEl().getElementsByClassName("mini-datagrid")[0].id;
-                var footer ='<a class="mini-button" onclick="relationRecord(\''+controlId+'\',\''+actionUrl+'\','+mini.encode(pks).replace(/\"/g, "'")+','+mini.encode(vals).replace(/\"/g, "'")+',\''+token+'\')">'+am.Assign+'</a>';
-                    footer +=' ';
-                    footer +='<a class="mini-button" onclick="closeWindow(\''+win.id+'\')">'+am.Close+'</a>';
-                win.setFooter(footer);            
-            }
+
+            var win = mini.open({
+                title: am.Assign + " - " + title,
+                showModal: true,allowResize:true,allowDrag:true,showFooter:true,
+                footerStyle:"text-align:left; padding:2px;",
+                width: width,
+                height: height
+            }); 
+            
+            $(win.getBodyEl()).html(text);
+            var controlId = win.getBodyEl().getElementsByClassName("mini-datagrid")[0].id;
+            var footer ='<a class="mini-button" onclick="relationRecord(\''+controlId+'\',\''+actionUrl+'\','+mini.encode(pks).replace(/\"/g, "'")+','+mini.encode(vals).replace(/\"/g, "'")+',\''+token+'\')">'+am.Assign+'</a>';
+                footer +=' ';
+                footer +='<a class="mini-button" onclick="closeWindow(\''+win.id+'\')">'+am.Close+'</a>';
+            win.setFooter(footer);            
+
           }
     });
 }
 
-function moveUp(id,url,pks,vals,token) {
+function editRelation(id,url,slaverPks,masterPkVals,field,token) {
   var control = mini.get(id);
-  var items = control.getSelecteds();
+  var itemsAllfield = control.getChanges("modified");
+  var items = control.getChanges("modified",true);//only changed fields
+  var key=[];
   
-  if (selectAtleastOne(items)){
-        for (var i = 0; i < items.length; ++i) {
-            var obj = {};
-            for(k = 0,len=pks.length; k < len; k++) {
-                obj[pks[k]]=items[i][pks[k]];
-            }
-            for (var k in vals){//is object
-                           obj[k]=vals[k];
-            }           
-            key.push(obj);            
+
+    for (var i = 0; i < items.length; ++i) {
+        var obj = {};
+        for(k = 0,len=slaverPks.length; k < len; k++) {
+            obj[slaverPks[k]]=itemsAllfield[i][slaverPks[k]];
+        }
+        for (var k in masterPkVals){//is object
+            obj[k]=masterPkVals[k];
         }
 
-           $.ajax({
-              url: url,
-              type: "post",
-              dataType: "json",
-              data: {
-                  authenticity_token: token,
-                  key: mini.encode(key)
-              },
-              success: function (data) {
-                  if (data){
-                      if (data.success) {
-                            for (var i = 0, l = items.length; i < l; i++) {
-                                  var item = items[i];
-                                  var index = control.indexOf(item);
-                                  if (control.type == "datagrid"){
-                                     control.moveRow(item, index - 1);
-                                  }else if(control.type == "tree"){
-                                     control.moveNode(item, index - 1);
-                                  }else if(control.type == "listbox"){
-                                     control.moveItem(item, index - 1);
-                                  }
-                            }
-                        mini.showTips({content: data.msg,state: "success",x: "center", y: "center",timeout: 2000});
-                      } else {
-                          mini.alert(data.msg);
-                      }
-                    }
-              }
-            });
+        if (typeof(items[i][field])!="undefined"){ //items contains the field
+            obj[field] = items[i][field];                  
+            key.push(obj); 
+        }          
     }
-}
 
-function moveDown(id,url,pks,vals,token) {
-  var control = mini.get(id);
-  var items = control.getSelecteds();
-  
-  if (selectAtleastOne(items)){
-        for (var i = 0; i < items.length; ++i) {
-            var obj = {};
-            for(k = 0,len=pks.length; k < len; k++) {
-                obj[pks[k]]=items[i][pks[k]];
-            }
-            for (var k in vals){//is object
-                           obj[k]=vals[k];
-            }           
-            key.push(obj);           
-        }
+   $.ajax({
+      url: url,
+      type: "post",
+      dataType: "json",
+      data: {
+          authenticity_token: token,
+          key: mini.encode(key)
+      },
+      success: function (data) {
 
-           $.ajax({
-              url: url,
-              type: "post",
-              dataType: "json",
-              data: {
-                  authenticity_token: token,
-                  key: mini.encode(key)
-              },
-              success: function (data) {
-                  if (data){
-                      if (data.success) {
-                            for (var i = items.length - 1; i >= 0; i--) {
-                                  var item = items[i];
-                                  var index = control.indexOf(item);
-                                  if (control.type == "datagrid"){
-                                     control.moveRow(item, index + 1);
-                                  }else if(control.type == "tree"){
-                                     control.moveNode(item, index + 1);
-                                  }else if(control.type == "listbox"){
-                                     control.moveItem(item, index + 1);
-                                  }
-                              }
-                        mini.showTips({content: data.msg,state: "success",x: "center", y: "center",timeout: 2000});
-                      } else {
-                          mini.alert(data.msg);
-                      }
-                    }
+              if (data.success) {
+                control.reload();
+                mini.showTips({content: data.msg,state: "success",x: "center", y: "center",timeout: 2000});
+              } else {
+                  mini.alert(data.msg);
               }
-            });
-    }
+
+      }
+    });
+
 }
 
 function refreshPage()
@@ -824,4 +795,4 @@ function refreshPage()
    
 }
 
-//var refreshInterval=setInterval("refreshPage()",5000);  //方法好像有问题,不能删除控件.
+//var refreshInterval=setInterval("refreshPage()",5000);  

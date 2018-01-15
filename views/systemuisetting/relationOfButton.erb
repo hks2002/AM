@@ -1,7 +1,7 @@
 <%
 QString tid = tId();
 QVariant buttonId = variant("buttonId");
-QVariant action = variant("action").toString();
+QString action = variant("action").toString();
 
 QVariantMap qMapOut;
 qMapOut.insert("tid",tid);
@@ -13,7 +13,7 @@ qMapOut.insert("buttonId",buttonId);
         <% if (accessAllow("SystemUIsetting/assignButtonToTodoList")){ %>
             <% if (action=="edit") { %>
             <a class="mini-button" plain="true" tooltip="<%== UI("Assign") %>" iconCls="icon-assign" 
-            onclick="relationWindow(this,'<%== UI("TodoList") %>',400,400,'/PartialService/relationTodoListByButton?assigned=unassigned','/SystemUIsetting/assignButtonToTodoList',['todoListId'],{'buttonId':'<%== buttonId %>'},'<%== csrfVal() %>')"></a>
+            onclick="relationWindow(this,'<%== UI("TodoList") %>',400,400,'/PartialService/relationTodoListByButton?relation=unassigned','/SystemUIsetting/assignButtonToTodoList',['todoListId'],{'buttonId':'<%== buttonId %>'},'<%== csrfVal() %>')"></a>
             <% } %>
         <% } %>
         <% if (accessAllow("SystemUIsetting/unassignButtonFromTodoList")) { %>

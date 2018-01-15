@@ -24,6 +24,7 @@ public:
         UpdatedBy,
     };
 
+public slots:
     QList<int> primaryKeyIndexList() const override { QList<int> pkidxList; return pkidxList<<EventId<<DeptId; }
     int autoValueIndex() const override { return -1; }
     QList<int> foreignKeyIndexList() const { QList<int> fkIdxList;return fkIdxList<<DeptId<<EventId; }
@@ -44,5 +45,6 @@ private:    /*** Don't modify below this line ***/
     Q_PROPERTY(QString updated_by READ getupdated_by WRITE setupdated_by)
     T_DEFINE_PROPERTY(QString, updated_by)
 };
+
 
 #endif // EVTDEPTOBJECT_H

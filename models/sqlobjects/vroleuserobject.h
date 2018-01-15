@@ -30,6 +30,7 @@ public:
         FullNameEn,
     };
 
+public slots:
     QList<int> primaryKeyIndexList() const override { QList<int> pkidxList; return pkidxList; }
     QList<int> foreignKeyIndexList() const { QList<int> fkIdxList; return fkIdxList; }
     int autoValueIndex() const override { return -1; }
@@ -56,5 +57,6 @@ private:    /*** Don't modify below this line ***/
     Q_PROPERTY(QString full_name_en READ getfull_name_en WRITE setfull_name_en)
     T_DEFINE_PROPERTY(QString, full_name_en)
 };
+
 
 #endif // VROLEUSEROBJECT_H

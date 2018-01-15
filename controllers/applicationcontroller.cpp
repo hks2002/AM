@@ -30,10 +30,18 @@ void ApplicationController::staticInitialize()
     auto list = act.getAll();
 
     for (ActionApp &a : list) {
-        zh.insert(QString("ACT_").append(a.actionCd()), QString::fromUtf8(a.actionNameZh().toLatin1().data()));
-        en.insert(QString("ACT_").append(a.actionCd()), QString::fromUtf8(a.actionNameEn().toLatin1().data()));
-        zh.insert(QString("TP_").append(a.actionCd()), QString::fromUtf8(a.actionTooltip().toLatin1().data()));
-        en.insert(QString("TP_").append(a.actionCd()), QString::fromUtf8(a.actionTooltip().toLatin1().data()));
+        if (!a.actionNameZh().isEmpty()) {
+            zh.insert(QString("ACT_").append(a.actionCd()), QString::fromUtf8(a.actionNameZh().toLatin1().data()));
+        }
+
+        if (!a.actionNameEn().isEmpty()) {
+            en.insert(QString("ACT_").append(a.actionCd()), QString::fromUtf8(a.actionNameEn().toLatin1().data()));
+        }
+
+        if (!a.actionTooltip().isEmpty()) {
+            zh.insert(QString("TP_").append(a.actionCd()), QString::fromUtf8(a.actionTooltip().toLatin1().data()));
+            en.insert(QString("TP_").append(a.actionCd()), QString::fromUtf8(a.actionTooltip().toLatin1().data()));
+        }
     }
 }
 
@@ -53,6 +61,7 @@ bool ApplicationController::preFilter()
         QString XMLHttpRequest = Tf::currentContext()->currentController()->httpRequest().header().rawHeader("X-Requested-With");
 
         if (XMLHttpRequest == "XMLHttpRequest") {//is ajax request
+            setStatusCode(401);
             renderTemplate("Welcome/signIn");
         } else { //Normal request
             redirect(url("Welcome", "signIn"));

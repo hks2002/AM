@@ -44,6 +44,7 @@ public:
         Action,
     };
 
+public slots:
     QList<int> primaryKeyIndexList() const override { QList<int> pkidxList; return pkidxList; }
     QList<int> foreignKeyIndexList() const { QList<int> fkIdxList; return fkIdxList; }
 
@@ -85,5 +86,6 @@ private:    /*** Don't modify below this line ***/
     Q_PROPERTY(QString action READ getaction WRITE setaction)
     T_DEFINE_PROPERTY(QString, action)
 };
+
 
 #endif // VMENUSGROUPMENUOBJECT_H

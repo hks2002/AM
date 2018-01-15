@@ -36,6 +36,7 @@ public:
         UpdatedBy,
     };
 
+public slots:
     QList<int> primaryKeyIndexList() const override { QList<int> pkidxList; return pkidxList<<RfqId<<VendorId; }
     int autoValueIndex() const override { return -1; }
     QList<int> foreignKeyIndexList() const { QList<int> fkIdxList;return fkIdxList<<TradeTermCd<<PaymentTermsCd<<TransportorId<<CurrencyId<<VendorId<<RfqId; }
@@ -68,5 +69,6 @@ private:    /*** Don't modify below this line ***/
     Q_PROPERTY(QString updated_by READ getupdated_by WRITE setupdated_by)
     T_DEFINE_PROPERTY(QString, updated_by)
 };
+
 
 #endif // RFQVENDOROBJECT_H

@@ -28,6 +28,7 @@ public:
         UpdatedBy,
     };
 
+public slots:
     QList<int> primaryKeyIndexList() const override { QList<int> pkidxList; return pkidxList<<WorkTypeId; }
     int autoValueIndex() const override { return WorkTypeId; }
     QList<int> foreignKeyIndexList() const { QList<int> fkIdxList;return fkIdxList; }
@@ -52,5 +53,6 @@ private:    /*** Don't modify below this line ***/
     Q_PROPERTY(QString updated_by READ getupdated_by WRITE setupdated_by)
     T_DEFINE_PROPERTY(QString, updated_by)
 };
+
 
 #endif // WORKTYPEOBJECT_H

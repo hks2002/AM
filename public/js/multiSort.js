@@ -1,4 +1,9 @@
-﻿var MultiSort = function (grid) {
+﻿/////////////////////////////////////////////////
+// 多级排序 
+// 1) grid:     allowSortColumn="false"
+// 2) var sorter = new MultiSort(grid);
+/////////////////////////////////////////////////
+var MultiSort = function (grid) {
 	var me = this;
 	me.grid = grid;
 	me.sortFields = [];
@@ -113,7 +118,9 @@ MultiSort.prototype = {
 				var sortCls = o.dir == "asc" ? "mini-grid-asc" : "mini-grid-desc";
 				$(el).removeClass("mini-grid-asc mini-grid-desc").addClass(sortCls);
 				$(el).find(".mini-grid-sortIcon").remove();
+                $(el).find(".mini-grid-sortNumber").remove();
 				$(el).find(".mini-grid-headerCell-inner").append('<span class="mini-grid-sortIcon"></span>');
+                $(el).find(".mini-grid-headerCell-inner").append('<span class="mini-grid-sortNumber" style="display:inline">'+(i+1)+'</span>');
 			}
 		}
 		syncSortIcon();

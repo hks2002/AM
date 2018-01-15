@@ -76,6 +76,7 @@ public:
         UpdatedBy,
     };
 
+public slots:
     QList<int> primaryKeyIndexList() const override { QList<int> pkidxList; return pkidxList<<ReqPartId; }
     int autoValueIndex() const override { return ReqPartId; }
     QList<int> foreignKeyIndexList() const { QList<int> fkIdxList;return fkIdxList<<ReqTypeCd<<ReqPriorityCd<<PartNoId<<AssmblId<<AssmblBomId<<StockId<<LocId<<InvNoId<<PartProviderTypeCd<<AccountId<<SchedId<<SchedInstPartId<<SchedPartId<<ShipmentLineId<<PoId<<PoLineId<<CsgnVendorId<<AssignedTo; }
@@ -148,5 +149,6 @@ private:    /*** Don't modify below this line ***/
     Q_PROPERTY(QString updated_by READ getupdated_by WRITE setupdated_by)
     T_DEFINE_PROPERTY(QString, updated_by)
 };
+
 
 #endif // REQPARTOBJECT_H

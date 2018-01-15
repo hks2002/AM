@@ -2,32 +2,33 @@
 QString lang = httpRequest().cookie("lang");
 QString tid = variant("tid").toString().isEmpty() ? tId(): variant("tid").toString();
 QString buttonId = httpRequest().queryItemValue("buttonId").isEmpty()? variant("buttonId").toString() : httpRequest().queryItemValue("buttonId");
-QString assigned = httpRequest().queryItemValue("assigned").isEmpty() ? "assigned" : httpRequest().queryItemValue("assigned");
+QString relation = httpRequest().queryItemValue("relation").isEmpty() ? "assigned" : httpRequest().queryItemValue("relation");
 
-QString fields = lang == "zh" ? "todoListId todoListCd todoListNameZh" : "todoListId todoListCd todoListNameEn";
-QString sortField ="todoListCd";
-QString key ="{'buttonId':'" + buttonId + "'}";
+QString relationKey ="{'buttonId':'" + buttonId + "'}";
 
 %>
 <div class="mini-fit">
 <div id="relationTodoListByButton<%== tid %>" name="relationTodoList" class="mini-datagrid" style="width:375px;height:100%;" 
-autoLoad="true" showPager="false" showEmptyText="true" multiSelect="true" onpreload="onpreload" 
-showcheckbox="true" multiselect="true" url="/DataService/Search/TodoList/TodoListButton/<%== assigned %>?searchMode=all" ajaxType="Post" 
-ajaxOptions="{data:{key:mini.encode(<%== key %>),fields:'<%== fields %>',sortField:'<%== sortField %>'}}" >
+showPager="false" showEmptyText="true" multiSelect="true" onpreload="onpreload" allowSortColumn="false"
+url="/DataService/Search/<%== relation %>TodoListByButton?searchMode=all&relation=<%== relation %>" sortField="todoListCd" 
+ajaxOptions="{data:{relationKey:mini.encode(<%== relationKey %>)}}" >
   <div property="columns">
     <div type="indexcolumn" width="25"></div>
     <div type="checkcolumn" width="25"></div>
     <div visible="false" field="todoListId"></div>
-    <div header="<%== UI("TODOLISTCD") %>" field="<%== "todoListCd" %>" ></div>
-    <div header="<%== lang == "zh" ? UI("TODOLISTNAMEZH") : UI("TODOLISTNAMEEN") %>" field="<%== lang == "zh" ? "todoListNameZh" : "todoListNameEn" %>" width="100%" ></div>
+    <div header="<%== UI("TODOLISTCD") %>" field="<%== "todoListCd" %>" allowsort="true"></div>
+    <div header="<%== lang == "zh" ? UI("TODOLISTNAMEZH") : UI("TODOLISTNAMEEN") %>" field="<%== lang == "zh" ? "todoListNameZh" : "todoListNameEn" %>" width="100%" allowsort="true"></div>
   </div>
 </div>
 </div>
 <script type="text/javascript">
   mini.parse();
   var grid = mini.get("relationTodoListByButton<%== tid %>");
+  var sorter = new MultiSort(grid);
+  sorter.sort([{'field':'todoListCd'}]);
+  
   grid.on("drawcell", function (e) {
-    if (e.field) {
+    if (e.field=="todoListCd") {
           e.cellHtml = '<a href="javascript:showRecord(\'relationTodoListByButton<%== tid %>\',\'<%== UI("TodoList") %>\',650,500,\'/PartialService/formTodoList?action=show\',[\'todoListId\'])">' + e.value + '</a>';
         }
   });

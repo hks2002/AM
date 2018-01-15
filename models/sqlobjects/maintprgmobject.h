@@ -46,6 +46,7 @@ public:
         UpdatedBy,
     };
 
+public slots:
     QList<int> primaryKeyIndexList() const override { QList<int> pkidxList; return pkidxList<<MaintPrgmId; }
     int autoValueIndex() const override { return MaintPrgmId; }
     QList<int> foreignKeyIndexList() const { QList<int> fkIdxList;return fkIdxList<<LockedBy<<ActivedBy<<MaintPrgmStatusCd<<MaintPrgmDefnId; }
@@ -88,5 +89,6 @@ private:    /*** Don't modify below this line ***/
     Q_PROPERTY(QString updated_by READ getupdated_by WRITE setupdated_by)
     T_DEFINE_PROPERTY(QString, updated_by)
 };
+
 
 #endif // MAINTPRGMOBJECT_H
