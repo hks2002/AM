@@ -6,6 +6,7 @@ QString action = variant("action").toString();
 QVariantMap qMapOut;
 qMapOut.insert("tid",tid);
 qMapOut.insert("todoListId",todoListId);
+qMapOut.insert("action",action);
 %>
 <div id="relationOfTodoList<%== tid %>" class="mini-tabs" activeindex="0" style="width:100%;height:100%;" bodystyle="border:0;">
   <div title='<%== UI("Assigned Tabs") %>'>

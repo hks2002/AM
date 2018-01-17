@@ -2,7 +2,10 @@
 
 TodoListTabValidator::TodoListTabValidator() : TFormValidator()
 {
-    // Set the rules below
-    //setRule("xxxx", Tf::MaxLength, 20);
-    //  :
+    /* Rule will auto add Tf::isRequired,Disable it as required.*/
+
+    //setRule("tabOrder", Tf::Required, false);
+
+ 
+
 }

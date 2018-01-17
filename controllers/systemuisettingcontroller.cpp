@@ -63,85 +63,314 @@ void SystemUIsettingController::searchTodoList()
 
 void SystemUIsettingController::createButton()
 {
+    if (boolean(CFG("UICODE_DUPLICATE"))) {
+        auto varMaps = httpRequest().formItems();
+        TSqlORMapper<ButtonObject> mapper;
+        TCriteria crt(ButtonObject::ButtonCd, varMaps.value("buttunCd"));
+        auto sqlobj = mapper.findFirst(crt);
+
+        if (!sqlobj.isNull()) {
+            renderJson(jsonObj(false, UI("Already exists.")));
+            return;
+        }
+    }
+
     DataServiceController::createRecord<Button, ButtonValidator>(dynamic_cast<ApplicationController *>(this));
 }
 
 void SystemUIsettingController::createMenu()
 {
+    auto varMaps = httpRequest().formItems();
+    TSqlORMapper<MenuObject> mapper;
+    TCriteria crt(MenuObject::MenuCd, varMaps.value("menuCd"));
+    auto sqlobj = mapper.findFirst(crt);
+
+    if (!sqlobj.isNull()) {
+        renderJson(jsonObj(false, UI("Already exists.")));
+        return;
+    }
+
     DataServiceController::createRecord<Menu, MenuValidator>(dynamic_cast<ApplicationController *>(this));
 }
 
 void SystemUIsettingController::createMenusGroup()
 {
+    auto varMaps = httpRequest().formItems();
+    TSqlORMapper<MenusGroupObject> mapper;
+    TCriteria crt(MenusGroupObject::MenusGroupCd, varMaps.value("menusGroupCd"));
+    auto sqlobj = mapper.findFirst(crt);
+
+    if (!sqlobj.isNull()) {
+        renderJson(jsonObj(false, UI("Already exists.")));
+        return;
+    }
+
     DataServiceController::createRecord<MenusGroup, MenusGroupValidator>(dynamic_cast<ApplicationController *>(this));
 }
 
 void SystemUIsettingController::createTab()
 {
+    auto varMaps = httpRequest().formItems();
+    TSqlORMapper<TabObject> mapper;
+    TCriteria crt(TabObject::TabCd, varMaps.value("tabCd"));
+    auto sqlobj = mapper.findFirst(crt);
+
+    if (!sqlobj.isNull()) {
+        renderJson(jsonObj(false, UI("Already exists.")));
+        return;
+    }
+
     DataServiceController::createRecord<Tab, TabValidator>(dynamic_cast<ApplicationController *>(this));
 }
 
 void SystemUIsettingController::createTodoList()
 {
+    auto varMaps = httpRequest().formItems();
+    TSqlORMapper<TodoListObject> mapper;
+    TCriteria crt(TodoListObject::TodoListCd, varMaps.value("todoListCd"));
+    auto sqlobj = mapper.findFirst(crt);
+
+    if (!sqlobj.isNull()) {
+        renderJson(jsonObj(false, UI("Already exists.")));
+        return;
+    }
+
     DataServiceController::createRecord<TodoList, TodoListValidator>(dynamic_cast<ApplicationController *>(this));
 }
 
 void SystemUIsettingController::deleteButton()
 {
-    DataServiceController::deleteRecord<Button, ButtonObject>(dynamic_cast<ApplicationController *>(this),
+    QString key  = httpRequest().formItemValue("key");
+    QJsonArray array = jsonArray(key);
+
+    if (array.isEmpty()) {
+        renderJson(jsonObj(false, UI("Error Occurred.")));
+        return;
+    }
+
+    for (QJsonValue jsonValue : array) {
+        QJsonObject obj = jsonValue.toObject();
+        {
+            TSqlORMapper<TodoListButtonObject> mapper;
+            TCriteria crt(TodoListButtonObject::ButtonId, hmacVal(obj.value("buttonId")));
+            auto sqlobj = mapper.findFirst(crt);
+
+            if (!sqlobj.isNull()) {
+                renderJson(jsonObj(false, UI("Already assigned to TodoList.")));
+                return;
+            }
+        }
+    }
+
+    DataServiceController::deleteRecord<ButtonObject>(dynamic_cast<ApplicationController *>(this),
             QStringList() << "buttonId");
 }
 
 void SystemUIsettingController::deleteMenu()
 {
-    DataServiceController::deleteRecord<Menu, MenuObject>(dynamic_cast<ApplicationController *>(this),
+    QString key  = httpRequest().formItemValue("key");
+    QJsonArray array = jsonArray(key);
+
+    if (array.isEmpty()) {
+        renderJson(jsonObj(false, UI("Error Occurred.")));
+        return;
+    }
+
+    for (QJsonValue jsonValue : array) {
+        QJsonObject obj = jsonValue.toObject();
+        {
+            TSqlORMapper<MenusGroupMenuObject> mapper;
+            TCriteria crt(MenusGroupMenuObject::MenuId, hmacVal(obj.value("menuId")));
+            auto sqlobj = mapper.findFirst(crt);
+
+            if (!sqlobj.isNull()) {
+                renderJson(jsonObj(false, UI("Already assigned to MenusGroup.")));
+                return;
+            }
+        }
+    }
+
+    DataServiceController::deleteRecord<MenuObject>(dynamic_cast<ApplicationController *>(this),
             QStringList() << "menuId");
 }
 
 void SystemUIsettingController::deleteMenusGroup()
 {
-    DataServiceController::deleteRecord<MenusGroup, MenusGroupObject>(dynamic_cast<ApplicationController *>(this),
+    QString key  = httpRequest().formItemValue("key");
+    QJsonArray array = jsonArray(key);
+
+    if (array.isEmpty()) {
+        renderJson(jsonObj(false, UI("Error Occurred.")));
+        return;
+    }
+
+    for (QJsonValue jsonValue : array) {
+        QJsonObject obj = jsonValue.toObject();
+        {
+            TSqlORMapper<MenusGroupMenuObject> mapper;
+            TCriteria crt(MenusGroupMenuObject::MenusGroupId, hmacVal(obj.value("menusGroupId")));
+            auto sqlobj = mapper.findFirst(crt);
+
+            if (!sqlobj.isNull()) {
+                renderJson(jsonObj(false, UI("Already assigned to Menu.")));
+                return;
+            }
+        }
+    }
+
+    DataServiceController::deleteRecord<MenusGroupObject>(dynamic_cast<ApplicationController *>(this),
             QStringList() << "menusGroupId");
 }
 
 void SystemUIsettingController::deleteTab()
 {
-    DataServiceController::deleteRecord<Tab, TabObject>(dynamic_cast<ApplicationController *>(this),
+    QString key  = httpRequest().formItemValue("key");
+    QJsonArray array = jsonArray(key);
+
+    if (array.isEmpty()) {
+        renderJson(jsonObj(false, UI("Error Occurred.")));
+        return;
+    }
+
+    for (QJsonValue jsonValue : array) {
+        QJsonObject obj = jsonValue.toObject();
+        {
+            TSqlORMapper<TodoListTabObject> mapper;
+            TCriteria crt(TodoListTabObject::TabId, hmacVal(obj.value("tabId")));
+            auto sqlobj = mapper.findFirst(crt);
+
+            if (!sqlobj.isNull()) {
+                renderJson(jsonObj(false, UI("Already assigned to TodoList.")));
+                return;
+            }
+        }
+    }
+
+    DataServiceController::deleteRecord<TabObject>(dynamic_cast<ApplicationController *>(this),
             QStringList() << "tabId");
 }
 
 void SystemUIsettingController::deleteTodoList()
 {
-    DataServiceController::deleteRecord<TodoList, TodoListObject>(dynamic_cast<ApplicationController *>(this),
+    QString key  = httpRequest().formItemValue("key");
+    QJsonArray array = jsonArray(key);
+
+    if (array.isEmpty()) {
+        renderJson(jsonObj(false, UI("Error Occurred.")));
+        return;
+    }
+
+    for (QJsonValue jsonValue : array) {
+        QJsonObject obj = jsonValue.toObject();
+        {
+            TSqlORMapper<TodoListTabObject> mapper;
+            TCriteria crt(TodoListTabObject::TodoListId, hmacVal(obj.value("todoListId")));
+            auto sqlobj = mapper.findFirst(crt);
+
+            if (!sqlobj.isNull()) {
+                renderJson(jsonObj(false, UI("Already assigned to Tab.")));
+                return;
+            }
+        }
+        {
+            TSqlORMapper<TodoListButtonObject> mapper;
+            TCriteria crt(TodoListButtonObject::TodoListId, hmacVal(obj.value("todoListId")));
+            auto sqlobj = mapper.findFirst(crt);
+
+            if (!sqlobj.isNull()) {
+                renderJson(jsonObj(false, UI("Already assigned to Button.")));
+                return;
+            }
+        }
+    }
+
+    DataServiceController::deleteRecord<TodoListObject>(dynamic_cast<ApplicationController *>(this),
             QStringList() << "todoListId");
 }
 
 void SystemUIsettingController::editButton()
 {
+    if (boolean(CFG("UICODE_DUPLICATE"))) {
+        auto varMaps = httpRequest().formItems();
+        TSqlORMapper<ButtonObject> mapper;
+        TCriteria crt(ButtonObject::ButtonCd, varMaps.value("buttunCd"));
+        crt.add(ButtonObject::ButtonId, TSql::NotEqual, hmacVal(varMaps.value("buttunId")));
+        auto sqlobj = mapper.findFirst(crt);
+
+        if (!sqlobj.isNull()) {
+            renderJson(jsonObj(false, UI("Already exists.")));
+            return;
+        }
+    }
+
     DataServiceController::updateRecord<Button, ButtonObject, ButtonValidator>(dynamic_cast<ApplicationController *>(this),
             QStringList() << "buttonId", QStringList());
 }
 
 void SystemUIsettingController::editMenu()
 {
+    auto varMaps = httpRequest().formItems();
+    TSqlORMapper<MenuObject> mapper;
+    TCriteria crt(MenuObject::MenuCd, varMaps.value("menuCd"));
+    crt.add(MenuObject::MenuId, TSql::NotEqual, hmacVal(varMaps.value("menuId")));
+    auto sqlobj = mapper.findFirst(crt);
+
+    if (!sqlobj.isNull()) {
+        renderJson(jsonObj(false, UI("Already exists.")));
+        return;
+    }
+
     DataServiceController::updateRecord<Menu, MenuObject, MenuValidator>(dynamic_cast<ApplicationController *>(this),
             QStringList() << "menuId", QStringList());
 }
 
 void SystemUIsettingController::editMenusGroup()
 {
+    auto varMaps = httpRequest().formItems();
+    TSqlORMapper<MenusGroupObject> mapper;
+    TCriteria crt(MenusGroupObject::MenusGroupCd, varMaps.value("menusGroupCd"));
+    crt.add(MenusGroupObject::MenusGroupId, TSql::NotEqual, hmacVal(varMaps.value("menusGroupId")));
+    auto sqlobj = mapper.findFirst(crt);
+
+    if (!sqlobj.isNull()) {
+        renderJson(jsonObj(false, UI("Already exists.")));
+        return;
+    }
+
     DataServiceController::updateRecord<MenusGroup, MenusGroupObject, MenusGroupValidator>(dynamic_cast<ApplicationController *>(this),
             QStringList() << "menusGroupId", QStringList());
 }
 
 void SystemUIsettingController::editTab()
 {
+    auto varMaps = httpRequest().formItems();
+    TSqlORMapper<TabObject> mapper;
+    TCriteria crt(TabObject::TabCd, varMaps.value("tabCd"));
+    crt.add(TabObject::TabId, TSql::NotEqual, hmacVal(varMaps.value("tabId")));
+    auto sqlobj = mapper.findFirst(crt);
+
+    if (!sqlobj.isNull()) {
+        renderJson(jsonObj(false, UI("Already exists.")));
+        return;
+    }
+
     DataServiceController::updateRecord<Tab, TabObject, TabValidator>(dynamic_cast<ApplicationController *>(this),
             QStringList() << "tabId", QStringList());
 }
 
 void SystemUIsettingController::editTodoList()
 {
+    auto varMaps = httpRequest().formItems();
+    TSqlORMapper<TodoListObject> mapper;
+    TCriteria crt(TodoListObject::TodoListCd, varMaps.value("todoListCd"));
+    crt.add(TodoListObject::TodoListId, TSql::NotEqual, hmacVal(varMaps.value("todoListId")));
+    auto sqlobj = mapper.findFirst(crt);
+
+    if (!sqlobj.isNull()) {
+        renderJson(jsonObj(false, UI("Already exists.")));
+        return;
+    }
+
     DataServiceController::updateRecord<TodoList, TodoListObject, TodoListValidator>(dynamic_cast<ApplicationController *>(this),
             QStringList() << "todoListId", QStringList());
 }
@@ -190,19 +419,19 @@ void SystemUIsettingController::assignMenuToMenusGroup()
 
 void SystemUIsettingController::unassignButtonFromTodoList()
 {
-    DataServiceController::unassignRecord<TodoListButton, TodoListButtonObject>(dynamic_cast<ApplicationController *>(this),
+    DataServiceController::unassignRecord<TodoListButtonObject>(dynamic_cast<ApplicationController *>(this),
             QStringList() << "todoListId" << "buttonId");
 }
 
 void SystemUIsettingController::unassignTabFromTodoList()
 {
-    DataServiceController::unassignRecord<TodoListTab, TodoListTabObject>(dynamic_cast<ApplicationController *>(this),
+    DataServiceController::unassignRecord<TodoListTabObject>(dynamic_cast<ApplicationController *>(this),
             QStringList() << "todoListId" << "tabId");
 }
 
 void SystemUIsettingController::unassignMenuFromMenusGroup()
 {
-    DataServiceController::unassignRecord<MenusGroupMenu, MenusGroupMenuObject>(dynamic_cast<ApplicationController *>(this),
+    DataServiceController::unassignRecord<MenusGroupMenuObject>(dynamic_cast<ApplicationController *>(this),
             QStringList() << "menusGroupId" << "menuId");
 }
 

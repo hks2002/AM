@@ -2,6 +2,13 @@
 
 ManufactValidator::ManufactValidator() : TFormValidator()
 {
-    setRule("ManufactCd", Tf::MaxLength, 16);
-    setRule("ManufactName", Tf::MaxLength, 64);
+    /* Rule will auto add Tf::isRequired,Disable it as required.*/
+
+    //setRule("manufactCd", Tf::Required, false);
+    //setRule("manufactName", Tf::Required, false);
+
+ 
+    setRule("manufactCd", Tf::MaxLength, 16);
+    setRule("manufactName", Tf::MaxLength, 64);
+
 }

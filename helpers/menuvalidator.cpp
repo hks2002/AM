@@ -2,8 +2,17 @@
 
 MenuValidator::MenuValidator() : TFormValidator()
 {
-    setRule("MenuCd", Tf::MaxLength, 64);
-    setRule("MenuName", Tf::MaxLength, 64);
-    setRule("MenuTooltip", Tf::MaxLength, 256);
-    setRule("Url", Tf::MaxLength, 256);
+    /* Rule will auto add Tf::isRequired,Disable it as required.*/
+
+    //setRule("menuCd", Tf::Required, false);
+    //setRule("menuNameZh", Tf::Required, false);
+    //setRule("menuNameEn", Tf::Required, false);
+    setRule("menuTooltip", Tf::Required, false);
+
+
+    setRule("menuCd", Tf::MaxLength, 64);
+    setRule("menuNameZh", Tf::MaxLength, 64);
+    setRule("menuNameEn", Tf::MaxLength, 64);
+    setRule("menuTooltip", Tf::MaxLength, 256);
+
 }

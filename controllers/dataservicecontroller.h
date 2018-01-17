@@ -20,7 +20,7 @@ public:
         }
 
         auto varMaps = ctl->httpRequest().formItems();
-        QString err = mapValidate<V>(varMaps);
+        QString err = validateForm<V>(varMaps);
 
         if (!err.isEmpty()) {
             ctl->XrenderJson(jsonObj(false, err));
@@ -34,7 +34,7 @@ public:
         : ctl->XrenderJson(jsonObj(true, UI("Created Successfully.")));
     }
 
-    template <class M, class O>
+    template <class O>
     static void deleteRecord(ApplicationController *ctl, const QStringList &pklist)
     {
         if (ctl->httpRequest().method() != Tf::Post) {
@@ -43,48 +43,15 @@ public:
         }
 
         QString key  = ctl->httpRequest().formItemValue("key");
-        tDebug() << "key:" << key;
-        QJsonParseError jsonError;
-        QJsonDocument jsonDoc = QJsonDocument::fromJson(key.toLatin1(), &jsonError);
+        QJsonArray array = jsonArray(key);
 
-        if (jsonError.error != QJsonParseError::NoError) {
-            ctl->XrenderJson(jsonObj(false, UI("Key Error.")));
+        if (array.isEmpty()) {
+            ctl->XrenderJson(jsonObj(false, UI("Error Occurred.")));
             return;
         }
 
-        if (jsonDoc.isArray()) {
-            tDebug() << "key is array";
-            QJsonArray array = jsonDoc.array();
-
-            for (QJsonValue jsonValue : array) {
-                tDebug() << "object in array";
-                QJsonObject obj = jsonValue.toObject();
-                QVariantList varlist;
-
-                for (auto &x : pklist) {
-                    varlist << hmacVal(obj.value(x).toString());
-                }
-
-                TSqlORMapper<O> mapper;
-                auto model = M(mapper.findByPrimaryKey(varlist));
-
-                if (model.isNull()) {
-                    ctl->XrenderJson(jsonObj(false, UI("Original data may have been updated/removed by another user.")));
-                    ctl->XrollbackTransaction();
-                    return;
-                }
-
-                if (model.remove()) {} else {
-                    ctl->XrenderJson(jsonObj(false, UI("Delete Failed.")));
-                    ctl->XrollbackTransaction();
-                    return;
-                }
-            }
-
-            ctl->XrenderJson(jsonObj(true, UI("Deleted Successfully.")));
-        } else if (jsonDoc.isObject()) {
-            tDebug() << "key is object";
-            QJsonObject obj = jsonDoc.object();
+        for (QJsonValue jsonValue : array) {
+            QJsonObject obj = jsonValue.toObject();
             QVariantList varlist;
 
             for (auto &x : pklist) {
@@ -92,17 +59,22 @@ public:
             }
 
             TSqlORMapper<O> mapper;
-            auto model = M(mapper.findByPrimaryKey(varlist));
+            O sqlobj = mapper.findByPrimaryKey(varlist);
 
-            if (model.isNull()) {
+            if (sqlobj.isNull()) {
                 ctl->XrenderJson(jsonObj(false, UI("Original data may have been updated/removed by another user.")));
+                ctl->XrollbackTransaction();
                 return;
             }
 
-            model.remove()
-            ? ctl->XrenderJson(jsonObj(true, UI("Deleted Successfully.")))
-            : ctl->XrenderJson(jsonObj(false, UI("Delete Failed.")));
+            if (sqlobj.remove()) {} else {
+                ctl->XrenderJson(jsonObj(false, UI("Delete Failed.")));
+                ctl->XrollbackTransaction();
+                return;
+            }
         }
+
+        ctl->XrenderJson(jsonObj(true, UI("Deleted Successfully.")));
     }
 
     template <class M>
@@ -114,41 +86,16 @@ public:
         }
 
         QString key  = ctl->httpRequest().formItemValue("key");
-        tDebug() << "key:" << key;
-        QJsonParseError jsonError;
-        QJsonDocument jsonDoc = QJsonDocument::fromJson(key.toLatin1(), &jsonError);
+        QJsonArray array = jsonArray(key);
 
-        if (jsonError.error != QJsonParseError::NoError) {
-            ctl->XrenderJson(jsonObj(false, UI("Key Error.")));
+        if (array.isEmpty()) {
+            ctl->XrenderJson(jsonObj(false, UI("Error Occurred.")));
             return;
         }
 
-        if (jsonDoc.isArray()) {
-            tDebug() << "key is array";
-            QJsonArray array = jsonDoc.array();
-
-            for (QJsonValue jsonValue : array) {
-                tDebug() << "object in array";
-                QJsonObject obj = jsonValue.toObject();
-                QVariantMap varMaps;
-
-                for (auto &x : pklist) {
-                    varMaps.insert(x, hmacVal(obj.value(x).toString()));
-                }
-
-                auto model = M::create(varMaps);
-
-                if (model.isNull()) {
-                    ctl->XrenderJson(jsonObj(false, UI("Assign Failed.")));
-                    ctl->XrollbackTransaction();
-                    return;
-                }
-            }
-
-            ctl->XrenderJson(jsonObj(true, UI("Assigned Successfully.")));
-        } else if (jsonDoc.isObject()) {
-            tDebug() << "key is object";
-            QJsonObject obj = jsonDoc.object();
+        for (QJsonValue jsonValue : array) {
+            tDebug() << "object in array";
+            QJsonObject obj = jsonValue.toObject();
             QVariantMap varMaps;
 
             for (auto &x : pklist) {
@@ -157,14 +104,17 @@ public:
 
             auto model = M::create(varMaps);
 
-            model.isNull()
-            ? ctl->XrenderJson(jsonObj(false, UI("Assign Failed.")))
-            : ctl->XrenderJson(jsonObj(true, UI("Assigned Successfully.")));
-
+            if (model.isNull()) {
+                ctl->XrenderJson(jsonObj(false, UI("Assign Failed.")));
+                ctl->XrollbackTransaction();
+                return;
+            }
         }
+
+        ctl->XrenderJson(jsonObj(true, UI("Assigned Successfully.")));
     }
 
-    template <class M, class O>
+    template <class O>
     static void unassignRecord(ApplicationController *ctl, const QStringList &pklist)
     {
 
@@ -174,48 +124,16 @@ public:
         }
 
         QString key  = ctl->httpRequest().formItemValue("key");
-        tDebug() << "key:" << key;
-        QJsonParseError jsonError;
-        QJsonDocument jsonDoc = QJsonDocument::fromJson(key.toLatin1(), &jsonError);
+        QJsonArray array = jsonArray(key);
 
-        if (jsonError.error != QJsonParseError::NoError) {
-            ctl->XrenderJson(jsonObj(false, UI("Key Error.")));
+        if (array.isEmpty()) {
+            ctl->XrenderJson(jsonObj(false, UI("Error Occurred.")));
             return;
         }
 
-        if (jsonDoc.isArray()) {
-            tDebug() << "key is array";
-            QJsonArray array = jsonDoc.array();
-
-            for (QJsonValue jsonValue : array) {
-                tDebug() << "object in array";
-                QJsonObject obj = jsonValue.toObject();
-                QVariantList varlist;
-
-                for (auto &x : pklist) {
-                    varlist << hmacVal(obj.value(x).toString());
-                }
-
-                TSqlORMapper<O> mapper;
-                auto model = M(mapper.findByPrimaryKey(varlist));
-
-                if (model.isNull()) {
-                    ctl->XrenderJson(jsonObj(false, UI("Original data may have been updated/removed by another user.")));
-                    ctl->XrollbackTransaction();
-                    return;
-                }
-
-                if (model.remove()) {} else {
-                    ctl->XrenderJson(jsonObj(false, UI("Unassign Failed.")));
-                    ctl->XrollbackTransaction();
-                    return;
-                }
-            }
-
-            ctl->XrenderJson(jsonObj(true, UI("Unassigned Successfully.")));
-        } else if (jsonDoc.isObject()) {
-            tDebug() << "key is object";
-            QJsonObject obj = jsonDoc.object();
+        for (QJsonValue jsonValue : array) {
+            tDebug() << "object in array";
+            QJsonObject obj = jsonValue.toObject();
             QVariantList varlist;
 
             for (auto &x : pklist) {
@@ -223,17 +141,23 @@ public:
             }
 
             TSqlORMapper<O> mapper;
-            auto model = M(mapper.findByPrimaryKey(varlist));
+            O sqlobj = mapper.findByPrimaryKey(varlist);
 
-            if (model.isNull()) {
+            if (sqlobj.isNull()) {
                 ctl->XrenderJson(jsonObj(false, UI("Original data may have been updated/removed by another user.")));
+                ctl->XrollbackTransaction();
                 return;
             }
 
-            model.remove()
-            ? ctl->XrenderJson(jsonObj(true, UI("Unassigned Successfully.")))
-            : ctl->XrenderJson(jsonObj(false, UI("Unassign Failed.")));
+            if (sqlobj.remove()) {} else {
+                ctl->XrenderJson(jsonObj(false, UI("Unassign Failed.")));
+                ctl->XrollbackTransaction();
+                return;
+            }
         }
+
+        ctl->XrenderJson(jsonObj(true, UI("Unassigned Successfully.")));
+
     }
 
     template<class M, class O, class V>
@@ -261,16 +185,9 @@ public:
                 return;
             }
 
-            V validator;
+            QString err = validateForm<V>(varMaps);
 
-            if (!validator.validate(varMaps)) {
-                QStringList errs = validator.errorMessages();
-                QString err;
-
-                for (auto &s : errs) {
-                    err += UI(s).append("\n");
-                }
-
+            if (!err.isEmpty()) {
                 ctl->XrenderJson(jsonObj(false, err));
                 return;
             }
@@ -282,22 +199,16 @@ public:
             : ctl->XrenderJson(jsonObj(false, UI("Update Failed.")));
 
             return;
-        }
+        } else {
 
-        //with key, treat it as not form edit request
-        QString key  = ctl->httpRequest().formItemValue("key");
-        tDebug() << "key:" << key;
-        QJsonParseError jsonError;
-        QJsonDocument jsonDoc = QJsonDocument::fromJson(key.toLatin1(), &jsonError);
+            //with key, treat it as not form edit request
+            QString key  = ctl->httpRequest().formItemValue("key");
+            QJsonArray array = jsonArray(key);
 
-        if (jsonError.error != QJsonParseError::NoError) {
-            tDebug() << "key error:" << jsonError.errorString().toLatin1().data();
-            ctl->XrenderJson(jsonObj(false, UI("Keys Error.")));
-            return;
-        }
-
-        if (jsonDoc.isArray()) {
-            QJsonArray array = jsonDoc.array();
+            if (array.isEmpty()) {
+                ctl->XrenderJson(jsonObj(false, UI("Error Occurred.")));
+                return;
+            }
 
             for (QJsonValue jsonValue : array) {
                 QJsonObject obj = jsonValue.toObject();
@@ -316,13 +227,20 @@ public:
                     return;
                 }
 
-                QVariantMap varMap;
+                QVariantMap varMaps;
 
                 for (auto &x : fieldlist) {
-                    varMap.insert(x, obj.value(x));
+                    varMaps.insert(x, obj.value(x));
                 }
 
-                model.setProperties(varMap);
+                QString err = validateForm<V>(varMaps);
+
+                if (!err.isEmpty()) {
+                    ctl->XrenderJson(jsonObj(false, err));
+                    return;
+                }
+
+                model.setProperties(varMaps);
 
                 if (model.save()) {}
                 else {
@@ -333,34 +251,6 @@ public:
             }
 
             ctl->XrenderJson(jsonObj(true, UI("Updated Successfully.")));
-
-        } else if (jsonDoc.isObject()) {
-            QJsonObject obj = jsonDoc.object();
-            QVariantList varlist;
-
-            for (auto &x : pklist) {
-                varlist << hmacVal(obj.value(x).toString());
-            }
-
-            TSqlORMapper<O> mapper;
-            auto model = M(mapper.findByPrimaryKey(varlist));
-
-            if (model.isNull()) {
-                ctl->XrenderJson(jsonObj(false, UI("Original data may have been updated/removed by another user.")));
-                return;
-            }
-
-            QVariantMap varMap;
-
-            for (auto &x : fieldlist) {
-                varMap.insert(x, obj.value(x));
-            }
-
-            model.setProperties(varMap);
-
-            model.save()
-            ? ctl->XrenderJson(jsonObj(true, UI("Updated Successfully.")))
-            : ctl->XrenderJson(jsonObj(false, UI("Update Failed.")));
         }
     }
 

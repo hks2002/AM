@@ -50,11 +50,23 @@ T_HELPER_EXPORT inline QString CFG(const QString &code)
     return utf8str;
 }
 
+T_HELPER_EXPORT inline bool boolean(const QString &code)
+{
+    QString enable = code.toLower();
+
+    if (enable == "true" || enable == "yes" || enable == "t" || enable == "y" || enable == "1") {
+        return true;
+    } else if (enable == "false" || enable == "no" || enable == "f" || enable == "n" || enable == "0") {
+        return false;
+    } else {
+        tError("boolean configure para error:%s", code.toLatin1().data());
+        return false;
+    }
+}
+
 T_HELPER_EXPORT inline QString hmac(int id)
 {
-    QString enableHash = CFG("ENABLE_HASH").toLower();
-
-    if (enableHash == "true" || enableHash == "yes" || enableHash == "t" || enableHash == "y" || enableHash == "1") {
+    if (boolean(CFG("ENABLE_HASH"))) {
         TSession &s = const_cast<TSession &>(Tf::currentContext()->currentController()->session());
         QString hash = TCryptMac::hash(QString::number(id).toLatin1(), Tf::currentContext()->currentController()->session().id(), TCryptMac::Hmac_Md5).toHex();
         s.insert(hash, id);
@@ -63,14 +75,11 @@ T_HELPER_EXPORT inline QString hmac(int id)
     } else {
         return QString::number(id);
     }
-
 }
 
 T_HELPER_EXPORT inline QString hmac(const QString &cd)
 {
-    QString enableHash = CFG("ENABLE_HASH").toLower();
-
-    if (enableHash == "true" || enableHash == "yes" || enableHash == "t" || enableHash == "y" || enableHash == "1") {
+    if (boolean(CFG("ENABLE_HASH"))) {
         TSession &s = const_cast<TSession &>(Tf::currentContext()->currentController()->session());
         QString hash = TCryptMac::hash(cd.toLatin1(), Tf::currentContext()->currentController()->session().id(), TCryptMac::Hmac_Md5).toHex();
         s.insert(hash, cd);
@@ -83,13 +92,18 @@ T_HELPER_EXPORT inline QString hmac(const QString &cd)
 
 T_HELPER_EXPORT inline QVariant hmacVal(const QString &hash)
 {
-    if (CFG("ENABLE_HASH").toLower() == "true" || CFG("ENABLE_HASH") == "1") {
+    if (boolean(CFG("ENABLE_HASH"))) {
         TSession &s = const_cast<TSession &>(Tf::currentContext()->currentController()->session());
         tSystemTrace("Hash->id/cd: %s -> %s", hash.toLatin1().data(), s.value(hash).toString().toLatin1().data());
         return s.value(hash);
     } else {
         return hash;
     }
+}
+
+T_HELPER_EXPORT inline QVariant hmacVal(const QVariant &varhash)
+{
+    return hmacVal(varhash.toString());
 }
 
 T_HELPER_EXPORT inline bool accessAllow(const QString &ctl, const QString &act)
@@ -140,6 +154,29 @@ T_HELPER_EXPORT inline QString csrfVal()
     return s;
 }
 
+T_HELPER_EXPORT inline QJsonArray jsonArray(const QString &key)
+{
+    QJsonArray array;
+    QJsonParseError jsonError;
+    QJsonDocument jsonDoc = QJsonDocument::fromJson(key.toLatin1(), &jsonError);
+
+    if (jsonError.error != QJsonParseError::NoError) {
+        tError("key %s toJsonArray:%s", key.toLatin1().data(), jsonError.errorString().toLatin1().data());
+        return array;
+    }
+
+    if (jsonDoc.isArray()) {
+        tDebug() << "key is array";
+        return jsonDoc.array();
+    } else if (jsonDoc.isObject()) {
+        tDebug() << "key is object";
+        array.push_back(jsonDoc.object());
+        return array;
+    }
+
+    return array;
+}
+
 T_HELPER_EXPORT inline QVariantMap mapNoHash(const QVariantMap &varMaps, const QStringList &fieldlist)
 {
     QVariantMap map;
@@ -158,16 +195,16 @@ T_HELPER_EXPORT inline QVariantMap mapNoHash(const QVariantMap &varMaps, const Q
 }
 
 template<class V>
-inline QString mapValidate(QVariantMap &varMaps)
+inline QString validateForm(QVariantMap &varMaps)
 {
     V validator;
     QString err;
 
     if (!validator.validate(varMaps)) {
-        QStringList errs = validator.errorMessages();
+        QStringList errorKeys = validator.validationErrorKeys();
 
-        for (auto &s : errs) {
-            err += UI(s).append("\n");
+        for (QString &key : errorKeys) {
+            err += UI(key.toUpper()).prepend("{").append("}").append(UI(validator.errorMessage(key))).append("<br>");
         }
     }
 

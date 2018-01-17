@@ -2,5 +2,14 @@
 
 OrgValidator::OrgValidator() : TFormValidator()
 {
-    setRule("OrgCd", Tf::MaxLength, 16);
+    /* Rule will auto add Tf::isRequired,Disable it as required.*/
+
+    //setRule("orgCd", Tf::Required, false);
+    //setRule("orgNameZh", Tf::Required, false);
+    //setRule("orgNameEn", Tf::Required, false);
+    //setRule("logo", Tf::Required, false);
+
+ 
+    setRule("orgCd", Tf::MaxLength, 16);
+
 }

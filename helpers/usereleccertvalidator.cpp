@@ -2,7 +2,15 @@
 
 UserElecCertValidator::UserElecCertValidator() : TFormValidator()
 {
-    // Set the rules below
-    //setRule("xxxx", Tf::MaxLength, 20);
-    //  :
+    /* Rule will auto add Tf::isRequired,Disable it as required.*/
+
+    //setRule("userId", Tf::Required, false);
+    //setRule("handSignImg", Tf::Required, false);
+    //setRule("publicKey", Tf::Required, false);
+    //setRule("issueDt", Tf::Required, false);
+    //setRule("expireDt", Tf::Required, false);
+    //setRule("activeBool", Tf::Required, false);
+
+ 
+
 }

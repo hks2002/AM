@@ -2,7 +2,17 @@
 
 TodoListValidator::TodoListValidator() : TFormValidator()
 {
-    setRule("TodoListCd", Tf::MaxLength, 64);
-    setRule("TodoListName", Tf::MaxLength, 64);
-    setRule("TodoListTooltip", Tf::MaxLength, 256);
+    /* Rule will auto add Tf::isRequired,Disable it as required.*/
+
+    //setRule("todoListCd", Tf::Required, false);
+    //setRule("todoListNameZh", Tf::Required, false);
+    //setRule("todoListNameEn", Tf::Required, false);
+    setRule("todoListTooltip", Tf::Required, false);
+
+
+    setRule("todoListCd", Tf::MaxLength, 64);
+    setRule("todoListNameZh", Tf::MaxLength, 64);
+    setRule("todoListNameEn", Tf::MaxLength, 64);
+    setRule("todoListTooltip", Tf::MaxLength, 256);
+
 }

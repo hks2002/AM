@@ -2,5 +2,13 @@
 
 LocAirportSettingValidator::LocAirportSettingValidator() : TFormValidator()
 {
-    setRule("TimezoneCd", Tf::MaxLength, 16);
+    /* Rule will auto add Tf::isRequired,Disable it as required.*/
+
+    //setRule("timezoneCd", Tf::Required, false);
+    //setRule("supplyBool", Tf::Required, false);
+    //setRule("inboundFlightQt", Tf::Required, false);
+
+ 
+    setRule("timezoneCd", Tf::MaxLength, 16);
+
 }
