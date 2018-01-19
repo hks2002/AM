@@ -111,7 +111,7 @@ void UserLoginHis::setUpdatedBy(const QString &updatedBy)
 
 UserApp UserLoginHis::userAppByuserId() const
 {
- return UserApp::get(d->user_id);
+    return UserApp::get(d->user_id);
 }
 
 UserLoginHis &UserLoginHis::operator=(const UserLoginHis &other)
@@ -120,7 +120,7 @@ UserLoginHis &UserLoginHis::operator=(const UserLoginHis &other)
     return *this;
 }
 
-UserLoginHis UserLoginHis::create(int userId, const QDateTime &loginDt, const QString &loginIp, const QString &loginMac, const QString &loginComputer, const QString &createdBy, const QString &updatedBy)
+UserLoginHis UserLoginHis::create(int userId, const QDateTime &loginDt, const QString &loginIp, const QString &loginMac, const QString &loginComputer)
 {
     UserLoginHisObject obj;
     obj.user_id = userId;
@@ -128,11 +128,11 @@ UserLoginHis UserLoginHis::create(int userId, const QDateTime &loginDt, const QS
     obj.login_ip = loginIp;
     obj.login_mac = loginMac;
     obj.login_computer = loginComputer;
-    obj.created_by = createdBy;
-    obj.updated_by = updatedBy;
+
     if (!obj.create()) {
         return UserLoginHis();
     }
+
     return UserLoginHis(obj);
 }
 
@@ -140,9 +140,11 @@ UserLoginHis UserLoginHis::create(const QVariantMap &values)
 {
     UserLoginHis model;
     model.setProperties(values);
+
     if (!model.d->create()) {
         model.d->clear();
     }
+
     return model;
 }
 

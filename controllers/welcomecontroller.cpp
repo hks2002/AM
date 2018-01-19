@@ -8,6 +8,9 @@
 #include "vcontrolleractionroleuser.h"
 #include "sqlobjects/vcontrolleractionroleuserobject.h"
 
+#include "userloginhis.h"
+#include <QHostInfo>
+
 void WelcomeController::index()
 {
     if (!isUserLoggedIn()) {
@@ -52,6 +55,10 @@ void WelcomeController::logIn()
         session().insert("currentUserId", user.userId());
         session().insert("currentUserZh", user.fullNameZh());
         session().insert("currentUserEn", user.fullNameEn());
+
+        QString clientAddress = httpRequest().clientAddress().toString();
+        QString clientHostName = QHostInfo::fromName(clientAddress).hostName();
+        UserLoginHis::create(user.userId(), QDateTime::currentDateTime(), clientAddress, "00-00-00-00-00-00", clientHostName);
 
         TSqlORMapper<VControllerActionUserAllObject> mapper;
 

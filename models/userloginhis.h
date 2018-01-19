@@ -46,7 +46,7 @@ public:
     bool save()   override { return TAbstractModel::save(); }
     bool remove() override { return TAbstractModel::remove(); }
 
-    static UserLoginHis create(int userId, const QDateTime &loginDt, const QString &loginIp, const QString &loginMac, const QString &loginComputer, const QString &createdBy, const QString &updatedBy);
+    static UserLoginHis create(int userId, const QDateTime &loginDt, const QString &loginIp, const QString &loginMac, const QString &loginComputer);
     static UserLoginHis create(const QVariantMap &values);
     static UserLoginHis get(int userLoginHisId);
     static int count();
