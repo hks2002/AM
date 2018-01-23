@@ -11,13 +11,13 @@ qMapOut.insert("action",action);
 <div id="relationOfTab<%== tid %>" class="mini-tabs" activeindex="0" style="width:100%;height:100%;" bodystyle="border:0;">
   <div title='<%== UI("Assigned TodoLists") %>'>
     <div>
-        <% if (accessAllow("SystemUIsetting/assignTabToTodoList")){ %>
+        <% if (accessAllow("SystemUIsetting","assignTabToTodoList")){ %>
             <% if (action=="edit") { %>
             <a class="mini-button" plain="true" tooltip="<%== UI("Assign") %>" iconCls="icon-assign" 
             onclick="relationWindow(this,'<%== UI("TodoList") %>',400,400,'/PartialService/relationTodoListByTab?relation=unassigned','/SystemUIsetting/assignTabToTodoList',['todoListId'],{'tabId':'<%== tabId %>'},'<%== csrfVal() %>')"></a>
             <% } %>
         <% } %>
-        <% if (accessAllow("SystemUIsetting/unassignTabFromTodoList")) { %>
+        <% if (accessAllow("SystemUIsetting","unassignTabFromTodoList")) { %>
             <% if (action=="edit") { %>
             <a class="mini-button" plain="true" tooltip="<%== UI("Unassign") %>" iconcls="icon-unassign" 
             onclick="relationRecord('relationTodoListByTab<%== tid %>','/SystemUIsetting/unassignTabFromTodoList',['todoListId'],{'tabId':'<%== tabId %>'},'<%== csrfVal() %>')" ></a>

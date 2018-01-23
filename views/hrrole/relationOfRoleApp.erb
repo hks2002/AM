@@ -1,0 +1,28 @@
+<%
+QString tid = tId();
+QVariant roleId = variant("roleId");
+QString action = variant("action").toString();
+
+QVariantMap qMapOut;
+qMapOut.insert("tid",tid);
+qMapOut.insert("roleId",roleId);
+qMapOut.insert("action",action);%>
+<div id="relationOfRoleApp<%== tid %>" class="mini-tabs" activeindex="0" style="width:100%;height:100%;" bodystyle="border:0;">
+  <div title='<%== UI("Assigned UserApps") %>'>
+    <div>
+        <% if (accessAllow("HrRole","assignUserAppToRoleApp")){ %>
+            <% if (action=="edit") { %>
+            <a class="mini-button" plain="true" tooltip="<%== UI("Assign") %>" iconCls="icon-assign" 
+            onclick="relationWindow(this,'<%== UI("UserApp") %>',400,400,'/PartialService/relationUserAppByRoleApp?relation=unassigned','/HrRole/assignUserAppToRoleApp',['userId'],{'roleId':'<%== roleId %>'},'<%== csrfVal() %>')"></a>
+            <% } %>
+        <% } %>
+        <% if (accessAllow("HrRole","unassignUserAppFromRoleApp")) { %>
+            <% if (action=="edit") { %>
+            <a class="mini-button" plain="true" tooltip="<%== UI("Unassign") %>" iconcls="icon-unassign" 
+            onclick="relationRecord('relationUserAppByRoleApp<%== tid %>','/HrRole/unassignUserAppFromRoleApp',['userId'],{'roleId':'<%== roleId %>'},'<%== csrfVal() %>')" ></a>
+            <% } %>
+        <% } %>
+    </div>
+    <%== renderPartial("HrRole/relationUserAppByRoleApp",qMapOut) %>
+  </div>
+</div>

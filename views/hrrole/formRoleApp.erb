@@ -1,0 +1,59 @@
+<%#include "roleApp.h" %>
+<%
+QString lang = httpRequest().cookie("lang");
+QVariantMap qMap = httpRequest().queryItems();
+QString tid = tId();
+
+QString action = qMap.contains("action") ? httpRequest().queryItemValue("action"): variant("action").toString();
+QString roleId = qMap.contains("roleId") ? httpRequest().queryItemValue("roleId"): variant("roleId").toString();
+RoleApp roleApp = RoleApp::get(hmacVal(roleId).toInt());
+
+QVariantMap qMapOut;
+qMapOut.insert("roleId",roleId);
+qMapOut.insert("action",action);
+%>
+<% if (action == "show"){ %>
+<!-- show -->
+<div id="formRoleApp<%== tid %>" name="formRoleApp" class="form" >
+  <table class="layout-fixed" width="100%">
+   <tr>
+      <td style="text-align:right;white-space:nowrap"><%== UI("ROLECD") %>:</td>
+      <td><span style="padding-right:30px;" ><%== roleApp.roleCd() %></span></td>
+      <td style="text-align:right;white-space:nowrap"><%== UI("ROLENAMEZH") %>:</td>
+      <td><span style="padding-right:30px;" ><%== roleApp.roleNameZh() %></span></td>
+      <td style="text-align:right;white-space:nowrap"><%== UI("ROLENAMEEN") %>:</td>
+      <td><span style="padding-right:30px;" ><%== roleApp.roleNameEn() %></span></td>
+   </tr>
+  </table>
+</div>
+<% }else { %>
+<!-- edit -->
+<div id="formRoleApp<%== tid %>" name="formRoleApp" class="form" action="/HrRole/<%== action %>RoleApp">
+  <%== inputAuthenticityTag() %>
+  <% if (action != "create") { %>
+     <input name="roleId" class="mini-textbox" visible="false" value="<%== roleId %>"  /> 
+  <% } %>
+  <table style="width:100%">
+   <tr>
+      <td style="text-align:right;white-space:nowrap"><%== UI("ROLECD") %>:</td>
+      <td><input name="roleCd" class="mini-textbox" style="width:100%" vtype="maxLength:16"  value="<%== roleApp.roleCd() %>" /></td>
+      <td style="text-align:right;white-space:nowrap"><%== UI("ROLENAMEZH") %>:</td>
+      <td><input name="roleNameZh" class="mini-textbox" style="width:100%" vtype="maxLength:64"  value="<%== roleApp.roleNameZh() %>" /></td>
+      <td style="text-align:right;white-space:nowrap"><%== UI("ROLENAMEEN") %>:</td>
+      <td><input name="roleNameEn" class="mini-textbox" style="width:100%" vtype="maxLength:64"  value="<%== roleApp.roleNameEn() %>" /></td>
+   </tr>
+  </table>
+</div>
+<% } %>
+<!-- toolBar -->
+<div class="mini-toolbar" style="border:0px">
+    <% if (action == "show" && accessAllow("HrRole","editRoleApp")){ %>
+        <a class="mini-button" onclick="editForm('formRoleApp<%== tid %>','/PartialService/formRoleApp?action=edit&roleId=<%== roleId%>')" tooltip="<%== UI("TP_HRROLE_EDIT_ROLEAPP") %>" ><%== UI("Edit") %></a>
+    <% } %>
+</div>
+<!-- tabs -->
+<div class="mini-fit">
+    <% if (action != "create") { %>
+    <%== renderPartial("HrRole/relationOfRoleApp",qMapOut) %> 
+    <% } %>
+</div>

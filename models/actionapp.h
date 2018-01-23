@@ -21,14 +21,6 @@ public:
     ~ActionApp();
 
     int actionId() const;
-    QString actionCd() const;
-    void setActionCd(const QString &actionCd);
-    QString actionNameZh() const;
-    void setActionNameZh(const QString &actionNameZh);
-    QString actionNameEn() const;
-    void setActionNameEn(const QString &actionNameEn);
-    QString actionTooltip() const;
-    void setActionTooltip(const QString &actionTooltip);
     QString actionDesc() const;
     void setActionDesc(const QString &actionDesc);
     QString actionTypeZh() const;
@@ -54,7 +46,7 @@ public:
     bool save()   override { return TAbstractModel::save(); }
     bool remove() override { return TAbstractModel::remove(); }
 
-    static ActionApp create(const QString &actionCd, const QString &actionNameZh, const QString &actionNameEn, const QString &actionTooltip, const QString &actionDesc, const QString &actionTypeZh, const QString &actionTypeEn, const QString &controller, const QString &action, bool activeBool, const QString &createdBy, const QString &updatedBy);
+    static ActionApp create(const QString &actionDesc, const QString &actionTypeZh, const QString &actionTypeEn, const QString &controller, const QString &action, bool activeBool, const QString &createdBy, const QString &updatedBy);
     static ActionApp create(const QVariantMap &values);
     static ActionApp get(int actionId);
     static int count();

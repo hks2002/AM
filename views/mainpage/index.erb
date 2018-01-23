@@ -1,12 +1,5 @@
-<%#include "vtodolistbuttonrole.h" %>
-<%#include "vtodolistbuttonuser.h" %>
-<%#include "vtodolisttabrole.h" %>
-<%#include "vtodolisttabuser.h" %>
-<%#include "sqlobjects/vtodolistbuttonroleobject.h" %>
-<%#include "sqlobjects/vtodolistbuttonuserobject.h" %>
-<%#include "sqlobjects/vtodolisttabroleobject.h" %>
-<%#include "sqlobjects/vtodolisttabuserobject.h" %>
-<%#include "tmodelutil.h" %>
+<%#include "sqlobjects/tabobject.h" %>
+<%#include "sqlobjects/buttonobject.h" %>
 
 <% 
 QString lang = httpRequest().cookie("lang");
@@ -17,32 +10,7 @@ int currentUserId = controller()->session().value("currentUserId").toInt();
 int tabsActiveIndex = httpRequest().cookie("mainTabsActiveIndex").toInt();
 QVariantMap addedTabs = httpRequest().formItems();
 
-TCriteria cri;
-QList<VTodoListButtonRole> buttonRoleList ;
-QList<VTodoListTabRole> tabRoleList;
-QList<VTodoListButtonUser> buttonUserList;
-QList<VTodoListTabUser> tabUserList;
-
-if (currentRoleId > 0) { //byRole
-    cri.clear();
-    cri.add(VTodoListButtonRoleObject::RoleId, currentRoleId);
-    buttonRoleList = tfGetModelListByCriteria<VTodoListButtonRole, VTodoListButtonRoleObject>(cri);
-
-    cri.clear();
-    cri.add(VTodoListTabRoleObject::RoleId, currentRoleId);
-    tabRoleList = tfGetModelListByCriteria<VTodoListTabRole, VTodoListTabRoleObject>(cri);
-} else {//byUser
-    cri.clear();
-    cri.add(VTodoListButtonUserObject::UserId, currentUserId);
-    buttonUserList = tfGetModelListByCriteria<VTodoListButtonUser, VTodoListButtonUserObject>(cri);
-
-    cri.clear();
-    cri.add(VTodoListTabUserObject::UserId, currentUserId);
-    tabUserList = tfGetModelListByCriteria<VTodoListTabUser, VTodoListTabUserObject>(cri);
-}
-
-%>
- 
+%> 
 <!-- PageHeader -->
 <div class="app-header" >        
   <%== renderPartial("pageHeader"); %>
@@ -51,31 +19,120 @@ if (currentRoleId > 0) { //byRole
 <div>
   <%== renderPartial("menus"); %>
 </div>
+<%
+TSqlQuery tabquery;
+TSqlQuery  buttonquery;
+QList<QVariantMap> tabList;
+QList<QVariantMap> buttonList;
+
+if (currentRoleId > 0) { //byRole
+    tabquery.prepare("SELECT DISTINCT "\
+                      "t.tab_name_zh, "\
+                      "t.tab_name_en, "\
+                      "t.tab_tooltip, "\
+                      "t.controller, "\
+                      "t.action "\
+                      "FROM todo_list_role tdlr "\
+                      "JOIN todo_list tdl on tdlr.todo_list_id=tdl.todo_list_id "\
+                      "JOIN todo_list_tab tdlt on tdlt.todo_list_id = tdl.todo_list_id "\
+                      "JOIN tab t on tdlt.tab_id = t.tab_id "\
+                      "WHERE tdlr.role_id=:role_id "                      
+                     );
+
+     buttonquery.prepare("SELECT DISTINCT "\
+                          "b.button_name_zh, "\
+                          "b.button_name_en, "\
+                          "b.button_tooltip, "\
+                          "b.controller, "\
+                          "b.action "\
+                          "FROM todo_list_role tdlr "\
+                          "JOIN todo_list tdl on tdlr.todo_list_id=tdl.todo_list_id "\
+                          "JOIN todo_list_button tdlb on tdlb.todo_list_id = tdl.todo_list_id "\
+                          "JOIN button b on tdlb.button_id = b.button_id "\
+                          "WHERE tdlr.role_id=:role_id "                      
+                         );
+     tabquery.bind(":role_id",currentRoleId);
+     buttonquery.bind(":role_id",currentRoleId);
+} else {//byUser
+    tabquery.prepare("SELECT DISTINCT "\
+                      "t.tab_name_zh, "\
+                      "t.tab_name_en, "\
+                      "t.tab_tooltip, "\
+                      "t.controller, "\
+                      "t.action "\
+                      "FROM todo_list_role tdlr "\
+                      "JOIN todo_list tdl on tdlr.todo_list_id=tdl.todo_list_id "\
+                      "JOIN todo_list_tab tdlt on tdlt.todo_list_id = tdl.todo_list_id "\
+                      "JOIN tab t on tdlt.tab_id = t.tab_id "\
+                      "WHERE tdlr.role_id IN (SELECT role_id from role_user ru where ru.user_id=:user_id) "                      
+                     );
+     buttonquery.prepare("SELECT DISTINCT "\
+                          "b.button_name_zh, "\
+                          "b.button_name_en, "\
+                          "b.button_tooltip, "\
+                          "b.controller, "\
+                          "b.action "\
+                          "FROM todo_list_role tdlr "\
+                          "JOIN todo_list tdl on tdlr.todo_list_id=tdl.todo_list_id "\
+                          "JOIN todo_list_button tdlb on tdlb.todo_list_id = tdl.todo_list_id "\
+                          "JOIN button b on tdlb.button_id = b.button_id "\
+                          "WHERE tdlr.role_id IN (SELECT role_id from role_user ru where ru.user_id=:user_id) "                      
+                         );
+     tabquery.bind(":user_id",currentUserId);
+     buttonquery.bind(":user_id",currentUserId);
+}
+
+    tabquery.exec(); 
+    buttonquery.exec();
+    
+    if (!tabquery.isActive()) {
+        tDebug("query error:%s", tabquery.lastQuery().toLatin1().data());
+    }
+    if (!buttonquery.isActive()) {
+        tDebug("query error:%s", buttonquery.lastQuery().toLatin1().data());
+    }
+    
+    while (tabquery.next()) {
+        QVariantMap map;
+        QSqlRecord record = tabquery.record();
+        map.insert("tabNameZh",record.value(0));
+        map.insert("tabNameEn",record.value(1));
+        map.insert("tabTooltip",record.value(2));
+        map.insert("controller",record.value(3));
+        map.insert("action",record.value(4));
+
+        tabList<<map;
+    }
+    tabquery.finish();
+    
+    while (buttonquery.next()) {
+        QVariantMap map;
+        QSqlRecord record = buttonquery.record();
+        map.insert("buttonNameZh",record.value(0));
+        map.insert("buttonNameEn",record.value(1));
+        map.insert("buttonTooltip",record.value(2));
+        map.insert("controller",record.value(3));
+        map.insert("action",record.value(4));
+
+        buttonList<<map;
+    }
+    tabquery.finish();
+%>
 <!-- ToDo List buttons and tabs related to user and all his roles-->
 <!--ToolBars-->
 <div style="margin-left:3px;margin-right:3px;margin-bottom:2px;">
-    <!--roleButtons-->
-	<% for (const auto &i : buttonRoleList) { %>
-	   <a class="mini-button" name="/<%== i.controller()+"/"+ i.action() %>" tooltip="<%== i.buttonTooltip() %>" onclick="onButtonClick" ><%== lang=="zh"?i.buttonNameZh():i.buttonNameEn() %></a>
-	<% } %>
-    <!--userButtons-->
-	<% for (const auto &i : buttonUserList) { %>
-	   <a class="mini-button" name="/<%== i.controller()+"/"+ i.action() %>" tooltip="<%== i.buttonTooltip() %>" onclick="onButtonClick" ><%== lang=="zh"?i.buttonNameZh():i.buttonNameEn() %></a>
+    <!--Buttons-->
+    <% for (auto &map : buttonList) { %>
+	   <a class="mini-button" name="/<%== map.value("controller") %>/<%== map.value("action") %>" tooltip="<%== map.value("buttonTooltip") %>" onclick="onButtonClick" ><%== lang=="zh"?map.value("buttonNameZh"):map.value("buttonNameEn") %></a>
 	<% } %>	
 </div>
-
 <!--Tabs-->
 <div class="mini-fit">		
     <div id="mainTabs" class="mini-tabs"  activeIndex="<%== tabsActiveIndex %>" style="width:100%;height:100%"  bodyStyle="border:0;" maskOnLoad="false" onbeforeactivechanged="onBeforeTabChange" onactivechanged="onTabChange" oncloseclick="onTabClose">			 
-         <!--roleTabs-->
-         <% for (const auto &i : tabRoleList) { %>
-           <div name="/<%== i.controller()+"/"+ i.action() %>" tooltip="<%== i.tabTooltip() %>" title="<%== lang=="zh"?i.tabNameZh():i.tabNameEn()%>" 
-           data-options="{tabNameZh:'<%== i.tabNameZh() %>',tabNameEn:'<%== i.tabNameEn() %>'}"></div>
-         <% } %>
-         <!--userTabs-->
-         <% for (const auto &i : tabUserList) { %>
-           <div name="/<%== i.controller()+"/"+ i.action() %>" tooltip="<%== i.tabTooltip() %>" title="<%== lang=="zh"?i.tabNameZh():i.tabNameEn()%>" 
-           data-options="{tabNameZh:'<%== i.tabNameZh() %>',tabNameEn:'<%== i.tabNameEn() %>'}"></div>
+         <!--Tabs-->
+         <% for (auto &map : tabList) { %>
+           <div name="/<%==  map.value("controller").toString()+"/"+  map.value("action").toString() %>" tooltip="<%== map.value("tabTooltip")  %>" title="<%== lang=="zh"?map.value("tabNameZh"):map.value("tabNameEn") %>" 
+           data-options="{tabNameZh:'<%== map.value("tabNameZh") %>',tabNameEn:'<%== map.value("tabNameEn") %>'}"></div>
          <% } %>
          <!--addedTabs-->
          <% 

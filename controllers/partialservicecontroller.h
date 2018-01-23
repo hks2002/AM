@@ -3,14 +3,15 @@
 #include <TActionController>
 #include "applicationcontroller.h"
 
-/*This controller is made for ajax request templates, templates are located in controller's view folder,
+/* This controller is made for ajax request templates, templates are located in controller's view folder,
  * but its controller doesn't have correspond action.
+ * And this controller ignore access permission check.
  */
-class T_CONTROLLER_EXPORT PartialServiceController : public ApplicationController
+class T_CONTROLLER_EXPORT PartialServiceController : public TActionController
 {
     Q_OBJECT
 public:
-    PartialServiceController(): ApplicationController() { }
+    PartialServiceController(): TActionController() { }
 
 public slots:
     void relationMenuByMenusGroup();

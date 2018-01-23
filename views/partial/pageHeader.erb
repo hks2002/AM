@@ -1,6 +1,3 @@
-<%#include "vroleuser.h" %>
-<%#include "sqlobjects/vroleuserobject.h" %>
-<%#include "tmodelutil.h" %>
 <%
 QString lang = httpRequest().cookie("lang");
 QString skin = httpRequest().cookie("miniuiSkin");
@@ -14,10 +11,21 @@ QString toDoRole = httpRequest().cookie("toDoRole");
 int currentRoleId = hmacVal(toDoRole).toInt();
 int currentUserId = controller()->session().value("currentUserId").toInt();
 
-TCriteria cri;
-cri.add(VRoleUserObject::UserId, currentUserId);
-auto roleList = tfGetModelListByCriteria< VRoleUser, VRoleUserObject >(cri);
-
+TSqlQuery query;
+query.prepare("SELECT "\
+              "r.role_id, "\
+              "r.role_name_zh, "\
+              "r.role_name_en "\
+              "FROM role_app r "\          
+              "LEFT JOIN role_user ru "\        
+              "ON ru.role_id = r.role_id "\ 
+              "WHERE ru.user_id=:user_id "\
+              "ORDER BY r.role_cd");   
+query.bind(":user_id",currentUserId);
+query.exec();
+if (!query.isActive()){
+    tDebug("query error:%s",query.lastQuery().toLatin1().data());
+}               
 %>
 <h1 style="margin:5px;width:525px;font-family:Microsoft YaHei,SimHei,SimSun; display:inline"><%== UI("Aircraft Maintenance Management System") %></h1>
 	<div style="position: absolute;text-align:right;right:12px;font-size:12px;line-height:25px;font-weight:normal;display:inline-block;">
@@ -53,10 +61,12 @@ auto roleList = tfGetModelListByCriteria< VRoleUser, VRoleUserObject >(cri);
 		<div style="display:inline-block; margin-left:2px"><%== UI("Roles") %>:</div>
 		<select id="selectToDoRole" onchange="onToDoRoleChange(this.value)">
 			<option value=""></option>
-			 <% for(const auto &i : roleList) { %>
-			 <%    QString hash=hmac(i.roleId());    %>
-			       <option value="<%== hash %>" <%== currentRoleId==i.roleId()? "selected='selected'":"" %>><%== lang=="zh"? i.roleNameZh():i.roleNameEn() %></option>
-			 <% } %>				
+			 <% while (query.next()) { %>
+             <%    QSqlRecord record = query.record(); %>
+			 <%    QString hash=hmac(record.value(0).toInt());    %>
+			       <option value="<%== hash %>" <%== currentRoleId==record.value(0).toInt()? "selected='selected'":"" %>><%== lang=="zh"? record.value(1):record.value(2) %></option>
+			 <% } %>
+             <% query.finish(); %>             
 		</select>
 		<a href="/Welcome/logOut"><%== UI("Quit") %></a>
 	</div>

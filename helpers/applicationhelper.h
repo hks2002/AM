@@ -108,28 +108,25 @@ T_HELPER_EXPORT inline QVariant hmacVal(const QVariant &varhash)
 
 T_HELPER_EXPORT inline bool accessAllow(const QString &ctl, const QString &act)
 {
-    QString url =  ctl + "/" + act;
-    int currentUserId = Tf::currentContext()->currentController()->session().value(url).toInt();
+    QString userName = Tf::currentContext()->currentController()->identityKeyOfLoginUser();
+    QString url =  ctl.toLower() + "/" + act.toLower();
 
-    if (currentUserId <= 0) {
-        tTrace("Access :%s is Forbidden", url.toLatin1().data());
-        //FIXME should be false, please change it
-        //Use true for development
+    //admin could access all pages.
+    if (userName == "admin") {
+        tTrace("Access %s is Overrided to admin", url.toLatin1().data());
         return true;
     }
 
-    return true;
-}
+    if (ctl.toLower() == "dataservice" && act == "Search") {
+        //In dataservice controller Search method check it again.
+        return true;
+    }
 
-T_HELPER_EXPORT inline bool accessAllow(const QString &url)
-{
     int currentUserId = Tf::currentContext()->currentController()->session().value(url).toInt();
 
     if (currentUserId <= 0) {
-        tTrace("Access %s is Forbidden", url.toLatin1().data());
-        //FIXME should be false, please change it
-        //Use true for development
-        return true;
+        tTrace("Access %s is Forbidden to %s", url.toLatin1().data(), userName.toLatin1().data());
+        return false;
     }
 
     return true;

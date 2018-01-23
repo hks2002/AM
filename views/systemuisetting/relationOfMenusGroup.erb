@@ -11,25 +11,25 @@ qMapOut.insert("action",action);
 <div id="relationOfMenusGroup<%== tid %>" class="mini-tabs" activeindex="0" style="width:100%;height:100%;" bodystyle="border:0;">
   <div title='<%== UI("Assigned Menus") %>'>
     <div>
-        <% if (accessAllow("SystemUIsetting/assignMenuToMenusGroup")){ %>
+        <% if (accessAllow("SystemUIsetting","assignMenuToMenusGroup")){ %>
             <% if (action=="edit") { %>
             <a class="mini-button" plain="true" tooltip="<%== UI("Assign") %>" iconCls="icon-assign" 
             onclick="relationWindow(this,'<%== UI("Menu") %>',400,400,'/PartialService/relationMenuByMenusGroup?relation=unassigned','/SystemUIsetting/assignMenuToMenusGroup',['menuId'],{'menusGroupId':'<%== menusGroupId %>'},'<%== csrfVal() %>')"></a>
             <% } %>
         <% } %>
-        <% if (accessAllow("SystemUIsetting/unassignMenuFromMenusGroup")) { %>
+        <% if (accessAllow("SystemUIsetting","unassignMenuFromMenusGroup")) { %>
             <% if (action=="edit") { %>
             <a class="mini-button" plain="true" tooltip="<%== UI("Unassign") %>" iconcls="icon-unassign" 
             onclick="relationRecord('relationMenuByMenusGroup<%== tid %>','/SystemUIsetting/unassignMenuFromMenusGroup',['menuId'],{'menusGroupId':'<%== menusGroupId %>'},'<%== csrfVal() %>')" ></a>
             <% } %>
         <% } %>
-        <% if (accessAllow("SystemUIsetting/orderMenusGroupMenu")) { %>
+        <% if (accessAllow("SystemUIsetting","orderMenusGroupMenu")) { %>
             <% if (action=="edit") { %>
             <a class="mini-button" plain="true" tooltip="<%== UI("Order") %>" iconcls="icon-order" 
             onclick="editRelation('relationMenuByMenusGroup<%== tid %>','/SystemUIsetting/orderMenusGroupMenu',['menuId'],{'menusGroupId':'<%== menusGroupId %>'},'menuOrder','<%== csrfVal() %>')" ></a>
             <% } %>
         <% } %>
-        <% if (accessAllow("SystemUIsetting/editMenuBreak")) { %>
+        <% if (accessAllow("SystemUIsetting","editMenuBreak")) { %>
             <% if (action=="edit") { %>
             <a class="mini-button" plain="true" tooltip="<%== UI("Toggle Break") %>" iconcls="icon-break" 
             onclick="editRelation('relationMenuByMenusGroup<%== tid %>','/SystemUIsetting/editMenuBreak',['menuId'],{'menusGroupId':'<%== menusGroupId %>'},'breakBool','<%== csrfVal() %>')" ></a>

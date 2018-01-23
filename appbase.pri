@@ -11,9 +11,4 @@ win32 {
 } else {
   unix:LIBS += -Wl,-rpath,. -Wl,-rpath,/usr/lib -L/usr/lib -ltreefrog
   unix:INCLUDEPATH += /usr/include/treefrog
-
-  # c++11
-  lessThan(QT_MAJOR_VERSION, 5) {
-    QMAKE_CXXFLAGS += -std=c++0x
-  }
 }

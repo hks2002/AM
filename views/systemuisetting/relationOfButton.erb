@@ -11,13 +11,13 @@ qMapOut.insert("action",action);
 <div id="relationOfButton<%== tid %>" class="mini-tabs" activeindex="0" style="width:100%;height:100%;" bodystyle="border:0;">
   <div title='<%== UI("Assigned TodoLists") %>'>
     <div>
-        <% if (accessAllow("SystemUIsetting/assignButtonToTodoList")){ %>
+        <% if (accessAllow("SystemUIsetting","assignButtonToTodoList")){ %>
             <% if (action=="edit") { %>
             <a class="mini-button" plain="true" tooltip="<%== UI("Assign") %>" iconCls="icon-assign" 
             onclick="relationWindow(this,'<%== UI("TodoList") %>',400,400,'/PartialService/relationTodoListByButton?relation=unassigned','/SystemUIsetting/assignButtonToTodoList',['todoListId'],{'buttonId':'<%== buttonId %>'},'<%== csrfVal() %>')"></a>
             <% } %>
         <% } %>
-        <% if (accessAllow("SystemUIsetting/unassignButtonFromTodoList")) { %>
+        <% if (accessAllow("SystemUIsetting","unassignButtonFromTodoList")) { %>
             <% if (action=="edit") { %>
             <a class="mini-button" plain="true" tooltip="<%== UI("Unassign") %>" iconcls="icon-unassign" 
             onclick="relationRecord('relationTodoListByButton<%== tid %>','/SystemUIsetting/unassignButtonFromTodoList',['todoListId'],{'buttonId':'<%== buttonId %>'},'<%== csrfVal() %>')" ></a>

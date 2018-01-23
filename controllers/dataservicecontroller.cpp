@@ -42,6 +42,10 @@ void DataServiceController::getSqlQueryPara(const QString &sqlTarget)
 
     query.exec();
 
+    if (!query.isActive()) {
+        tDebug("query error:%s", query.lastQuery().toLatin1().data());
+    }
+
     QSqlRecord fields = query.record();
 
     for (int i = 0; i < fields.count(); ++i) {
@@ -66,7 +70,7 @@ void DataServiceController::getSqlQueryPara(const QString &sqlTarget)
 
     getBoundValue(relationKey);
     getWhereClause(key);
-
+    query.finish();
 }
 
 void DataServiceController::getSingleSort(const QString &sortField, const QString &sortOrder)
@@ -345,6 +349,11 @@ void DataServiceController::Search(const QString &searchTarget)
 {
     getHttpRequestPara();
     getSqlQueryPara(QString(searchTarget) + ".sql");
+
+    if (!accessAllow("dataservice", searchTarget)) {
+        renderErrorResponse(Tf::Forbidden);
+        return;
+    }
 
     if (searchMode.toLower() == "all" || searchMode.toLower() == "page") {
         Render(QString(searchTarget) + ".sql");

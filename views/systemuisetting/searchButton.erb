@@ -17,15 +17,6 @@ qMapOut.insert("tid",tid);
  <div class="mini-toolbar" style="border:0px">
         <a class="mini-button" onclick="doSearch('searchFormButton<%== tid %>','gridButton<%== tid %>')"><%== UI("Search") %></a>
         <a class="mini-button" onclick="showRecord('gridButton<%== tid %>','<%== UI("Button") %>',650,500,'/PartialService/formButton?action=show',['buttonId'])" tooltip="" ><%== UI("Show Details") %></a>
-    <% if (accessAllow("SystemUIsetting/createButton")){ %>
-        <a class="mini-button" onclick="createRecord('<%== UI("Button") %>',650,500,'/PartialService/formButton?action=create')" tooltip="<%== UI("TP_SYSTEMUISETTING_CREATE_BUTTON") %>" ><%== UI("Create") %></a>
-    <% } %>
-    <% if (accessAllow("SystemUIsetting/editButton")){ %>
-        <a class="mini-button" onclick="editRecord('gridButton<%== tid %>','<%== UI("Button") %>',650,500,'/PartialService/formButton?action=edit',['buttonId'])" tooltip="<%== UI("TP_SYSTEMUISETTING_EDIT_BUTTON") %>" ><%== UI("Edit") %></a>
-    <% } %>
-    <% if (accessAllow("SystemUIsetting/deleteButton")){ %>
-        <a class="mini-button" onclick="deleteRecord('gridButton<%== tid %>','/SystemUIsetting/deleteButton',['buttonId'],'<%== csrfVal() %>')" tooltip="<%== UI("TP_SYSTEMUISETTING_DELETE_BUTTON") %>" ><%== UI("Delete") %></a>
-    <% } %>
  </div>
 <!-- grid -->
 <div class="mini-fit">

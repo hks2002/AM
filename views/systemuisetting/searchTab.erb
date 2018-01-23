@@ -17,15 +17,6 @@ qMapOut.insert("tid",tid);
  <div class="mini-toolbar" style="border:0px">
         <a class="mini-button" onclick="doSearch('searchFormTab<%== tid %>','gridTab<%== tid %>')"><%== UI("Search") %></a>
         <a class="mini-button" onclick="showRecord('gridTab<%== tid %>','<%== UI("Tab") %>',650,500,'/PartialService/formTab?action=show',['tabId'])" tooltip="" ><%== UI("Show Details") %></a>
-    <% if (accessAllow("SystemUIsetting/createTab")){ %>
-        <a class="mini-button" onclick="createRecord('<%== UI("Tab") %>',650,500,'/PartialService/formTab?action=create')" tooltip="<%== UI("TP_SYSTEMUISETTING_CREATE_TAB") %>" ><%== UI("Create") %></a>
-    <% } %>
-    <% if (accessAllow("SystemUIsetting/editTab")){ %>
-        <a class="mini-button" onclick="editRecord('gridTab<%== tid %>','<%== UI("Tab") %>',650,500,'/PartialService/formTab?action=edit',['tabId'])" tooltip="<%== UI("TP_SYSTEMUISETTING_EDIT_TAB") %>" ><%== UI("Edit") %></a>
-    <% } %>
-    <% if (accessAllow("SystemUIsetting/deleteTab")){ %>
-        <a class="mini-button" onclick="deleteRecord('gridTab<%== tid %>','/SystemUIsetting/deleteTab',['tabId'],'<%== csrfVal() %>')" tooltip="<%== UI("TP_SYSTEMUISETTING_DELETE_TAB") %>" ><%== UI("Delete") %></a>
-    <% } %>
  </div>
 <!-- grid -->
 <div class="mini-fit">

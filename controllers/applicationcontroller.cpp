@@ -1,7 +1,5 @@
 #include "applicationcontroller.h"
 #include "userapp.h"
-#include "vcontrolleractionuserall.h"
-#include "vcontrolleractionroleuser.h"
 #include "tactioncontroller.h"
 #include "actionapp.h"
 
@@ -23,26 +21,13 @@ void ApplicationController::staticInitialize()
     Tf::app()->getConfig("am");
 
     //load zh_CN.ini,en_US.ini
-    QVariantMap &zh = const_cast<QVariantMap &>(Tf::app()->getConfig("zh_CN"));
-    QVariantMap &en = const_cast<QVariantMap &>(Tf::app()->getConfig("en_US"));
+    Tf::app()->getConfig("zh_CN");
+    Tf::app()->getConfig("en_US");
 
-    ActionApp act;
-    auto list = act.getAll();
+    //if want to insert new value, use these below:
+    //QVariantMap &zh = const_cast<QVariantMap &>(Tf::app()->getConfig("zh_CN"));
+    //QVariantMap &en = const_cast<QVariantMap &>(Tf::app()->getConfig("en_US"));
 
-    for (ActionApp &a : list) {
-        if (!a.actionNameZh().isEmpty()) {
-            zh.insert(QString("ACT_").append(a.actionCd()), QString::fromUtf8(a.actionNameZh().toLatin1().data()));
-        }
-
-        if (!a.actionNameEn().isEmpty()) {
-            en.insert(QString("ACT_").append(a.actionCd()), QString::fromUtf8(a.actionNameEn().toLatin1().data()));
-        }
-
-        if (!a.actionTooltip().isEmpty()) {
-            zh.insert(QString("TP_").append(a.actionCd()), QString::fromUtf8(a.actionTooltip().toLatin1().data()));
-            en.insert(QString("TP_").append(a.actionCd()), QString::fromUtf8(a.actionTooltip().toLatin1().data()));
-        }
-    }
 }
 
 void ApplicationController::staticRelease()
@@ -52,10 +37,9 @@ void ApplicationController::staticRelease()
 
 bool ApplicationController::preFilter()
 {
-    tDebug() << "Session Id:" << Tf::currentContext()->currentController()->session().id();
+    tSystemTrace("Session Id:%s", Tf::currentContext()->currentController()->session().id().data());
     QString ctl = Tf::currentContext()->currentController()->name();
     QString act = Tf::currentContext()->currentController()->activeAction();
-    tDebug() << "Access :" << ctl << "/" << act;
 
     if (!isUserLoggedIn()) {
         QString XMLHttpRequest = Tf::currentContext()->currentController()->httpRequest().header().rawHeader("X-Requested-With");
@@ -72,7 +56,7 @@ bool ApplicationController::preFilter()
         QString userName = identityKeyOfLoginUser();
 
         //admin could access all pages.
-        if (userName == "admin" || ctl.toLower() == "partialservice" || ctl.toLower() == "dataservice") {
+        if (userName == "admin") {
             return true;
         } else if (!accessAllow(ctl, act)) {
             renderErrorResponse(Tf::Forbidden);

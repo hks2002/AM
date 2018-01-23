@@ -3,11 +3,7 @@
 #include <TreeFrogModel>
 #include <TreeFrogController>
 #include "userapp.h"
-#include "vcontrolleractionuserall.h"
-#include "sqlobjects/vcontrolleractionuserallobject.h"
-#include "vcontrolleractionroleuser.h"
-#include "sqlobjects/vcontrolleractionroleuserobject.h"
-
+#include "sqlobjects/actionappobject.h"
 #include "userloginhis.h"
 #include <QHostInfo>
 
@@ -52,6 +48,7 @@ void WelcomeController::logIn()
 
     if (!user.isNull()) {
         userLogin(&user);
+
         session().insert("currentUserId", user.userId());
         session().insert("currentUserZh", user.fullNameZh());
         session().insert("currentUserEn", user.fullNameEn());
@@ -60,28 +57,43 @@ void WelcomeController::logIn()
         QString clientHostName = QHostInfo::fromName(clientAddress).hostName();
         UserLoginHis::create(user.userId(), QDateTime::currentDateTime(), clientAddress, "00-00-00-00-00-00", clientHostName);
 
-        TSqlORMapper<VControllerActionUserAllObject> mapper;
+        TSqlQuery query;
+        query.prepare("SELECT aa.controller,aa.action "\
+                      "FROM action_user au "\
+                      "JOIN action_app aa ON aa.action_id= au.action_id "\
+                      "WHERE au.user_id=:user_id "
+                      "AND aa.active_bool=true "
+                      "UNION "
+                      "SELECT DISTINCT aa.controller,aa.action "\
+                      "FROM action_role ar "\
+                      "JOIN action_app aa ON aa.action_id= ar.action_id "\
+                      "WHERE ar.role_id IN (SELECT role_id FROM role_user ru WHERE ru.user_id=:user_id) "\
+                      "AND aa.active_bool=true");
+        query.bind(":user_id", user.userId());
+        query.exec();
 
-        if (mapper.find(TCriteria(VControllerActionUserAllObject::UserId, user.userId())) > 0) {
-            for (auto &o : mapper) {
-                auto model = VControllerActionUserAll(o);
-                QString url = model.controller() + "/" + model.action();
-                tTrace() << url << " allowed to " << userName;
+        if (!query.isActive()) {
+            tDebug("query error:%s", query.lastQuery().toLatin1().data());
+        }
+
+        while (query.next()) {
+            tDebug("XX");
+            QSqlRecord record = query.record();
+            QString url;
+
+            url = record.value(0).toString().toLower() + "/" + record.value(1).toString().toLower();
+            tTrace("access allowed :%s allowed to %s", url.toLatin1().data(), userName.toLatin1().data());
+            session().insert(url, user.userId());
+
+            //if allow search, allow it use dataservice.
+            if (record.value(1).toString().toLower().startsWith("search") || record.value(1).toString().toLower().endsWith("search")) {
+                url = "dataservice/" + record.value(1).toString().toLower().replace("search", "");
+                tTrace("access allowed :%s allowed to %s", url.toLatin1().data(), userName.toLatin1().data());
                 session().insert(url, user.userId());
             }
         }
 
-        TSqlORMapper<VControllerActionRoleUserObject> mapper2;
-
-        if (mapper2.find(TCriteria(VControllerActionRoleUserObject::UserId, user.userId())) > 0) {
-            for (auto &o : mapper2) {
-                auto model = VControllerActionRoleUser(o);
-                QString url =  model.controller() + "/" + model.action();
-                tTrace() << url << " allowed to " << userName;
-                session().insert(url, user.userId());
-            }
-        }
-
+        query.finish();
         renderJson(jsonObj(true));
     } else {
         renderJson(jsonObj(false, UI("invalidPassword")));

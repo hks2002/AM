@@ -17,14 +17,14 @@ qMapOut.insert("tid",tid);
  <div class="mini-toolbar" style="border:0px">
         <a class="mini-button" onclick="doSearch('searchFormTodoList<%== tid %>','gridTodoList<%== tid %>')"><%== UI("Search") %></a>
         <a class="mini-button" onclick="showRecord('gridTodoList<%== tid %>','<%== UI("TodoList") %>',650,500,'/PartialService/formTodoList?action=show',['todoListId'])" tooltip="" ><%== UI("Show Details") %></a>
-    <% if (accessAllow("SystemUIsetting/createTodoList")){ %>
-        <a class="mini-button" onclick="createRecord('<%== UI("TodoList") %>',650,500,'/PartialService/formTodoList?action=create')" tooltip="<%== UI("TP_SYSTEMUISETTING_CREATE_TODOLIST") %>" ><%== UI("Create") %></a>
+    <% if (accessAllow("SystemUIsetting","createTodoList")){ %>
+        <a class="mini-button" onclick="createRecord('<%== UI("TodoList") %>',650,500,'/PartialService/formTodoList?action=create')" ><%== UI("Create") %></a>
     <% } %>
-    <% if (accessAllow("SystemUIsetting/editTodoList")){ %>
-        <a class="mini-button" onclick="editRecord('gridTodoList<%== tid %>','<%== UI("TodoList") %>',650,500,'/PartialService/formTodoList?action=edit',['todoListId'])" tooltip="<%== UI("TP_SYSTEMUISETTING_EDIT_TODOLIST") %>" ><%== UI("Edit") %></a>
+    <% if (accessAllow("SystemUIsetting","editTodoList")){ %>
+        <a class="mini-button" onclick="editRecord('gridTodoList<%== tid %>','<%== UI("TodoList") %>',650,500,'/PartialService/formTodoList?action=edit',['todoListId'])" ><%== UI("Edit") %></a>
     <% } %>
-    <% if (accessAllow("SystemUIsetting/deleteTodoList")){ %>
-        <a class="mini-button" onclick="deleteRecord('gridTodoList<%== tid %>','/SystemUIsetting/deleteTodoList',['todoListId'],'<%== csrfVal() %>')" tooltip="<%== UI("TP_SYSTEMUISETTING_DELETE_TODOLIST") %>" ><%== UI("Delete") %></a>
+    <% if (accessAllow("SystemUIsetting","deleteTodoList")){ %>
+        <a class="mini-button" onclick="deleteRecord('gridTodoList<%== tid %>','/SystemUIsetting/deleteTodoList',['todoListId'],'<%== csrfVal() %>')" ><%== UI("Delete") %></a>
     <% } %>
  </div>
 <!-- grid -->

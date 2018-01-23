@@ -63,7 +63,7 @@ qMapOut.insert("action",action);
 <% } %>
 <!-- toolBar -->
 <div class="mini-toolbar" style="border:0px">
-    <% if (action == "show" && accessAllow("SystemUIsetting/editMenusGroup")){ %>
+    <% if (action == "show" && accessAllow("SystemUIsetting","editMenusGroup")){ %>
         <a class="mini-button" onclick="editForm('formMenusGroup<%== tid %>','/PartialService/formMenusGroup?action=edit&menusGroupId=<%== menusGroupId%>')" tooltip="<%== UI("TP_SYSTEMUISETTING_EDIT_MENUSGROUP") %>" ><%== UI("Edit") %></a>
     <% } %>
 </div>

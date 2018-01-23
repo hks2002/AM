@@ -1,4 +1,4 @@
-<div id="signInWindow" class="mini-window" width="300px;" showCloseButton="true" title="<%== UI("Sign In") %>" 
+<div id="signInWindow" class="mini-window" width="300px;" showCloseButton="true" title="<%== UI("SignIn") %>" 
    showModal="true" showCloseButton="false">
 
     <div id="signInForm" style="padding:15px;padding-top:10px;">
@@ -10,7 +10,7 @@
                 </td>    
             </tr>
             <tr>
-                <td nowrap="nowrap"><label for="password$text"><%== UI("Password") %>:</label></td>
+                <td nowrap="nowrap"><label for="password$text"><%== UI("PassWord") %>:</label></td>
                 <td>
                     <input id="password" name="password" class="mini-password" required="true" style="width:150px;" onenter="signIn"/>
                     
@@ -24,7 +24,7 @@
             </tr>            
             <tr>
                  <td style="padding-top:5px;" colspan="2" align="center">
-                    <a onclick="signIn" class="mini-button" ><%== UI("Sign In") %></a>
+                    <a onclick="signIn" class="mini-button" ><%== UI("SignIn") %></a>
                     <a onclick="resetForm('signInForm')" class="mini-button" "><%== UI("Reset") %></a>
                 </td>
             </tr>

@@ -1,8 +1,3 @@
-<%#include "vmenusgroupmenurole.h" %>
-<%#include "sqlobjects/vmenusgroupmenuroleobject.h" %>
-<%#include "vmenusgroupmenuuser.h" %>
-<%#include "sqlobjects/vmenusgroupmenuuserobject.h" %>
-<%#include "tmodelutil.h" %>
 <%
 QString lang = httpRequest().cookie("lang");
 
@@ -10,79 +5,103 @@ QString toDoRole = httpRequest().cookie("toDoRole");
 int currentRoleId = controller()->session().value(toDoRole).toInt();
 int currentUserId = controller()->session().value("currentUserId").toInt();
 
-TCriteria cri;
-QList<VMenusGroupMenuRole> menuRoleList;
-QList<VMenusGroupMenuUser> menuUserList;
-
+QList<QVariantMap> menuList;
+TSqlQuery query;
+ 
 if (currentRoleId > 0) { //byRole
-     cri.add(VMenusGroupMenuRoleObject::RoleId, currentRoleId);
-     menuRoleList =  tfGetModelListByCriteria<VMenusGroupMenuRole, VMenusGroupMenuRoleObject>(cri);
+    query.prepare("SELECT "\
+                  "mgm.menus_group_id, "\
+                  "mgm.menu_id, "\
+                  "mgm.menu_order, "\
+                  "mgm.break_bool, "\
+                  "mg.menus_group_name_zh, "\
+                  "mg.menus_group_name_en, "\
+                  "m.menu_name_zh, "\
+                  "m.menu_name_en, "\
+                  "m.controller, "\
+                  "m.action "\
+                  "FROM menus_group_role mgr "\
+                  "JOIN menus_group_menu mgm ON mgr.menus_group_id = mgm.menus_group_id "\
+                  "JOIN menus_group mg ON mg.menus_group_id = mgm.menus_group_id "\
+                  "JOIN menu m ON mgm.menu_id = m.menu_id "\
+                  "WHERE mgr.role_id=:role_id "\
+                  "ORDER BY mgr.menus_group_order,mg.menus_group_cd, mgm.menu_order");
+     query.bind(":role_id",currentRoleId);               
+
 } else {//byUser
-     cri.add(VMenusGroupMenuUserObject::UserId, currentUserId);
-    menuUserList =  tfGetModelListByCriteria<VMenusGroupMenuUser, VMenusGroupMenuUserObject>(cri);
+      query.prepare("SELECT "\
+                  "mgm.menus_group_id, "\
+                  "mgm.menu_id, "\
+                  "mgm.menu_order, "\
+                  "mgm.break_bool, "\
+                  "mg.menus_group_name_zh, "\
+                  "mg.menus_group_name_en, "\
+                  "m.menu_name_zh, "\
+                  "m.menu_name_en, "\
+                  "m.controller, "\
+                  "m.action "\
+                  "FROM menus_group_user mgu "\
+                  "JOIN menus_group_menu mgm ON mgu.menus_group_id = mgm.menus_group_id "\
+                  "JOIN menus_group mg ON mg.menus_group_id = mgm.menus_group_id "\
+                  "JOIN menu m ON mgm.menu_id = m.menu_id "\
+                  "WHERE mgu.user_id=:user_id "\
+                  "ORDER BY mgu.menus_group_order,mg.menus_group_cd, mgm.menu_order");   
+     query.bind(":user_id",currentUserId);                    
 }
+
+query.exec();
+if (!query.isActive()){
+    tDebug("query error:%s",query.lastQuery().toLatin1().data());
+}
+while (query.next()) {
+    QVariantMap map;
+    QSqlRecord record = query.record();
+    map.insert("menusGroupId",record.value(0));
+    map.insert("menuId",record.value(1));
+    map.insert("menuOrder",record.value(2));
+    map.insert("breakBool",record.value(3));
+    map.insert("menusGroupNameZh",record.value(4));
+    map.insert("menusGroupNameEn",record.value(5));
+    map.insert("menuNameZh",record.value(6));
+    map.insert("menuNameEn",record.value(7));
+    map.insert("controller",record.value(8));
+    map.insert("action",record.value(9));
+
+    menuList<<map;
+}
+query.finish();
 %>
 <ul id="menu" class="mini-menubar" style="width:100%;">
-    <!--roleMuens-->
-	<% 
-       bool newgroup; 
-	   int groupId=-1;  
-	   int total=menuRoleList.length(); 
-	   int current=0; 
-	   for (const auto &i : menuRoleList) { 
-	       ++current;                       
-	       newgroup= (groupId==i.menusGroupId())? false:true;
-	       groupId=i.menusGroupId(); 
-	       if (newgroup && current==1){                  
-    %>
-			  <li>
-			  <span><%== lang=="zh"? i.menusGroupNameZh():i.menusGroupNameEn() %></span>
-			  <ul>
-	<%     }else if (newgroup && current>1) { %>
-			  </ul>
-			  </li><li>
-			  <span><%== lang=="zh"? i.menusGroupNameZh():i.menusGroupNameEn() %></span>
-			  <ul>
-	<%     }else{ %>
-		      <li name="/<%== i.controller()+"/"+ i.action() %>" onclick="onMenuItemClick" 
-			   data-options="{menuNameAlt:'<%== lang=="zh"? i.menuNameEn():i.menuNameZh() %>',menuTooltip:'<%== i.menuTooltip() %>'}"
-			  ><%== lang=="zh"? i.menuNameZh():i.menuNameEn() %></li>
-	<%     } 
-	      if (current==total){ %>
-			  </ul>
-			  </li>
-	<%     } 	
-	   } %>
-       
-       
-	<!--userMuens-->
-	<% 
-         groupId=-1;  
-         total=menuUserList.length(); 
-         current=0; 
-         for (const auto &i : menuUserList) { 
-             ++current;                       
-             newgroup= (groupId==i.menusGroupId())? false:true; 
-             groupId=i.menusGroupId(); 
-             if (newgroup && current==1){                  
-    %>
-			  <li>
-			  <span><%== lang=="zh"? i.menusGroupNameZh():i.menusGroupNameEn() %></span>
-			  <ul>
-	<%     }else if (newgroup && current>1) { %>
-			  </ul>
-			  </li><li>
-			  <span ><%== lang=="zh"? i.menusGroupNameZh():i.menusGroupNameEn() %></span>
-			  <ul>
-	<%     }else{ %>
-		      <li name="/<%== i.controller()+"/"+ i.action() %>" onclick="onMenuItemClick"
-			   data-options="{menuNameAlt:'<%== lang=="zh"? i.menuNameEn():i.menuNameZh() %>',menuTooltip:'<%== i.menuTooltip() %>'}"
-			  ><%== lang=="zh"? i.menuNameZh():i.menuNameEn() %></li>
-	<%     } 
-	      if (current==total){ %>
-			  </ul>
-			  </li>
-	<%     } 	
-	   } %>
-  
+    
+  <% int lastgroupId=-1;      %>
+  <% for (int current=1; current<=menuList.length();++current){      %>
+
+      <% QVariantMap map=menuList.at(current-1);             %>        
+      <% QVariant menusGroupName = lang=="zh"? map.value("menusGroupNameZh"):map.value("menusGroupNameEn") %>
+      <% QVariant menuName = lang=="zh"? map.value("menuNameZh"):map.value("menuNameEn") %>
+      <% QVariant menuUrl = map.value("controller").toString()+"/"+ map.value("action").toString() %>
+      <% bool breakBool = map.value("breakBool").toBool() %>
+      <% int currentGroupId = map.value("menusGroupId").toInt() %>
+      
+      <% if (!(lastgroupId==currentGroupId)){   //newgroup   %>       
+          <% if (current>1) { %>
+          </ul>
+          </li>
+          <% } %>     
+          <li>
+          <span><%== menusGroupName %></span>
+          <ul>
+      <% } %>
+              <li name="/<%== menuUrl %>" onclick="onMenuItemClick" data-options="{menuNameAlt:'<%== menuName %>',menuTooltip:'<%== map.value("menuTooltip") %>'}"
+              ><%== menuName %></li>
+              <% if ( breakBool){ %>
+              <li class="separator"></li>
+              <% } %>
+      
+	  <% if (current==menuList.length()){ %>
+          </ul>
+          </li>
+	  <% } %>
+      <%  lastgroupId=currentGroupId;	%>
+  <% } %>  
 </ul>

@@ -1,0 +1,28 @@
+<% QVariant tid = variant("tid") %>
+<% QVariant sqlop = CFG("SQLOP") %>
+<form id="searchFormRoleApp<%== tid %>" name="searchFormRoleApp">
+   <input class="mini-checkbox" name="advanceSearchCheckBox" onclick="toggleAdvanceSearch(this, 'searchFormRoleApp<%== tid %>')" /><%== UI("Advance Search") %>
+   <%== inputAuthenticityTag();%>
+   <table>
+   <tr>
+      <td style="text-align:right;"><%== UI("ROLECD") %>:</td>
+      <td><input name="sqlOp_roleCd" data="sqlOpData" value="<%== sqlop %>" class="mini-combobox" onvaluechanged="sqlOpChange" visible="false" style="width:200px;" /></td>
+      <td><input name="roleCd" class="mini-textbox" /></td>
+      <td><input name="roleCd2" class="mini-textbox" visible="false" /></td>
+      <td style="text-align:right;"><%== UI("ROLENAMEZH") %>:</td>
+      <td><input name="sqlOp_roleNameZh" data="sqlOpData" value="<%== sqlop %>" class="mini-combobox" onvaluechanged="sqlOpChange" visible="false" style="width:200px;" /></td>
+      <td><input name="roleNameZh" class="mini-textbox" /></td>
+      <td><input name="roleNameZh2" class="mini-textbox" visible="false" /></td>
+   </tr>
+   <tr>
+      <td style="text-align:right;"><%== UI("ROLENAMEEN") %>:</td>
+      <td><input name="sqlOp_roleNameEn" data="sqlOpData" value="<%== sqlop %>" class="mini-combobox" onvaluechanged="sqlOpChange" visible="false" style="width:200px;" /></td>
+      <td><input name="roleNameEn" class="mini-textbox" /></td>
+      <td><input name="roleNameEn2" class="mini-textbox" visible="false" /></td>
+   </tr>
+   </table>
+</form>
+<div class="mini-toolbar" style="margin-left:3px;border:0">
+ <a class="mini-button" onclick="clearForm('searchFormRoleApp<%== tid %>')"><%== UI("Clear") %></a>
+ <a class="mini-button" onclick="resetForm('searchFormRoleApp<%== tid %>')"><%== UI("Reset") %></a>
+</div>

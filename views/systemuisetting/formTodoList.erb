@@ -63,7 +63,7 @@ qMapOut.insert("action",action);
 <% } %>
 <!-- toolBar -->
 <div class="mini-toolbar" style="border:0px">
-    <% if (action == "show" && accessAllow("SystemUIsetting/editTodoList")){ %>
+    <% if (action == "show" && accessAllow("SystemUIsetting","editTodoList")){ %>
         <a class="mini-button" onclick="editForm('formTodoList<%== tid %>','/PartialService/formTodoList?action=edit&todoListId=<%== todoListId%>')" tooltip="<%== UI("TP_SYSTEMUISETTING_EDIT_TODOLIST") %>" ><%== UI("Edit") %></a>
     <% } %>
 </div>

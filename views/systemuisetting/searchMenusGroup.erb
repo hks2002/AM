@@ -17,14 +17,14 @@ qMapOut.insert("tid",tid);
  <div class="mini-toolbar" style="border:0px">
         <a class="mini-button" onclick="doSearch('searchFormMenusGroup<%== tid %>','gridMenusGroup<%== tid %>')"><%== UI("Search") %></a>
         <a class="mini-button" onclick="showRecord('gridMenusGroup<%== tid %>','<%== UI("MenusGroup") %>',650,500,'/PartialService/formMenusGroup?action=show',['menusGroupId'])" tooltip="" ><%== UI("Show Details") %></a>
-    <% if (accessAllow("SystemUIsetting/createMenusGroup")){ %>
-        <a class="mini-button" onclick="createRecord('<%== UI("MenusGroup") %>',650,500,'/PartialService/formMenusGroup?action=create')" tooltip="<%== UI("TP_SYSTEMUISETTING_CREATE_MENUSGROUP") %>" ><%== UI("Create") %></a>
+    <% if (accessAllow("SystemUIsetting","createMenusGroup")){ %>
+        <a class="mini-button" onclick="createRecord('<%== UI("MenusGroup") %>',650,500,'/PartialService/formMenusGroup?action=create')" ><%== UI("Create") %></a>
     <% } %>
-    <% if (accessAllow("SystemUIsetting/editMenusGroup")){ %>
-        <a class="mini-button" onclick="editRecord('gridMenusGroup<%== tid %>','<%== UI("MenusGroup") %>',650,500,'/PartialService/formMenusGroup?action=edit',['menusGroupId'])" tooltip="<%== UI("TP_SYSTEMUISETTING_EDIT_MENUSGROUP") %>" ><%== UI("Edit") %></a>
+    <% if (accessAllow("SystemUIsetting","editMenusGroup")){ %>
+        <a class="mini-button" onclick="editRecord('gridMenusGroup<%== tid %>','<%== UI("MenusGroup") %>',650,500,'/PartialService/formMenusGroup?action=edit',['menusGroupId'])" ><%== UI("Edit") %></a>
     <% } %>
-    <% if (accessAllow("SystemUIsetting/deleteMenusGroup")){ %>
-        <a class="mini-button" onclick="deleteRecord('gridMenusGroup<%== tid %>','/SystemUIsetting/deleteMenusGroup',['menusGroupId'],'<%== csrfVal() %>')" tooltip="<%== UI("TP_SYSTEMUISETTING_DELETE_MENUSGROUP") %>" ><%== UI("Delete") %></a>
+    <% if (accessAllow("SystemUIsetting","deleteMenusGroup")){ %>
+        <a class="mini-button" onclick="deleteRecord('gridMenusGroup<%== tid %>','/SystemUIsetting/deleteMenusGroup',['menusGroupId'],'<%== csrfVal() %>')" ><%== UI("Delete") %></a>
     <% } %>
  </div>
 <!-- grid -->

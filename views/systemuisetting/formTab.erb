@@ -63,9 +63,6 @@ qMapOut.insert("action",action);
 <% } %>
 <!-- toolBar -->
 <div class="mini-toolbar" style="border:0px">
-    <% if (action == "show" && accessAllow("SystemUIsetting/editTab")){ %>
-        <a class="mini-button" onclick="editForm('formTab<%== tid %>','/PartialService/formTab?action=edit&tabId=<%== tabId%>')" tooltip="<%== UI("TP_SYSTEMUISETTING_EDIT_TAB") %>" ><%== UI("Edit") %></a>
-    <% } %>
 </div>
 <!-- tabs -->
 <div class="mini-fit">
