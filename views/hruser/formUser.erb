@@ -1,0 +1,83 @@
+<%#include "userapp.h" %>
+<%
+QString lang = httpRequest().cookie("lang");
+QVariantMap qMap = httpRequest().queryItems();
+QString tid = tId();
+
+QString action = qMap.contains("action") ? httpRequest().queryItemValue("action"): variant("action").toString();
+QString userId = qMap.contains("userId") ? httpRequest().queryItemValue("userId"): variant("userId").toString();
+UserApp user = UserApp::get(hmacVal(userId).toInt());
+
+QVariantMap qMapOut;
+qMapOut.insert("userId",userId);
+qMapOut.insert("action",action);
+%>
+<% if (action == "show"){ %>
+<!-- show -->
+<div id="formUser<%== tid %>" name="formUser" class="form" >
+  <table class="layout-fixed" width="100%">
+   <tr>
+      <td style="text-align:right;white-space:nowrap"><%== UI("USERNAME") %>:</td>
+      <td><span style="padding-right:30px;" ><%== user.userName() %></span></td>
+      <td style="text-align:right;white-space:nowrap"><%== UI("FULLNAMEZH") %>:</td>
+      <td><span style="padding-right:30px;" ><%== user.fullNameZh() %></span></td>
+      <td style="text-align:right;white-space:nowrap"><%== UI("FULLNAMEEN") %>:</td>
+      <td><span style="padding-right:30px;" ><%== user.fullNameEn() %></span></td>
+   </tr>
+   <tr>
+      <td style="text-align:right;white-space:nowrap"><%== UI("HRCD") %>:</td>
+      <td><span style="padding-right:30px;" ><%== user.hrCd() %></span></td>
+      <td style="text-align:right;white-space:nowrap"><%== UI("PASSWORD") %>:</td>
+      <td><span style="padding-right:30px;" ><%== user.password() %></span></td>
+      <td style="text-align:right;white-space:nowrap"><%== UI("EMAILADDR") %>:</td>
+      <td><span style="padding-right:30px;" ><%== user.emailAddr() %></span></td>
+   </tr>
+   <tr>
+      <td style="text-align:right;white-space:nowrap"><%== UI("LOCKEDBOOL") %>:</td>
+      <td><span style="padding-right:30px;" ><%== user.lockedBool() %></span></td>
+   </tr>
+  </table>
+</div>
+<% }else { %>
+<!-- edit -->
+<div id="formUser<%== tid %>" name="formUserApp" class="form" action="/HrUser/<%== action %>User">
+  <%== inputAuthenticityTag() %>
+  <% if (action != "create") { %>
+     <input name="userId" class="mini-textbox" visible="false" value="<%== userId %>"  /> 
+  <% } %>
+  <table style="width:100%">
+   <tr>
+      <td style="text-align:right;white-space:nowrap"><%== UI("USERNAME") %>:</td>
+      <td><input name="userName" class="mini-textbox" style="width:100%" vtype="maxLength:16"  value="<%== user.userName() %>" /></td>
+      <td style="text-align:right;white-space:nowrap"><%== UI("FULLNAMEZH") %>:</td>
+      <td><input name="fullNameZh" class="mini-textbox" style="width:100%" vtype="maxLength:64"  value="<%== user.fullNameZh() %>" /></td>
+      <td style="text-align:right;white-space:nowrap"><%== UI("FULLNAMEEN") %>:</td>
+      <td><input name="fullNameEn" class="mini-textbox" style="width:100%" vtype="maxLength:64"  value="<%== user.fullNameEn() %>" /></td>
+   </tr>
+   <tr>
+      <td style="text-align:right;white-space:nowrap"><%== UI("HRCD") %>:</td>
+      <td><input name="hrCd" class="mini-textbox" style="width:100%" vtype="maxLength:16"  value="<%== user.hrCd() %>" /></td>
+      <td style="text-align:right;white-space:nowrap"><%== UI("PASSWORD") %>:</td>
+      <td><input name="password" class="mini-textarea" style="width:100%" vtype="maxLength:256"  value="<%== user.password() %>" /></td>
+      <td style="text-align:right;white-space:nowrap"><%== UI("EMAILADDR") %>:</td>
+      <td><input name="emailAddr" class="mini-textbox" style="width:100%" vtype="maxLength:64"  value="<%== user.emailAddr() %>" /></td>
+   </tr>
+   <tr>
+      <td style="text-align:right;white-space:nowrap"><%== UI("LOCKEDBOOL") %>:</td>
+      <td><input name="lockedBool" class="mini-checkbox" value="<%== user.lockedBool() %>" /></td>
+   </tr>
+  </table>
+</div>
+<% } %>
+<!-- toolBar -->
+<div class="mini-toolbar" style="border:0px">
+    <% if (action == "show" && accessAllow("HrUser","editUser")){ %>
+        <a class="mini-button" onclick="editForm('formUser<%== tid %>','/PartialService/formUser?action=edit&userId=<%== userId%>')" ><%== UI("Edit") %></a>
+    <% } %>
+</div>
+<!-- tabs -->
+<div class="mini-fit">
+    <% if (action != "create") { %>
+    <%== renderPartial("HrUser/relationOfUser",qMapOut) %> 
+    <% } %>
+</div>

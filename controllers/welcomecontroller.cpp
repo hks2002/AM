@@ -77,7 +77,6 @@ void WelcomeController::logIn()
         }
 
         while (query.next()) {
-            tDebug("XX");
             QSqlRecord record = query.record();
             QString url;
 

@@ -1,0 +1,67 @@
+<%#include "dept.h" %>
+<%
+QString lang = httpRequest().cookie("lang");
+QVariantMap qMap = httpRequest().queryItems();
+QString tid = tId();
+
+QString action = qMap.contains("action") ? httpRequest().queryItemValue("action"): variant("action").toString();
+QString deptId = qMap.contains("deptId") ? httpRequest().queryItemValue("deptId"): variant("deptId").toString();
+Dept dept = Dept::get(hmacVal(deptId).toInt());
+
+QVariantMap qMapOut;
+qMapOut.insert("deptId",deptId);
+qMapOut.insert("action",action);
+%>
+<% if (action == "show"){ %>
+<!-- show -->
+<div id="formDept<%== tid %>" name="formDept" class="form" >
+  <table class="layout-fixed" width="100%">
+   <tr>
+      <td style="text-align:right;white-space:nowrap"><%== UI("DEPTCD") %>:</td>
+      <td><span style="padding-right:30px;" ><%== dept.deptCd() %></span></td>
+      <td style="text-align:right;white-space:nowrap"><%== UI("DEPTNAMEZH") %>:</td>
+      <td><span style="padding-right:30px;" ><%== dept.deptNameZh() %></span></td>
+      <td style="text-align:right;white-space:nowrap"><%== UI("DEPTNAMEEN") %>:</td>
+      <td><span style="padding-right:30px;" ><%== dept.deptNameEn() %></span></td>
+   </tr>
+   <tr>
+      <td style="text-align:right;white-space:nowrap"><%== UI("DEPTDESC") %>:</td>
+      <td><span style="padding-right:30px;" ><%== dept.deptDesc() %></span></td>
+   </tr>
+  </table>
+</div>
+<% }else { %>
+<!-- edit -->
+<div id="formDept<%== tid %>" name="formDept" class="form" action="/HrDepartment/<%== action %>Dept">
+  <%== inputAuthenticityTag() %>
+  <% if (action != "create") { %>
+     <input name="deptId" class="mini-textbox" visible="false" value="<%== deptId %>"  /> 
+  <% } %>
+  <table style="width:100%">
+   <tr>
+      <td style="text-align:right;white-space:nowrap"><%== UI("DEPTCD") %>:</td>
+      <td><input name="deptCd" class="mini-textbox" style="width:100%" vtype="maxLength:16"  value="<%== dept.deptCd() %>" /></td>
+      <td style="text-align:right;white-space:nowrap"><%== UI("DEPTNAMEZH") %>:</td>
+      <td><input name="deptNameZh" class="mini-textbox" style="width:100%" vtype="maxLength:64"  value="<%== dept.deptNameZh() %>" /></td>
+      <td style="text-align:right;white-space:nowrap"><%== UI("DEPTNAMEEN") %>:</td>
+      <td><input name="deptNameEn" class="mini-textbox" style="width:100%" vtype="maxLength:64"  value="<%== dept.deptNameEn() %>" /></td>
+   </tr>
+   <tr>
+      <td style="text-align:right;white-space:nowrap"><%== UI("DEPTDESC") %>:</td>
+      <td><input name="deptDesc" class="mini-textarea" style="width:100%" value="<%== dept.deptDesc() %>" /></td>
+   </tr>
+  </table>
+</div>
+<% } %>
+<!-- toolBar -->
+<div class="mini-toolbar" style="border:0px">
+    <% if (action == "show" && accessAllow("HrDepartment","editDept")){ %>
+        <a class="mini-button" onclick="editForm('formDept<%== tid %>','/PartialService/formDept?action=edit&deptId=<%== deptId%>')" tooltip="<%== UI("TP_HRDEPARTMENT_EDIT_DEPT") %>" ><%== UI("Edit") %></a>
+    <% } %>
+</div>
+<!-- tabs -->
+<div class="mini-fit">
+    <% if (action != "create") { %>
+    <%== renderPartial("HrDepartment/relationOfDept",qMapOut) %> 
+    <% } %>
+</div>

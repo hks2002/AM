@@ -1,0 +1,59 @@
+<%
+QString lang = httpRequest().cookie("lang");
+QVariant tid = tId();
+QVariantMap qMapOut;
+qMapOut.insert("tid",tid);
+%>
+<!-- searchFrom -->
+<fieldset id="searchFieldsetUser<%== tid %>" class="hideFieldset"> <!--    default hide-->
+<legend><label>
+<input type="checkbox" onclick="toggleSearch(this, 'searchFieldsetUser<%== tid %>')" hidefocus=""/><%== UI("Search Criteria") %>
+</label></legend>
+<div class="fieldset-body">
+    <%== renderPartial("HrUser/formSearchUser",qMapOut) %>
+ </div>
+</fieldset>
+<!-- toolBar -->
+ <div class="mini-toolbar" style="border:0px">
+        <a class="mini-button" onclick="doSearch('searchFormUser<%== tid %>','gridUser<%== tid %>')"><%== UI("Search") %></a>
+        <a class="mini-button" onclick="showRecord('gridUser<%== tid %>','<%== UI("User") %>',650,500,'/PartialService/formUser?action=show',['userId'])" tooltip="" ><%== UI("Show Details") %></a>
+    <% if (accessAllow("HrUser","createUser")){ %>
+        <a class="mini-button" onclick="createRecord('<%== UI("User") %>',650,500,'/PartialService/formUser?action=create')" ><%== UI("Create") %></a>
+    <% } %>
+    <% if (accessAllow("HrUser","editUser")){ %>
+        <a class="mini-button" onclick="editRecord('gridUser<%== tid %>','<%== UI("User") %>',650,500,'/PartialService/formUser?action=edit',['userId'])" ><%== UI("Edit") %></a>
+    <% } %>
+    <% if (accessAllow("HrUser","deleteUser")){ %>
+        <a class="mini-button" onclick="deleteRecord('gridUser<%== tid %>','/HrUser/deleteUser',['userId'],'<%== csrfVal() %>')" ><%== UI("Delete") %></a>
+    <% } %>
+ </div>
+<!-- grid -->
+<div class="mini-fit">
+<div id="gridUser<%== tid %>" name="gridUser" class="mini-datagrid" url="/DataService/Search/User?searchMode=page" allowSortColumn="false" 
+   style="height:100%" showEmptyText="true" multiSelect="true" onpreload="onpreload" >
+  <div property="columns">
+   <div type="indexcolumn" width="25"></div>
+   <div type="checkcolumn" width="25"></div>
+   <div field="userId" visible="false"><%== UI("USERID") %></div>
+   <div field="userName" allowsort="true"><%== UI("USERNAME") %></div>
+   <div field="fullNameZh" allowsort="true"><%== UI("FULLNAMEZH") %></div>
+   <div field="fullNameEn" allowsort="true"><%== UI("FULLNAMEEN") %></div>
+   <div field="hrCd" allowsort="true"><%== UI("HRCD") %></div>
+   <div field="password" allowsort="true"><%== UI("PASSWORD") %></div>
+   <div field="emailAddr" allowsort="true"><%== UI("EMAILADDR") %></div>
+   <div field="lockedBool" allowsort="true" width="100%"><%== UI("LOCKEDBOOL") %></div>
+  </div>
+</div>
+</div>
+<script type="text/javascript">
+    mini.parse();
+    var grid = mini.get("gridUser<%== tid %>");
+    var sorter = new MultiSort(grid);
+    sorter.sort([{'field':''}]);
+
+    grid.on("drawcell", function (e) {
+        if (e.field=="") {
+            e.cellHtml = '<a href="javascript:showRecord(\'gridUser<%== tid %>\',\'<%== UI("User") %>\',650,500,\'/PartialService/formUser?action=show\',[\'userId\'])">' + e.value + '</a>';
+        }
+    });
+</script>

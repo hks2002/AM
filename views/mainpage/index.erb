@@ -17,7 +17,7 @@ QVariantMap addedTabs = httpRequest().formItems();
 </div>
 <!-- Menus -->
 <div>
-  <%== renderPartial("menus"); %>
+  <%== renderPartial("pageMenus"); %>
 </div>
 <%
 TSqlQuery tabquery;
@@ -120,7 +120,7 @@ if (currentRoleId > 0) { //byRole
 %>
 <!-- ToDo List buttons and tabs related to user and all his roles-->
 <!--ToolBars-->
-<div style="margin-left:3px;margin-right:3px;margin-bottom:2px;">
+<div class="mini-toolbar">
     <!--Buttons-->
     <% for (auto &map : buttonList) { %>
 	   <a class="mini-button" name="/<%== map.value("controller") %>/<%== map.value("action") %>" tooltip="<%== map.value("buttonTooltip") %>" onclick="onButtonClick" ><%== lang=="zh"?map.value("buttonNameZh"):map.value("buttonNameEn") %></a>

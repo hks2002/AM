@@ -9,7 +9,6 @@ void HrUserController::userRoleMapSearch()
 
 void HrUserController::userSearch()
 {
-    //TODO userSearch
     render();
 }
 

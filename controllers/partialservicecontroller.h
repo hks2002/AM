@@ -14,17 +14,18 @@ public:
     PartialServiceController(): TActionController() { }
 
 public slots:
+    void formMenusGroup();
+    void formMenu();
+    void formButton();
+    void formTab();
+    void formTodoList();
+    void formDept();
     void relationMenuByMenusGroup();
     void relationMenusGroupByMenu();
     void relationTabByTodoList();
     void relationButtonByTodoList();
     void relationTodoListByButton();
     void relationTodoListByTab();
-    void formMenusGroup();
-    void formMenu();
-    void formButton();
-    void formTab();
-    void formTodoList();
 };
 
 #endif // PARTIALSERVICE_H

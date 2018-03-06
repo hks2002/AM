@@ -1,0 +1,56 @@
+<%
+QString lang = httpRequest().cookie("lang");
+QVariant tid = tId();
+QVariantMap qMapOut;
+qMapOut.insert("tid",tid);
+%>
+<!-- searchFrom -->
+<fieldset id="searchFieldsetDept<%== tid %>" class="hideFieldset"> <!--    default hide-->
+<legend><label>
+<input type="checkbox" onclick="toggleSearch(this, 'searchFieldsetDept<%== tid %>')" hidefocus=""/><%== UI("Search Criteria") %>
+</label></legend>
+<div class="fieldset-body">
+    <%== renderPartial("HrDepartment/formSearchDept",qMapOut) %>
+ </div>
+</fieldset>
+<!-- toolBar -->
+ <div class="mini-toolbar" style="border:0px">
+        <a class="mini-button" onclick="doSearch('searchFormDept<%== tid %>','gridDept<%== tid %>')"><%== UI("Search") %></a>
+        <a class="mini-button" onclick="showRecord('gridDept<%== tid %>','<%== UI("Dept") %>',650,500,'/PartialService/formDept?action=show',['deptId'])" tooltip="" ><%== UI("Show Details") %></a>
+    <% if (accessAllow("HrDepartment","createDept")){ %>
+        <a class="mini-button" onclick="createRecord('<%== UI("Dept") %>',650,250,'/PartialService/formDept?action=create')" ><%== UI("Create") %></a>
+    <% } %>
+    <% if (accessAllow("HrDepartment","editDept")){ %>
+        <a class="mini-button" onclick="editRecord('gridDept<%== tid %>','<%== UI("Dept") %>',650,500,'/PartialService/formDept?action=edit',['deptId'])" ><%== UI("Edit") %></a>
+    <% } %>
+    <% if (accessAllow("HrDepartment","deleteDept")){ %>
+        <a class="mini-button" onclick="deleteRecord('gridDept<%== tid %>','/HrDepartment/deleteDept',['deptId'],'<%== csrfVal() %>')" ><%== UI("Delete") %></a>
+    <% } %>
+ </div>
+<!-- grid -->
+<div class="mini-fit">
+<div id="gridDept<%== tid %>" name="gridDept" class="mini-datagrid" url="/DataService/Search/Dept?searchMode=page" allowSortColumn="false" 
+   style="height:100%" showEmptyText="true" multiSelect="true" onpreload="onpreload" >
+  <div property="columns">
+   <div type="indexcolumn" width="25"></div>
+   <div type="checkcolumn" width="25"></div>
+   <div field="deptId" visible="false"><%== UI("DEPTID") %></div>
+   <div field="deptCd" allowsort="true"><%== UI("DEPTCD") %></div>
+   <div field="deptNameZh" allowsort="true"><%== UI("DEPTNAMEZH") %></div>
+   <div field="deptNameEn" allowsort="true"><%== UI("DEPTNAMEEN") %></div>
+   <div field="deptDesc" allowsort="true" width="100%"><%== UI("DEPTDESC") %></div>
+  </div>
+</div>
+</div>
+<script type="text/javascript">
+    mini.parse();
+    var grid = mini.get("gridDept<%== tid %>");
+    var sorter = new MultiSort(grid);
+    sorter.sort([{'field':'deptCd'}]);
+
+    grid.on("drawcell", function (e) {
+        if (e.field=="deptCd") {
+            e.cellHtml = '<a href="javascript:showRecord(\'gridDept<%== tid %>\',\'<%== UI("Dept") %>\',650,500,\'/PartialService/formDept?action=show\',[\'deptId\'])">' + e.value + '</a>';
+        }
+    });
+</script>

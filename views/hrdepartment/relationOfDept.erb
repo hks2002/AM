@@ -1,0 +1,46 @@
+<%
+QString tid = tId();
+QVariant deptId = variant("deptId");
+QString action = variant("action").toString();
+
+QVariantMap qMapOut;
+qMapOut.insert("tid",tid);
+qMapOut.insert("deptId",deptId);
+qMapOut.insert("action",action);
+%>
+<div id="relationOfDept<%== tid %>" class="mini-tabs" activeindex="0" style="width:100%;height:100%;" bodystyle="border:0;">
+  <div title='<%== UI("Assigned Organizations") %>'>
+    <div>
+        <% if (accessAllow("HrDepartment","assignOrg")){ %>
+            <% if (action=="edit") { %>
+            <a class="mini-button" plain="true" tooltip="<%== UI("Assign") %>" iconCls="icon-assign" 
+            onclick="relationWindow(this,'<%== UI("Organizations") %>',400,400,'/PartialService/relationOrgByDept?relation=unassigned','/HrDepartment/assignOrg',['orgId'],{'deptId':'<%== deptId %>'},'<%== csrfVal() %>')"></a>
+            <% } %>
+        <% } %>
+        <% if (accessAllow("HrDepartment","unassignOrg")) { %>
+            <% if (action=="edit") { %>
+            <a class="mini-button" plain="true" tooltip="<%== UI("Unassign") %>" iconcls="icon-unassign" 
+            onclick="relationRecord('relationOrgByDept<%== tid %>','/HrDepartment/unassignOrg',['orgId'],{'deptId':'<%== deptId %>'},'<%== csrfVal() %>')" ></a>
+            <% } %>
+        <% } %>
+    </div>
+    <%== renderPartial("HrDepartment/relationOrgByDept",qMapOut) %>
+  </div>
+  <div title='<%== UI("Assigned Users") %>'>
+    <div>
+        <% if (accessAllow("HrDepartment","assignUser")){ %>
+            <% if (action=="edit") { %>
+            <a class="mini-button" plain="true" tooltip="<%== UI("Assign") %>" iconCls="icon-assign" 
+            onclick="relationWindow(this,'<%== UI("Users") %>',400,400,'/PartialService/relationUserByDept?relation=unassigned','/HrDepartment/assignUser',['userId'],{'deptId':'<%== deptId %>'},'<%== csrfVal() %>')"></a>
+            <% } %>
+        <% } %>
+        <% if (accessAllow("HrDepartment","unassignUser")) { %>
+            <% if (action=="edit") { %>
+            <a class="mini-button" plain="true" tooltip="<%== UI("Unassign") %>" iconcls="icon-unassign" 
+            onclick="relationRecord('relationUserAppByDept<%== tid %>','/HrDepartment/unassignUser',['userId'],{'deptId':'<%== deptId %>'},'<%== csrfVal() %>')" ></a>
+            <% } %>
+        <% } %>
+    </div>
+    <%== renderPartial("HrDepartment/relationUserByDept",qMapOut) %>
+  </div>
+</div>

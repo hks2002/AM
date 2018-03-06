@@ -80,14 +80,16 @@ void SystemUIsettingController::createButton()
 
 void SystemUIsettingController::createMenu()
 {
-    auto varMaps = httpRequest().formItems();
-    TSqlORMapper<MenuObject> mapper;
-    TCriteria crt(MenuObject::MenuCd, varMaps.value("menuCd"));
-    auto sqlobj = mapper.findFirst(crt);
+    if (boolean(CFG("UICODE_DUPLICATE"))) {
+        auto varMaps = httpRequest().formItems();
+        TSqlORMapper<MenuObject> mapper;
+        TCriteria crt(MenuObject::MenuCd, varMaps.value("menuCd"));
+        auto sqlobj = mapper.findFirst(crt);
 
-    if (!sqlobj.isNull()) {
-        renderJson(jsonObj(false, UI("Already exists.")));
-        return;
+        if (!sqlobj.isNull()) {
+            renderJson(jsonObj(false, UI("Already exists.")));
+            return;
+        }
     }
 
     DataServiceController::createRecord<Menu, MenuValidator>(dynamic_cast<ApplicationController *>(this));
@@ -95,14 +97,16 @@ void SystemUIsettingController::createMenu()
 
 void SystemUIsettingController::createMenusGroup()
 {
-    auto varMaps = httpRequest().formItems();
-    TSqlORMapper<MenusGroupObject> mapper;
-    TCriteria crt(MenusGroupObject::MenusGroupCd, varMaps.value("menusGroupCd"));
-    auto sqlobj = mapper.findFirst(crt);
+    if (boolean(CFG("UICODE_DUPLICATE"))) {
+        auto varMaps = httpRequest().formItems();
+        TSqlORMapper<MenusGroupObject> mapper;
+        TCriteria crt(MenusGroupObject::MenusGroupCd, varMaps.value("menusGroupCd"));
+        auto sqlobj = mapper.findFirst(crt);
 
-    if (!sqlobj.isNull()) {
-        renderJson(jsonObj(false, UI("Already exists.")));
-        return;
+        if (!sqlobj.isNull()) {
+            renderJson(jsonObj(false, UI("Already exists.")));
+            return;
+        }
     }
 
     DataServiceController::createRecord<MenusGroup, MenusGroupValidator>(dynamic_cast<ApplicationController *>(this));
@@ -110,14 +114,16 @@ void SystemUIsettingController::createMenusGroup()
 
 void SystemUIsettingController::createTab()
 {
-    auto varMaps = httpRequest().formItems();
-    TSqlORMapper<TabObject> mapper;
-    TCriteria crt(TabObject::TabCd, varMaps.value("tabCd"));
-    auto sqlobj = mapper.findFirst(crt);
+    if (boolean(CFG("UICODE_DUPLICATE"))) {
+        auto varMaps = httpRequest().formItems();
+        TSqlORMapper<TabObject> mapper;
+        TCriteria crt(TabObject::TabCd, varMaps.value("tabCd"));
+        auto sqlobj = mapper.findFirst(crt);
 
-    if (!sqlobj.isNull()) {
-        renderJson(jsonObj(false, UI("Already exists.")));
-        return;
+        if (!sqlobj.isNull()) {
+            renderJson(jsonObj(false, UI("Already exists.")));
+            return;
+        }
     }
 
     DataServiceController::createRecord<Tab, TabValidator>(dynamic_cast<ApplicationController *>(this));
@@ -125,14 +131,16 @@ void SystemUIsettingController::createTab()
 
 void SystemUIsettingController::createTodoList()
 {
-    auto varMaps = httpRequest().formItems();
-    TSqlORMapper<TodoListObject> mapper;
-    TCriteria crt(TodoListObject::TodoListCd, varMaps.value("todoListCd"));
-    auto sqlobj = mapper.findFirst(crt);
+    if (boolean(CFG("UICODE_DUPLICATE"))) {
+        auto varMaps = httpRequest().formItems();
+        TSqlORMapper<TodoListObject> mapper;
+        TCriteria crt(TodoListObject::TodoListCd, varMaps.value("todoListCd"));
+        auto sqlobj = mapper.findFirst(crt);
 
-    if (!sqlobj.isNull()) {
-        renderJson(jsonObj(false, UI("Already exists.")));
-        return;
+        if (!sqlobj.isNull()) {
+            renderJson(jsonObj(false, UI("Already exists.")));
+            return;
+        }
     }
 
     DataServiceController::createRecord<TodoList, TodoListValidator>(dynamic_cast<ApplicationController *>(this));
@@ -156,7 +164,7 @@ void SystemUIsettingController::deleteButton()
             auto sqlobj = mapper.findFirst(crt);
 
             if (!sqlobj.isNull()) {
-                renderJson(jsonObj(false, UI("Already assigned to TodoList.")));
+                renderJson(jsonObj(false, UI("Already be assigned to TodoList.")));
                 return;
             }
         }
@@ -184,7 +192,7 @@ void SystemUIsettingController::deleteMenu()
             auto sqlobj = mapper.findFirst(crt);
 
             if (!sqlobj.isNull()) {
-                renderJson(jsonObj(false, UI("Already assigned to MenusGroup.")));
+                renderJson(jsonObj(false, UI("Already be assigned to MenusGroup.")));
                 return;
             }
         }
@@ -212,7 +220,7 @@ void SystemUIsettingController::deleteMenusGroup()
             auto sqlobj = mapper.findFirst(crt);
 
             if (!sqlobj.isNull()) {
-                renderJson(jsonObj(false, UI("Already assigned to Menu.")));
+                renderJson(jsonObj(false, UI("Already be assigned to Menu.")));
                 return;
             }
         }
@@ -240,7 +248,7 @@ void SystemUIsettingController::deleteTab()
             auto sqlobj = mapper.findFirst(crt);
 
             if (!sqlobj.isNull()) {
-                renderJson(jsonObj(false, UI("Already assigned to TodoList.")));
+                renderJson(jsonObj(false, UI("Already be assigned to TodoList.")));
                 return;
             }
         }
@@ -268,7 +276,7 @@ void SystemUIsettingController::deleteTodoList()
             auto sqlobj = mapper.findFirst(crt);
 
             if (!sqlobj.isNull()) {
-                renderJson(jsonObj(false, UI("Already assigned to Tab.")));
+                renderJson(jsonObj(false, UI("Already be assigned to Tab.")));
                 return;
             }
         }
@@ -278,7 +286,7 @@ void SystemUIsettingController::deleteTodoList()
             auto sqlobj = mapper.findFirst(crt);
 
             if (!sqlobj.isNull()) {
-                renderJson(jsonObj(false, UI("Already assigned to Button.")));
+                renderJson(jsonObj(false, UI("Already be assigned to Button.")));
                 return;
             }
         }
@@ -309,15 +317,17 @@ void SystemUIsettingController::editButton()
 
 void SystemUIsettingController::editMenu()
 {
-    auto varMaps = httpRequest().formItems();
-    TSqlORMapper<MenuObject> mapper;
-    TCriteria crt(MenuObject::MenuCd, varMaps.value("menuCd"));
-    crt.add(MenuObject::MenuId, TSql::NotEqual, hmacVal(varMaps.value("menuId")));
-    auto sqlobj = mapper.findFirst(crt);
+    if (boolean(CFG("UICODE_DUPLICATE"))) {
+        auto varMaps = httpRequest().formItems();
+        TSqlORMapper<MenuObject> mapper;
+        TCriteria crt(MenuObject::MenuCd, varMaps.value("menuCd"));
+        crt.add(MenuObject::MenuId, TSql::NotEqual, hmacVal(varMaps.value("menuId")));
+        auto sqlobj = mapper.findFirst(crt);
 
-    if (!sqlobj.isNull()) {
-        renderJson(jsonObj(false, UI("Already exists.")));
-        return;
+        if (!sqlobj.isNull()) {
+            renderJson(jsonObj(false, UI("Already exists.")));
+            return;
+        }
     }
 
     DataServiceController::updateRecord<Menu, MenuObject, MenuValidator>(dynamic_cast<ApplicationController *>(this),
@@ -326,15 +336,17 @@ void SystemUIsettingController::editMenu()
 
 void SystemUIsettingController::editMenusGroup()
 {
-    auto varMaps = httpRequest().formItems();
-    TSqlORMapper<MenusGroupObject> mapper;
-    TCriteria crt(MenusGroupObject::MenusGroupCd, varMaps.value("menusGroupCd"));
-    crt.add(MenusGroupObject::MenusGroupId, TSql::NotEqual, hmacVal(varMaps.value("menusGroupId")));
-    auto sqlobj = mapper.findFirst(crt);
+    if (boolean(CFG("UICODE_DUPLICATE"))) {
+        auto varMaps = httpRequest().formItems();
+        TSqlORMapper<MenusGroupObject> mapper;
+        TCriteria crt(MenusGroupObject::MenusGroupCd, varMaps.value("menusGroupCd"));
+        crt.add(MenusGroupObject::MenusGroupId, TSql::NotEqual, hmacVal(varMaps.value("menusGroupId")));
+        auto sqlobj = mapper.findFirst(crt);
 
-    if (!sqlobj.isNull()) {
-        renderJson(jsonObj(false, UI("Already exists.")));
-        return;
+        if (!sqlobj.isNull()) {
+            renderJson(jsonObj(false, UI("Already exists.")));
+            return;
+        }
     }
 
     DataServiceController::updateRecord<MenusGroup, MenusGroupObject, MenusGroupValidator>(dynamic_cast<ApplicationController *>(this),
@@ -343,15 +355,17 @@ void SystemUIsettingController::editMenusGroup()
 
 void SystemUIsettingController::editTab()
 {
-    auto varMaps = httpRequest().formItems();
-    TSqlORMapper<TabObject> mapper;
-    TCriteria crt(TabObject::TabCd, varMaps.value("tabCd"));
-    crt.add(TabObject::TabId, TSql::NotEqual, hmacVal(varMaps.value("tabId")));
-    auto sqlobj = mapper.findFirst(crt);
+    if (boolean(CFG("UICODE_DUPLICATE"))) {
+        auto varMaps = httpRequest().formItems();
+        TSqlORMapper<TabObject> mapper;
+        TCriteria crt(TabObject::TabCd, varMaps.value("tabCd"));
+        crt.add(TabObject::TabId, TSql::NotEqual, hmacVal(varMaps.value("tabId")));
+        auto sqlobj = mapper.findFirst(crt);
 
-    if (!sqlobj.isNull()) {
-        renderJson(jsonObj(false, UI("Already exists.")));
-        return;
+        if (!sqlobj.isNull()) {
+            renderJson(jsonObj(false, UI("Already exists.")));
+            return;
+        }
     }
 
     DataServiceController::updateRecord<Tab, TabObject, TabValidator>(dynamic_cast<ApplicationController *>(this),
@@ -360,15 +374,17 @@ void SystemUIsettingController::editTab()
 
 void SystemUIsettingController::editTodoList()
 {
-    auto varMaps = httpRequest().formItems();
-    TSqlORMapper<TodoListObject> mapper;
-    TCriteria crt(TodoListObject::TodoListCd, varMaps.value("todoListCd"));
-    crt.add(TodoListObject::TodoListId, TSql::NotEqual, hmacVal(varMaps.value("todoListId")));
-    auto sqlobj = mapper.findFirst(crt);
+    if (boolean(CFG("UICODE_DUPLICATE"))) {
+        auto varMaps = httpRequest().formItems();
+        TSqlORMapper<TodoListObject> mapper;
+        TCriteria crt(TodoListObject::TodoListCd, varMaps.value("todoListCd"));
+        crt.add(TodoListObject::TodoListId, TSql::NotEqual, hmacVal(varMaps.value("todoListId")));
+        auto sqlobj = mapper.findFirst(crt);
 
-    if (!sqlobj.isNull()) {
-        renderJson(jsonObj(false, UI("Already exists.")));
-        return;
+        if (!sqlobj.isNull()) {
+            renderJson(jsonObj(false, UI("Already exists.")));
+            return;
+        }
     }
 
     DataServiceController::updateRecord<TodoList, TodoListObject, TodoListValidator>(dynamic_cast<ApplicationController *>(this),

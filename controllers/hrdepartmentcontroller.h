@@ -11,7 +11,7 @@ public:
     HrDepartmentController() : ApplicationController() { }
 
 public slots:
-    void departmentSearch();
+    void searchDepartment();
     void createDepartment();
     void deleteDepartment();
     void editDepartment();
@@ -19,8 +19,8 @@ public slots:
     void unassignSubDepartment();
     void assignOrg();
     void unassignOrg();
-    void assignUsers();
-    void unassignUsers();
+    void assignUser();
+    void unassignUser();
 };
 
 #endif // HRDEPARTMENTCONTROLLER_H

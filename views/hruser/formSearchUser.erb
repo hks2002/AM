@@ -1,0 +1,48 @@
+<% QVariant tid = variant("tid") %>
+<% QVariant sqlop = CFG("SQLOP") %>
+<form id="searchFormUser<%== tid %>" name="searchFormUser">
+   <input class="mini-checkbox" name="advanceSearchCheckBox" onclick="toggleAdvanceSearch(this, 'searchFormUser<%== tid %>')" /><%== UI("Advance Search") %>
+   <%== inputAuthenticityTag();%>
+   <table>
+   <tr>
+      <td style="text-align:right;"><%== UI("USERNAME") %>:</td>
+      <td><input name="sqlOp_userName" data="sqlOpData" value="<%== sqlop %>" class="mini-combobox" onvaluechanged="sqlOpChange" visible="false" style="width:200px;" /></td>
+      <td><input name="userName" class="mini-textbox" /></td>
+      <td><input name="userName2" class="mini-textbox" visible="false" /></td>
+      <td style="text-align:right;"><%== UI("FULLNAMEZH") %>:</td>
+      <td><input name="sqlOp_fullNameZh" data="sqlOpData" value="<%== sqlop %>" class="mini-combobox" onvaluechanged="sqlOpChange" visible="false" style="width:200px;" /></td>
+      <td><input name="fullNameZh" class="mini-textbox" /></td>
+      <td><input name="fullNameZh2" class="mini-textbox" visible="false" /></td>
+   </tr>
+   <tr>
+      <td style="text-align:right;"><%== UI("FULLNAMEEN") %>:</td>
+      <td><input name="sqlOp_fullNameEn" data="sqlOpData" value="<%== sqlop %>" class="mini-combobox" onvaluechanged="sqlOpChange" visible="false" style="width:200px;" /></td>
+      <td><input name="fullNameEn" class="mini-textbox" /></td>
+      <td><input name="fullNameEn2" class="mini-textbox" visible="false" /></td>
+      <td style="text-align:right;"><%== UI("HRCD") %>:</td>
+      <td><input name="sqlOp_hrCd" data="sqlOpData" value="<%== sqlop %>" class="mini-combobox" onvaluechanged="sqlOpChange" visible="false" style="width:200px;" /></td>
+      <td><input name="hrCd" class="mini-textbox" /></td>
+      <td><input name="hrCd2" class="mini-textbox" visible="false" /></td>
+   </tr>
+   <tr>
+      <td style="text-align:right;"><%== UI("PASSWORD") %>:</td>
+      <td><input name="sqlOp_password" data="sqlOpData" value="<%== sqlop %>" class="mini-combobox" onvaluechanged="sqlOpChange" visible="false" style="width:200px;" /></td>
+      <td><input name="password" class="mini-textbox" /></td>
+      <td><input name="password2" class="mini-textbox" visible="false" /></td>
+      <td style="text-align:right;"><%== UI("EMAILADDR") %>:</td>
+      <td><input name="sqlOp_emailAddr" data="sqlOpData" value="<%== sqlop %>" class="mini-combobox" onvaluechanged="sqlOpChange" visible="false" style="width:200px;" /></td>
+      <td><input name="emailAddr" class="mini-textbox" /></td>
+      <td><input name="emailAddr2" class="mini-textbox" visible="false" /></td>
+   </tr>
+   <tr>
+      <td style="text-align:right;"><%== UI("LOCKEDBOOL") %>:</td>
+      <td><input name="sqlOp_lockedBool" data="sqlOpData" value="<%== sqlop %>" class="mini-combobox" onvaluechanged="sqlOpChange" visible="false" style="width:200px;" /></td>
+      <td><input name="lockedBool" class="mini-textbox" /></td>
+      <td><input name="lockedBool2" class="mini-textbox" visible="false" /></td>
+   </tr>
+   </table>
+</form>
+<div class="mini-toolbar" style="margin-left:3px;border:0">
+ <a class="mini-button" onclick="clearForm('searchFormUser<%== tid %>')"><%== UI("Clear") %></a>
+ <a class="mini-button" onclick="resetForm('searchFormUser<%== tid %>')"><%== UI("Reset") %></a>
+</div>

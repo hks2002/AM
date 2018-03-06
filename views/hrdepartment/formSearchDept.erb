@@ -1,0 +1,32 @@
+<% QVariant tid = variant("tid") %>
+<% QVariant sqlop = CFG("SQLOP") %>
+<form id="searchFormDept<%== tid %>" name="searchFormDept">
+   <input class="mini-checkbox" name="advanceSearchCheckBox" onclick="toggleAdvanceSearch(this, 'searchFormDept<%== tid %>')" /><%== UI("Advance Search") %>
+   <%== inputAuthenticityTag();%>
+   <table>
+   <tr>
+      <td style="text-align:right;"><%== UI("DEPTCD") %>:</td>
+      <td><input name="sqlOp_deptCd" data="sqlOpData" value="<%== sqlop %>" class="mini-combobox" onvaluechanged="sqlOpChange" visible="false" style="width:200px;" /></td>
+      <td><input name="deptCd" class="mini-textbox" /></td>
+      <td><input name="deptCd2" class="mini-textbox" visible="false" /></td>
+      <td style="text-align:right;"><%== UI("DEPTNAMEZH") %>:</td>
+      <td><input name="sqlOp_deptNameZh" data="sqlOpData" value="<%== sqlop %>" class="mini-combobox" onvaluechanged="sqlOpChange" visible="false" style="width:200px;" /></td>
+      <td><input name="deptNameZh" class="mini-textbox" /></td>
+      <td><input name="deptNameZh2" class="mini-textbox" visible="false" /></td>
+   </tr>
+   <tr>
+      <td style="text-align:right;"><%== UI("DEPTNAMEEN") %>:</td>
+      <td><input name="sqlOp_deptNameEn" data="sqlOpData" value="<%== sqlop %>" class="mini-combobox" onvaluechanged="sqlOpChange" visible="false" style="width:200px;" /></td>
+      <td><input name="deptNameEn" class="mini-textbox" /></td>
+      <td><input name="deptNameEn2" class="mini-textbox" visible="false" /></td>
+      <td style="text-align:right;"><%== UI("DEPTDESC") %>:</td>
+      <td><input name="sqlOp_deptDesc" data="sqlOpData" value="<%== sqlop %>" class="mini-combobox" onvaluechanged="sqlOpChange" visible="false" style="width:200px;" /></td>
+      <td><input name="deptDesc" class="mini-textbox" /></td>
+      <td><input name="deptDesc2" class="mini-textbox" visible="false" /></td>
+   </tr>
+   </table>
+</form>
+<div class="mini-toolbar" style="margin-left:3px;border:0">
+ <a class="mini-button" onclick="clearForm('searchFormDept<%== tid %>')"><%== UI("Clear") %></a>
+ <a class="mini-button" onclick="resetForm('searchFormDept<%== tid %>')"><%== UI("Reset") %></a>
+</div>
